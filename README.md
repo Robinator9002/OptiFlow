@@ -1,6 +1,6 @@
 # OptiFlow: Rental Management & Workflow Optimization
 
-[[![Project Status: Active Development](https://img.shields.io/badge/status-active%20development-green.svg)](https://shields.io/)
+[![Project Status: Active Development](https://img.shields.io/badge/status-active%20development-green.svg)](https://shields.io/)
 OptiFlow is a comprehensive rental management software designed to streamline workflows and optimize the operational environment for property managers and related businesses.
 
 ## Overview
