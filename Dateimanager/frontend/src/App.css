@@ -1,0 +1,14 @@
+/* styles/main.css */
+/* Diese Datei importiert alle anderen CSS-Teile. */
+/* Binde NUR diese Datei in dein HTML oder deine Haupt-JS-Datei ein. */
+
+@import url('styles/global.css');
+@import url('styles/components.css');
+@import url('styles/sections.css');
+@import url('styles/filemanagement.css');
+@import url('styles/login.css');
+@import url('styles/settings.css');
+@import url('styles/deduping.css');
+@import url('styles/help.css');
+
+/* Hier könnten zusätzliche, übergreifende Stile stehen, falls nötig */

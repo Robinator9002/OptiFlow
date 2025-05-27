@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dateimanager Dokumentation - Technik</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Dateimanager Dokumentation</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Übersicht</a></li>
+                <li><a href="funktionen.html">Funktionen</a></li>
+                <li class="active"><a href="technik.html">Technik</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="roadmap.html">Roadmap</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="technik">
+            <h2>Technische Übersicht</h2>
+
+            <section id="invertierte-indexierung">
+                <h3>Invertierte Indexierung</h3>
+                <p>
+                    Die Grundlage für die blitzschnelle Suche bildet die <strong>invertierte Indexierung</strong>, eine Technik, die in der Information Retrieval (IR) verwendet wird, um Suchvorgänge zu beschleunigen.
+                    Statt die Dokumente sequentiell zu durchsuchen, erstellt diese Methode einen Index, der Wörter und Metadaten auf die Dokumente abbildet, in denen sie vorkommen.
+                    Dies ermöglicht es, Suchanfragen mit hoher Effizienz zu beantworten, da nicht jede Datei einzeln durchsucht werden muss.
+                </p>
+                <p>
+                    Der Index wird als Hash-Tabelle oder Baumstruktur implementiert, was den schnellen Zugriff auf die relevanten Dokumente ermöglicht.
+                    Bei der Indexierung werden Texte in Token zerlegt, Stoppwörter entfernt und Stemming-Algorithmen angewendet, um die Effektivität der Suche zu erhöhen.
+                </p>
+                <div class="img-container">
+                    <img src="img/invertierte-indexierung.png" alt="Diagramm der invertierten Indexierung">
+                    <p>
+                        Dieses Diagramm veranschaulicht, wie die invertierte Indexierung funktioniert.
+                        <br>Der Index speichert Wörter und Metadaten zusammen mit den Dateiverweisen, in denen sie vorkommen.
+                        <br>Dieser Prozess dauert etwas, geht aber mit einigen Techniken relativ schnell, und dafür geht die Suche durch den Index danach relativ schnell (oft in Millisekunden trotz hunderttausender von Dateien).
+                    </p>
+                </div>
+            </section>
+
+            <section id="suchsystem">
+                <h3>Suchsystem</h3>
+                <p>
+                    Das Suchsystem verwendet ein ausgeklügeltes <strong>Punktesystem</strong>, um die Relevanz der Suchergebnisse zu bewerten.
+                    Dabei werden verschiedene Faktoren wie die Häufigkeit des Suchbegriffs (Term Frequency), seine Position im Text (Proximity), Übereinstimmungen mit Metadaten und die inverse Dokumenthäufigkeit (Inverse Document Frequency, IDF) berücksichtigt.
+                    Die Ergebnisse werden dynamisch sortiert, um die relevantesten Dateien zuerst anzuzeigen.
+                </p>
+                <p>
+                    Die IDF gewichtet seltene Begriffe höher, da sie oft aussagekräftiger sind.
+                    Die Kombination von TF und IDF (TF-IDF) ermöglicht eine präzise Bewertung der Relevanz von Dokumenten für eine bestimmte Suchanfrage.
+                </p>
+                <div class="img-container">
+                    <div class="img-container">
+                        <img src="img/suchparameter.png" alt="Diagramm der Suchparameter">
+                        <p>Dieses Diagramm zeigt, wie das Frontend eine Eingabe an das Backend sendet, diese dort verarbeitet wird, und die Ergebnisse dann dynamisch zurück an das Frontend geschickt werden.</p>
+                    </div>
+                    <div class="img-container">
+                        <img src="img/suchsystem.png" alt="Diagramm des Suchsystems">
+                        <p>
+                            Dieses Diagramm zeigt, wie das Punktesystem funktioniert.
+                            Suchbegriffe werden mit verschiedenen Faktoren bewertet, um die Relevanz der Suchergebnisse zu bestimmen.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="dateiverwaltung">
+                <h3>Dateiverwaltung</h3>
+                <p>
+                    Die Dateiverwaltung ermöglicht das direkte Öffnen, Bearbeiten und Löschen von Dateien innerhalb der Anwendung.
+                    Eine Vorschaufunktion zeigt Dateiinhalte und Metadaten an, ohne dass die Dateien extern geöffnet werden müssen.
+                    Die integrierte Bearbeitungsfunktion unterstützt schnelle Änderungen an Textdateien durch die verwendung von <code>contenteditable</code> und anderen Javascript basierten techniken.
+                </p>
+                <p>
+                    Die Anwendung verwendet APIs des Betriebssystems, um Dateien zu öffnen und zu bearbeiten.
+                    Die Vorschaufunktion nutzt Bibliotheken wie <code>react-pdf</code>, um verschiedene Dateiformate anzuzeigen.
+                </p>
+                <div class="img-container">
+                    <img src="img/dateiverwaltung.png" alt="Diagramm der Dateiverwaltung">
+                    <p>
+                        Dieses Diagramm veranschaulicht, wie die Dateiverwaltung funktioniert.
+                        <br>Benutzer können Dateien direkt in der Anwendung öffnen, bearbeiten und löschen.
+                    </p>
+                </div>
+            </section>
+
+            <section id="indexierungskonfiguration">
+                <h3>Indexierungskonfiguration</h3>
+                <p>
+                    Die Indexierung kann flexibel an verschiedene Anforderungen angepasst werden.
+                    Benutzer können Dateitypen, Ordner und Größenbeschränkungen definieren, um die Indexierung zu optimieren.
+                    Die Konfiguration wird in einer separaten Datei gespeichert und kann jederzeit angepasst werden.
+                </p>
+                <p>
+                    Die Konfigurationsdatei wird im JSON-Format gespeichert, was die einfache Bearbeitung und das Lesen der Einstellungen ermöglicht.
+                    Die Anwendung verwendet Bibliotheken wie <code>fs</code> (Node.js) oder <code>os</code> (Python), um auf das Dateisystem zuzugreifen und die Indexierung entsprechend der Konfiguration durchzuführen.
+                </p>
+                <div class="img-container">
+                    <img src="img/indexierungskonfiguration.png" alt="Diagramm der Indexierungskonfiguration">
+                    <p>
+                        Dieses Diagramm zeigt, wie die Indexierungskonfiguration funktioniert.
+                        Benutzer können verschiedene Parameter definieren, um die Indexierung anzupassen.
+                        <br>Wenn dann ein Signal zum Scannen gesendet wird, werden diese Parameter für das Durchsuchen, Filtern und Speichern der Dateien im Index genutzt.
+                    </p>
+                </div>
+            </section>
+
+            <section id="sicherheit">
+                <h3>Sicherheit</h3>
+                <p>
+                    Sicherheit hat oberste Priorität.
+                    Alle Index- und Nutzerdaten werden lokal gespeichert, um externen Zugriff zu verhindern.
+                    Die Anwendung läuft auf einem lokalen Server, und ein automatisches Backup-System schützt vor Datenverlust.
+                </p>
+                <p>
+                    Die Anwendung verwendet Verschlüsselungstechniken, um sensible Daten zu schützen.
+                    Ein automatisches Backup-System erstellt regelmäßig Sicherungskopien des Index und der Konfigurationsdateien, um Datenverlust zu verhindern.
+                </p>
+                <div class="img-container">
+                    <img src="img/sicherheit.png" alt="Diagramm der Sicherheit">
+                    <p>
+                        Dieses Diagramm zeigt, wie alle Dateien lokal auf dem Server abgespeichert werden, sodass selbst bei einem Absturz oder Schließen der Anwendung ein Backup vorhanden ist. Bei Änderungen in der Dateimanager Klasse (die den Index enthält) wird automatisch die <code>file_index.json</code>-Datei, die den Index lokal abspeichert, aktualisiert. Außerdem wird beim Schließen und Neu Öffnen der App (des Servers, nicht der clientbasierten Anwendung) automatisch die <code>file_index.json</code>-Datei ausgelesen, sodass sofort wieder alle Daten vorhanden sind.
+                    </p>
+                </div>
+            </section>
+
+            <section id="kommunikation-backend-frontend">
+                <h3>Kommunikation zwischen Backend und Frontend</h3>
+                <p>
+                    Die Anwendung ist in zwei Hauptkomponenten unterteilt: ein clientbasiertes <strong>Frontend</strong> und ein Server-<strong>Backend</strong>.
+                    Das <strong>Frontend</strong>, entwickelt in React, stellt die Benutzeroberfläche dar und läuft unabhängig auf den Computern der Mitarbeiter. Es ermöglicht die Interaktion mit dem Dateimanager, wie das Ausführen von Suchen und das Anzeigen von Ergebnissen.
+                    Das <strong>Backend</strong>, entwickelt in Python mit FastAPI, verwaltet die gesamte Logik, Indexierung und Suche. Es läuft auf einem zentralen Server und ist für die Verarbeitung von Suchanfragen, die Verwaltung des Index und die Interaktion mit dem Dateisystem verantwortlich.
+                </p>
+                <p>
+                    Die Kommunikation zwischen Frontend und Backend erfolgt über eine <strong>RESTful API</strong>, die von FastAPI bereitgestellt wird.
+                    React verwendet <strong>Axios</strong>, um HTTP-Anfragen an das Backend zu senden und die empfangenen Daten darzustellen.
+                </p>
+                <p>
+                    Die API verwendet JSON als Datenaustauschformat, was die Interoperabilität zwischen Frontend und Backend erleichtert.
+                    FastAPI bietet automatische Validierung und Serialisierung von Daten, was die Entwicklung und Wartung der API vereinfacht.
+                </p>
+                <p>
+                    <strong>Wichtige Begriffe:</strong>
+                    <ul>
+                        <li><strong>Frontend (Client):</strong> Die Benutzeroberfläche der Anwendung, die auf den Computern der Mitarbeiter läuft.</li>
+                        <li><strong>Backend (Server):</strong> Die serverseitige Logik, die auf einem zentralen Server läuft und die Datenverarbeitung übernimmt.</li>
+                        <li><strong>RESTful API:</strong> Eine Schnittstelle für die Kommunikation zwischen Frontend und Backend.</li>
+                        <li><strong>FastAPI:</strong> Ein modernes, schnelles Web-Framework für Python zur Erstellung von APIs.</li>
+                        <li><strong>React:</strong> Eine JavaScript-Bibliothek zur Erstellung von Benutzeroberflächen.</li>
+                        <li><strong>Axios:</strong> Eine JavaScript-Bibliothek für HTTP-Anfragen.</li>
+                        <li><strong>JSON:</strong> Ein leichtes Datenaustauschformat.</li>
+                        <li><strong>TF-IDF:</strong> Eine Methode zur Bewertung der Relevanz von Dokumenten für Suchanfragen.</li>
+                    </ul>
+                </p>
+            </section>
+
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Robin Schumacher</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

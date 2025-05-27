@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dateimanager - Technische Dokumentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Dateimanager - Technische Dokumentation</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Übersicht</a></li>
+                <li><a href="einstellungen.html">Einstellungen</a></li>
+                <li><a href="login.html">Login-System</a></li>
+                <li><a href="neue-funktionen.html">Neue Funktionen</a></li>
+                <li class="active"><a href="technik.html">Technik</a></li>
+                <li><a href="roadmap.html">Roadmap</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="technische-ubersicht">
+            <h2>Technische Übersicht</h2>
+            <p>
+                Dieser Abschnitt richtet sich an Personen mit IT-Kentnissen und beschreibt die zugrundeliegende Architektur und die verwendeten Technologien des Dateimanagers.
+                Ich beleuchte die Interaktion zwischen dem React-Frontend und dem Uvicorn/FastAPI-Backend, die Datenhaltung, die Netzwerkkommunikation und
+                andere relevante technische Details.
+            </p>
+        </section>
+
+        <section id="architektur">
+            <h2>Architektur</h2>
+            <p>
+                Der Dateimanager ist als moderne Webanwendung konzipiert und folgt einer klaren Client-Server-Architektur.  Das Frontend ist mit React
+                entwickelt, während das Backend auf Uvicorn und FastAPI basiert.  Diese Wahl ermöglicht eine effiziente, skalierbare und
+                wartbare Anwendungsentwicklung.
+            </p>
+            <ul>
+                <li><strong>Frontend:</strong>  Das Frontend ist mit React realisiert und bietet eine dynamische und benutzerfreundliche Oberfläche.  Es
+                    kommuniziert über HTTP-Anfragen die mit Axios erstellt werden mit dem Backend, um Daten abzurufen und Aktionen auszuführen.</li>
+                <li><strong>Backend:</strong>  Das Backend ist mit Uvicorn und FastAPI aufgebaut.  Uvicorn dient als ASGI-Server (Asynchronous Server
+                    Gateway Interface) und ermöglicht die Ausführung von FastAPI, einem modernen, leistungsstarken Python-Framework für den Aufbau von
+                    APIs.</li>
+                <li><strong>Datenbank:</strong>  Die Daten werden in einer lokalen Datenbank gespeichert.  Details zum verwendeten Datenbankmanagementsystem
+                    und dem Schema werden im Abschnitt "Datenhaltung" erläutert.</li>
+            </ul>
+        </section>
+
+        <section id="frontend">
+            <h2>Frontend (React)</h2>
+            <p>
+                Das Frontend ist mit React entwickelt, einer beliebten JavaScript-Bibliothek für den Aufbau von Benutzeroberflächen.  React ermöglicht
+                die Erstellung von Single-Page-Anwendungen (SPAs), die schnell, reaktionsschnell und interaktiv sind.
+            </p>
+            <ul>
+                <li><strong>Komponentenbasierte Architektur:</strong>  Das Frontend ist in wiederverwendbare Komponenten unterteilt, die die
+                    Benutzeroberfläche strukturieren und die Entwicklung erleichtern.</li>
+                <li><strong>Zustandsmanagement:</strong>  React verwendet ein effizientes Zustandsmanagement, um die Datenflüsse in der Anwendung
+                    zu verwalten und die Leistung zu optimieren.</li>
+                <li><strong>Asynchrone Kommunikation:</strong>  Das Frontend kommuniziert asynchron mit dem Backend, um Daten abzurufen und Aktionen
+                    auszuführen, ohne die Benutzeroberfläche zu blockieren.</li>
+            </ul>
+        </section>
+
+        <section id="backend">
+            <h2>Backend (Uvicorn, FastAPI)</h2>
+            <p>
+                Das Backend ist mit Uvicorn und FastAPI realisiert.  Diese Technologien bieten eine moderne, leistungsstarke und flexible Plattform für
+                die Entwicklung von APIs.
+            </p>
+            <ul>
+                <li><strong>Uvicorn:</strong>  Uvicorn ist ein blitzschneller ASGI-Server, der auf uvloop und httptools basiert.  Er ermöglicht die
+                    Ausführung von asynchronen Python-Webanwendungen und bietet eine hervorragende Leistung.</li>
+                <li><strong>FastAPI:</strong>  FastAPI ist ein modernes, schnelles (High-Performance) Web-Framework für den Aufbau von APIs mit Python 3.6+
+                    basierend auf Standard-Python-Typhinting.
+                    <ul>
+                        <li><strong>Typisierung:</strong>  FastAPI verwendet Python-Typhints, um die Validierung von Daten, die Serialisierung und die
+                            Dokumentation der API zu automatisieren.</li>
+                        <li><strong>Abhängigkeitsinjektion:</strong>  FastAPI unterstützt ein leistungsfähiges System zur Abhängigkeitsinjektion, das die
+                            Wiederverwendbarkeit von Code und die Testbarkeit verbessert.</li>
+                        <li><strong>Automatische Dokumentation:</strong>  FastAPI generiert automatisch eine interaktive API-Dokumentation (Swagger UI),
+                            die die Entwicklung und den Test der API erleichtert.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section id="kommunikation">
+            <h2>Kommunikation zwischen Frontend und Backend</h2>
+            <p>
+                Das Frontend und das Backend kommunizieren über HTTP-Anfragen.  Das Frontend sendet Anfragen an das Backend, um Daten abzurufen oder
+                Aktionen auszuführen, und das Backend antwortet mit den entsprechenden Daten oder Statusmeldungen.
+            </p>
+            <ul>
+                <li><strong>HTTP-Methoden:</strong>  Die Kommunikation erfolgt über standardmäßige HTTP-Methoden wie GET, POST, PUT, DELETE usw.</li>
+                <li><strong>JSON-Datenformat:</strong>  Die ausgetauschten Daten sind in der Regel im JSON-Format kodiert, das einfach zu parsen und
+                    zu verarbeiten ist.</li>
+                <li><strong>CORS:</strong>  Cross-Origin Resource Sharing (CORS) ist konfiguriert, um Anfragen von verschiedenen Domänen zu ermöglichen.</li>
+            </ul>
+            <p>
+                Um die Sicherheit zu gewährleisten, wird ein Token-basiertes Authentifizierungssystem verwendet.  Nach erfolgreichem Login erhält der
+                Client ein Token, das er bei nachfolgenden Anfragen an den Server sendet.  Der Server überprüft das Token, um die Identität des Benutzers
+                zu bestätigen und die Anfrage zu autorisieren.
+            </p>
+        </section>
+
+        <section id="datenhaltung">
+            <h2>Datenhaltung</h2>
+            <p>
+                Der Dateimanager speichert Benutzerdaten, Einstellungen und andere relevante Informationen in einer lokalen Datenbank.
+            </p>
+            <ul>
+                <li><strong>Lokale Datenbank:</strong>  Die Verwendung einer lokalen Datenbank reduziert die Abhängigkeit von externen Servern und
+                    verbessert die Leistung.</li>
+                <li><strong>Datenbankschema:</strong>  Das Datenbankschema ist sorgfältig entworfen, um die Integrität und Konsistenz der Daten zu
+                    gewährleisten.  Es umfasst Tabellen für Benutzer, Einstellungen, Dateien und andere relevante Entitäten.</li>
+                <li><strong>ORM (Object-Relational Mapping):</strong>  Ein ORM-System wird verwendet, um die Interaktion mit der Datenbank zu
+                    vereinfachen und die Entwicklung zu beschleunigen.</li>
+            </ul>
+        </section>
+
+        <section id="sicherheit">
+            <h2>Sicherheit</h2>
+            <p>
+                Sicherheit ist ein zentraler Aspekt des Dateimanagers.  Es wurden verschiedene Maßnahmen ergriffen, um die Daten und die Anwendung vor
+                Bedrohungen zu schützen.
+            </p>
+            <ul>
+                <li><strong>Authentifizierung:</strong>  Ein Token-basiertes Authentifizierungssystem wird verwendet, um die Identität der Benutzer zu
+                    überprüfen und den Zugriff auf geschützte Ressourcen zu sichern.</li>
+                <li><strong>Passwort-Hashing:</strong>  Passwörter werden mit starken Hashing-Algorithmen verschlüsselt, um sie vor unbefugtem Zugriff zu schützen.</li>
+                <li><strong>Autorisierung:</strong>  Die Autorisierung erfolgt auf der Grundlage von Benutzerrollen (z.B. Administrator, normaler Benutzer),
+                    um den Zugriff auf bestimmte Funktionen und Daten zu steuern.</li>
+                <li><strong>Validierung:</strong>  Eingaben von Benutzern und anderen Quellen werden sorgfältig validiert, um Sicherheitslücken wie
+                    SQL-Injection und Cross-Site Scripting (XSS) zu vermeiden.</li>
+                 <li><strong>CORS:</strong>  CORS ist korrekt konfiguriert, um sicherzustellen, dass nur autorisierte Domänen auf die API zugreifen können.</li>
+            </ul>
+        </section>
+
+        <section id="event-system-technik">
+            <h2>Technik des Event-Systems</h2>
+            <p>
+                Das Event-System ermöglicht die automatische Ausführung von Aufgaben zu bestimmten Zeiten.  Technisch gesehen, funktioniert dies wie folgt:
+            </p>
+            <ul>
+                <li><strong>Zeitplanung:</strong>  Der Benutzer definiert Ereignisse mit einer bestimmten Zeit oder einem Zeitplan.  Diese Informationen
+                    werden in der Datenbank gespeichert.</li>
+                <li><strong>Scheduler:</strong>  Ein Hintergrundprozess (Scheduler) überwacht die Datenbank regelmäßig, um festzustellen, ob Ereignisse
+                    ausgeführt werden müssen.</li>
+                <li><strong>Ausführung:</strong>  Wenn ein Ereignis fällig ist, führt der Scheduler die entsprechende Aufgabe aus.  Dies kann das
+                    Ausführen einer Funktion, das Senden einer Nachricht oder eine andere Aktion sein.</li>
+                <li><strong>Dynamische Anpassung:</strong>  Der Zeitplan von Ereignissen kann dynamisch geändert werden, ohne dass ein Neustart der
+                    Anwendung erforderlich ist.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Robin Schumacher</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

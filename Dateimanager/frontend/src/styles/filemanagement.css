@@ -1,0 +1,1119 @@
+/* File Management, File Search, and File Preview Styles */
+/* Consolidated styles for the File Management tab */
+
+/* ============================================= */
+/* === File Management Container (Wrapper) === */
+/* ============================================= */
+.file-management-container {
+    display: flex;
+    flex-direction: row;
+    /* Standardmäßig nebeneinander */
+    align-items: flex-start;
+    /* Elemente am oberen Rand ausrichten */
+    justify-content: left;
+    height: 100%;
+    /* Wichtig, damit Kinder (Search/Preview) flex-grow/height nutzen können */
+    gap: 1.875rem;
+    /* Abstand zwischen Search und Preview */
+    width: 100%;
+    padding: 1.25rem;
+    /* Einheitliches Padding außen */
+    border-radius: 0.5rem;
+    background-color: var(--bg-primary);
+    /* Hintergrundfarbe aus Variablen */
+    border: 1px solid var(--border-primary);
+    /* Border aus Variablen */
+    box-sizing: border-box;
+    /* Padding und Border in Größe einrechnen */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    /* Sanfte Übergänge */
+    /* Kein max-height oder overflow hier, Kinder sollen scrollen */
+}
+
+/* Verschachteltes FileManagement (falls es das gibt?) - behalten */
+/* Dies sollte nur für Debugging oder spezielle verschachtelte Layouts gelten */
+.file-management-container .file-management-container {
+    border-style: dashed;
+    box-shadow: none;
+}
+
+/* Zustand, wenn Suche eingeklappt ist - Klasse am Wrapper */
+/* Der Wrapper selbst ändert sich nicht stark, nur die Kinder (FileSearch schrumpft) */
+/* .file-management-container.search-collapsed { } */
+
+
+/* ============================================= */
+/* === File Search Container (Linke Spalte) === */
+/* ============================================= */
+.file-search-container {
+    width: auto;
+    /* Breite durch flex-basis/grow/shrink */
+    background: var(--bg-primary);
+    padding: 0.9375rem;
+    /* Einheitliches Padding innen */
+    border-radius: 0.3125rem;
+    border: 1px solid var(--border-tertiary);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    /* Elemente untereinander (Header, SearchBar, Results) */
+    gap: 0.625rem;
+    /* Vertikaler Abstand zwischen den Kindern */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, flex-basis 0.3s ease, width 0.3s ease, padding 0.3s ease;
+    /* Transitions für Ein-/Ausklappen */
+    flex-basis: 22.5rem;
+    /* Startbreite (kann von flex-grow/shrink abweichen) */
+    flex-grow: 0;
+    /* Standardmäßig nicht wachsen */
+    flex-shrink: 0;
+    /* Standardmäßig nicht schrumpfen unter Basis */
+    min-width: 0;
+    /* Wichtig für Flex-Items in row, damit sie schrumpfen können */
+    overflow: hidden;
+    /* Inhalt verstecken, wenn schmal (eingeklappt) */
+    height: 100%;
+    /* Nimm verfügbare Höhe im Parent Container */
+    box-sizing: border-box;
+    /* Padding und Border in Größe einrechnen */
+    max-height: 68vh;
+}
+
+/* Header für Suche (Titel + Toggle) */
+.file-search-header {
+    display: flex;
+    justify-content: space-between;
+    /* Titel links, Toggle rechts */
+    align-items: center;
+    /* Kein margin-bottom hier, Parent Container (.file-search-container) hat gap */
+}
+
+.file-search-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    /* Titel abschneiden */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-grow: 1;
+    /* H2 soll wachsen */
+    min-width: 0;
+    /* H2 muss schrumpfen können */
+}
+
+/* Toggle Button zum Ein-/Ausklappen */
+.collapse-toggle-button {
+    background: none;
+    border: none;
+    padding: 0.2rem;
+    /* Kleineres Padding für Icon-Button */
+    cursor: pointer;
+    color: var(--text-muted);
+    /* Standardfarbe aus Variablen */
+    transition: color 0.2s ease;
+    /* Übergang für Farbe */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    flex-shrink: 0;
+    /* Wichtig, damit der Button nicht schrumpft */
+    margin-left: 0.5rem;
+    /* Abstand zum Titel */
+}
+
+.collapse-toggle-button:hover {
+    color: var(--text-primary);
+    /* Farbe bei Hover ändern */
+}
+
+.collapse-toggle-button:active {
+    color: var(--accent-primary);
+    /* Farbe bei Klick ändern */
+}
+
+/* Zustand, wenn Suche eingeklappt ist - angewendet über Parent Klasse */
+.file-management-container.search-collapsed .file-search-container {
+    flex-basis: 3.2rem;
+    /* Sehr schmaler Basiswert */
+    padding: 0.5rem;
+    /* Weniger Padding */
+    gap: 0.25rem;
+    /* Kleinerer Gap im eingeklappten Zustand */
+}
+
+/* Überschrift im eingeklappten Zustand verstecken */
+.file-management-container.search-collapsed .file-search-header h2 {
+    display: none;
+}
+
+/* Toggle Button im eingeklappten Zustand */
+.file-management-container.search-collapsed .collapse-toggle-button {
+    margin-left: 0;
+    /* Kein Margin mehr links */
+}
+
+/* Hint im eingeklappten Zustand */
+.collapsed-hint {
+    display: none;
+    /* Standardmäßig versteckt */
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    /* Abstand zum Header */
+}
+
+.file-management-container.search-collapsed .collapsed-hint {
+    display: block;
+    /* Anzeigen, wenn eingeklappt */
+}
+
+
+/* Suchleiste innerhalb FileSearch */
+/* Wird per React bedingt gerendert, keine CSS Transitions/Display nötig */
+.file-search-bar {
+    display: flex;
+    gap: 0.625rem;
+    align-items: stretch;
+    /* Input und Button gleiche Höhe */
+    /* Kein margin-bottom hier, Parent Container hat gap */
+}
+
+.file-search-container input[type="text"] {
+    flex-grow: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    border: 1px solid var(--border-secondary);
+    border-radius: 4px;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    outline: none;
+    width: 17rem;
+}
+
+.file-search-container input[type="text"]:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-focus-ring);
+    background-color: var(--bg-primary);
+}
+
+/* Button im FileSearch Bar */
+.file-search-container .file-search-bar button {
+    padding: 0.5rem 0.75rem;
+    flex-shrink: 0;
+    /* Standard Button Styling (Secondary) */
+    background-color: var(--button-secondary-bg);
+    color: var(--button-secondary-text);
+    border: 1px solid var(--button-secondary-border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    /* Abstand Icon/Text */
+}
+
+.file-search-container .file-search-bar button:hover:not(:disabled) {
+    background-color: var(--button-secondary-hover-bg);
+    border-color: var(--button-secondary-hover-border);
+}
+
+.file-search-container .file-search-bar button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* Suchergebnis Wrapper - wird per React bedingt gerendert */
+.file-search-results-wrapper {
+    display: flex;
+    flex-direction: row;
+    /* Betrifft die Kinder *innerhalb* dieses Wrappers */
+    gap: 1.25rem;
+    flex-grow: 1;
+    /* Nimmt verfügbaren Platz in der Höhe in der .file-search-container Column */
+    min-width: 0;
+    min-height: 0;
+    /* Kein Übergang oder Verstecken hier, da React das Element entfernt */
+}
+
+
+/* Datei Liste Container (innerhalb FileSearch Results Wrapper) */
+.file-list-container {
+    max-height: 31.25rem;
+    /* Maximale Höhe, scrollbar */
+    overflow-y: auto;
+    flex-grow: 1;
+    /* Nimmt den restlichen Platz innerhalb .file-search-results-wrapper ein (obwohl nur ein Kind) */
+    min-width: 0;
+    width: 100%;
+    /* Wichtig, damit es den Parent füllt */
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Kein Ergebnis Nachricht */
+.file-list .no-results {
+    padding: 0.75rem 0.9375rem;
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+}
+
+/* Einzelnes Datei-Item in der Liste */
+.file-item {
+    margin-bottom: 0.5rem;
+    border-radius: 0.3125rem;
+    transition: border-color var(--transition-base);
+    border: 1px solid transparent;
+    /* 1px solid, damit 2px im selected State nicht springen */
+    overflow: hidden;
+}
+
+.file-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Kein Boden-Margin beim letzten Element */
+
+
+/* Button innerhalb des Datei-Items */
+.file-item button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-tertiary);
+    padding: 0.75rem 0.9375rem;
+    border-radius: 0.25rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--transition-base), border-color var(--transition-base);
+    color: inherit;
+    box-shadow: none;
+    transform: none;
+    font-size: 1rem;
+    gap: 0.625rem;
+    /* Abstand zwischen Icon (falls vorhanden) und Info */
+}
+
+.file-item button:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-secondary);
+}
+
+/* Fokus-Stil für Tastaturnavigation */
+.file-item button:focus-visible {
+    outline: 3px solid var(--accent-focus-ring);
+    outline-offset: 1px;
+}
+
+/* Ausgewähltes Datei-Item */
+.file-item.selected {
+    border-color: var(--accent-primary);
+    /* Border am li, der den Button umgibt */
+}
+
+.file-item.selected button {
+    background-color: var(--bg-accent);
+    border-color: var(--border-accent);
+    /* Border am Button */
+}
+
+/* Info-Bereich im Datei-Item (Name, Pfad, Relevanz) */
+.file-info {
+    flex-grow: 1;
+    /* Info-Bereich soll wachsen */
+    min-width: 0;
+    /* Wichtig, damit Textumbrüche funktionieren */
+    overflow: hidden;
+    /* Sicherstellen, dass Text nicht überläuft */
+}
+
+.file-name {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    /* Dateinamen nicht umbrechen */
+}
+
+.file-path {
+    margin: 0.2rem 0 0 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    /* Pfade nicht umbrechen (besser als break-all oft) */
+    font-family: var(--font-mono);
+}
+
+.match-count {
+    margin: 0.2rem 0 0 0;
+    font-size: 0.8rem;
+    color: var(--accent-primary);
+    /* Akzentfarbe für Relevanz */
+}
+
+
+/* ============================================= */
+/* === File Preview Container (Rechte Spalte) === */
+/* ============================================= */
+.file-preview-container {
+    background: var(--bg-primary);
+    padding: 0.9375rem;
+    /* Einheitliches Padding innen */
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    /* Header, Metadata, Content etc. untereinander */
+    position: relative;
+    border: 1px solid var(--border-primary);
+    min-width: 0;
+    /* Wichtig, damit es schrumpfen kann */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    flex-grow: 1;
+    /* Nimmt den restlichen Platz in der FileManagement Row ein */
+    flex-shrink: 1;
+    /* Kann schrumpfen */
+    flex-basis: 0;
+    /* Startet mit Basis 0, lässt sich von grow/shrink bestimmen */
+    height: 100%;
+    /* Nimm verfügbare Höhe im Parent Container */
+    box-sizing: border-box;
+    /* Padding und Border in Größe einrechnen */
+    /* gap: 1rem; */
+}
+
+/* Header innerhalb der Preview */
+.file-preview-container .header {
+    display: flex;
+    justify-content: space-between;
+    /* Titel links, Close Button rechts */
+    align-items: center;
+    margin-bottom: 0.9375rem;
+    /* Abstand zur Metadata */
+    padding-bottom: 0.625rem;
+    /* Padding unter der Trennlinie */
+    border-bottom: 1px solid var(--border-tertiary);
+    position: relative;
+    transition: border-color 0.3s ease;
+    /* Kein Padding hier, das ist am Parent (.file-preview-container) */
+}
+
+.file-preview-container .header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-grow: 1;
+    /* H2 soll wachsen */
+    min-width: 0;
+    /* H2 muss schrumpfen können */
+    /* margin-right: 0.5rem; */
+    /* Abstand zum Close Button, wenn nicht per gap im Parent */
+}
+
+/* Close Button */
+/* Dein Code hatte hier doppelte Selektoren und !important, konsolidiert */
+.close-button {
+    /* Standard-Button-Styles anpassen (allgemein) */
+    background: none !important;
+    /* Wichtig, um andere Styles zu überschreiben */
+    border: none !important;
+    padding: 0.3125rem !important;
+    /* 5px */
+    box-shadow: none !important;
+    border-radius: 50% !important;
+    /* Rund */
+    font-size: 1.5rem !important;
+    /* Icon Größe */
+    width: 2rem !important;
+    /* 32px */
+    height: 2rem !important;
+    /* 32px */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color var(--transition-base), background-color var(--transition-base);
+    line-height: 1 !important;
+    /* Zeilenhöhe für vertikale Zentrierung */
+    color: var(--text-danger);
+    /* Farbe aus Variablen */
+}
+
+/* Close Button spezifisch in der FilePreview Header */
+.file-preview-container .close-button {
+    position: absolute;
+    /* Absolut positionieren */
+    top: -0.3125rem;
+    /* -5px */
+    right: -0.3125rem;
+    /* -5px */
+    z-index: 1;
+    /* Über anderen Elementen */
+    /* Margin-left im Header H2 wird nicht benötigt, wenn absolut positioniert */
+}
+
+.close-button:hover {
+    color: var(--accent-danger-hover) !important;
+    /* Hover Farbe aus Variablen */
+    background-color: var(--bg-accent-red) !important;
+    /* Hintergrund bei Hover */
+}
+
+.file-search-bar label {
+    position: relative;
+}
+
+.clear-search-button {
+    position: absolute;
+    right: 2% !important;
+}
+
+.clear-search-button-inside {
+    position: absolute;
+    top: 20%;
+    right: 17%;
+    background: none;
+    border: none;
+    color: var(--accent-danger) !important;
+    /* schönes Rot */
+    cursor: pointer;
+    padding: 0.5rem 0.5rem !important;
+    border-radius: 50% !important;
+}
+
+.clear-search-button-inside:hover {
+    color: var(--accent-danger-hover);
+    background: var(--bg-accent-red) !important;
+}
+
+/* Metadaten */
+.file-metadata {
+    padding: 0 0 0.75rem 0;
+    /* Padding nur unten */
+    margin: 0 0 1rem 0;
+    /* Margin nur unten, Abstand zum Content */
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-tertiary);
+    /* background-color: var(--bg-secondary); */
+    /* Optionale Hintergrundfarbe */
+}
+
+.file-metadata p {
+    margin: 0 0 0.3rem 0;
+    /* Abstand zwischen Metadaten-Zeilen */
+    word-break: break-all;
+    /* Lange Pfade umbrechen */
+}
+
+.file-metadata p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* Hauptinhalt Bereich (JETZT: Flex Row Container für Text & Sidebar) */
+.file-content {
+    display: flex;
+    /* Wichtig: Flex Container */
+    flex-direction: row;
+    /* Elemente nebeneinander */
+    flex-grow: 1;
+    /* Nimmt den restlichen horizontalen Platz im Parent (.file-preview-container Column) ein */
+    min-height: 0;
+    /* Wichtig für Flex-Item mit overflow */
+    overflow: hidden;
+    /* Wichtig, damit Kinder mit overflow korrekt arbeiten */
+    position: relative;
+    /* Für absolute Positionierung des Spinners */
+    /* Border, Padding, Background - verschieben wir auf die Kinder oder das neue Sidebar Div */
+    border: none;
+    /* Border ist am Parent (.file-preview-container) oder an den Kindern */
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    /* Hintergrund am Kindelement */
+    gap: 1.5rem;
+    /* Abstand zwischen Textbereich und Sidebar */
+}
+
+/* <pre> und <textarea> (Kind des .file-content) */
+.file-preview-container pre,
+.file-preview-container textarea {
+    /* Behalten die meisten vorherigen Styles */
+    max-height: 45vh;
+    /* Höhe wird durch flex-grow im .file-content Row geregelt */
+    max-width: none;
+    /* Breite wird durch flex-grow im .file-content Row geregelt */
+    overflow: auto;
+    /* Scrollbar hier */
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    background-color: var(--bg-code);
+    /* Hintergrund hier */
+    border: 1px solid var(--border-tertiary);
+    /* Border hier */
+    border-radius: 0.25rem;
+    /* 4px */
+    padding: 0.625rem;
+    /* 10px */
+    flex-grow: 1;
+    /* Nimm den restlichen Platz in der .file-content Row ein */
+    min-height: 150px;
+    /* Mindesthöhe beibehalten */
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    width: auto;
+    /* Breite wird durch Flex geregelt */
+    height: 100%;
+    /* Fülle die verfügbare Höhe im .file-content Row */
+    box-sizing: border-box;
+}
+
+/* Spezifische Styles für Textarea im Bearbeitungsmodus */
+.file-preview-container textarea {
+    resize: vertical;
+    /* Nur vertikal resizebar */
+    white-space: pre-wrap;
+    /* Umbrüche beibehalten */
+    overflow-wrap: break-word;
+    /* Lange Wörter umbrechen */
+    min-height: 18.75rem;
+    /* 300px Mindesthöhe beim Bearbeiten */
+    box-shadow: none;
+}
+
+/* Fokus-Stil für Textarea */
+.file-preview-container textarea:focus {
+    background-color: var(--bg-primary);
+    /* Hintergrund bei Fokus ändern */
+    border-color: var(--accent-primary);
+    /* Borderfarbe bei Fokus */
+    box-shadow: 0 0 0 3px var(--accent-focus-ring);
+    /* Fokus-Ring */
+    outline: none;
+}
+
+
+/* Neuer Sidebar Container (Kind des .file-content) */
+/* DIESE KLASSE (.file-sidebar) MUSS IN DEINEM REACT CODE HINZUGEFÜGT WERDEN */
+/* Sie muss die Elemente .in-file-search-controls, das Snippets div, und .file-actions umschließen */
+.file-sidebar {
+    display: flex;
+    /* Flex Container */
+    flex-direction: column;
+    /* Elemente untereinander stapeln */
+    flex-shrink: 0;
+    /* Standardmäßig nicht schrumpfen */
+    flex-basis: 25rem;
+    /* Startbreite der Sidebar */
+    width: auto;
+    /* Breite durch flex-basis */
+    max-width: 100%;
+    /* Maximale Breite der Sidebar */
+    gap: 1rem;
+    /* Vertikaler Abstand zwischen In-File Search, Snippets, Actions */
+    padding: 0.75rem;
+    /* Padding innen für Sidebar-Inhalt */
+    border-left: 1px solid var(--border-tertiary);
+    /* Trennlinie zum Textbereich */
+    background-color: var(--bg-secondary);
+    border-radius: 0.5rem;
+    /* Hintergrund der Sidebar */
+    overflow-y: auto;
+    /* Sidebar scrollbar machen, falls Inhalt zu lang */
+    height: 100%;
+    /* Fülle die verfügbare Höhe im .file-content Row */
+    box-sizing: border-box;
+    transition: flex-basis 0.3s ease, width 0.3s ease, padding 0.3s ease, background-color 0.3s ease;
+    /* Transitions für Ein-/Ausklappen */
+}
+
+.file-content.editing .file-sidebar {
+    max-width: 11.5rem;
+    display: flex;
+    flex-direction: row;
+}
+
+.file-content.editing .file-sidebar button {
+    width: 100%;
+}
+
+.file-content.editing .file-sidebar .action-button-group {
+    max-width: 10rem;
+}
+
+/* Zustand, wenn Sidebar eingeklappt ist (Klasse am .file-content) */
+.file-content.sidebar-collapsed .file-sidebar {
+    flex-basis: 50px;
+    /* Schmaler Basiswert */
+    width: 50px;
+    /* Feste schmale Breite */
+    padding: 0.5rem;
+    /* Weniger Padding */
+    gap: 0.25rem;
+    /* Kleinerer Gap im eingeklappten Zustand */
+    overflow: hidden;
+    /* Inhalt verstecken */
+}
+
+/* Elemente innerhalb der Sidebar im eingeklappten Zustand verstecken */
+/* Wird per React bedingt gerendert, aber falls nicht, diese Regeln nutzen */
+/* .file-content.sidebar-collapsed .file-sidebar .in-file-search-controls, */
+/* .file-content.sidebar-collapsed .file-sidebar > div:has(.search-snippet-list-container), */
+/* .file-content.sidebar-collapsed .file-sidebar .file-actions { */
+/* display: none; */
+/* } */
+
+
+/* In-File Suchleiste & Navigation (Kind des .file-sidebar) */
+.in-file-search-controls {
+    display: flex;
+    flex-direction: column;
+    /* Elemente untereinander stapeln (Suchleiste, Snippet Nav/Liste) */
+    gap: 0.75rem;
+    /* Abstand zwischen Suchleiste und Snippet Nav/Liste */
+    /* Kein Margin oder Border hier, das ist am .file-sidebar oder zwischen Elementen */
+    margin: 0;
+    padding: 0;
+    border: none;
+    flex-shrink: 0;
+    /* Wichtig, damit es nicht schrumpft */
+    width: 100%;
+    max-width: 30rem;
+}
+
+.in-file-search-controls.editing {
+    max-width: fit-content;
+}
+
+/* 1) Gruppe vertikal stapeln, 100% Breite des Containers */
+.in-file-search-controls.editing .action-button-group {
+    display: flex;
+    flex-direction: column;
+    /* Buttons dehnen sich aus */
+    margin-top: 0.5rem;
+    /* optional: etwas Abstand nach oben */
+}
+
+/* 2) Einheitliche Button-Größe */
+.in-file-search-controls.editing .action-button-group button {
+    width: 100%;
+    /* volle Breite der Gruppe */
+    font-size: 1rem;
+    /* einheitliche Schriftgröße */
+}
+
+.in-file-search-bar {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+    flex-shrink: 0;
+    margin-bottom: 0.2rem;
+    ;
+    /* Nicht schrumpfen */
+}
+
+.in-file-search-bar input[type="search"] {
+    flex-grow: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    border: 1px solid var(--border-secondary);
+    border-radius: 4px;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    outline: none;
+}
+
+.in-file-search-bar input[type="search"]:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-focus-ring);
+    background-color: var(--bg-primary);
+}
+
+.in-file-search-bar button {
+    flex-shrink: 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--button-secondary-bg);
+    color: var(--button-secondary-text);
+    border: 1px solid var(--button-secondary-border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    gap: 0.5rem;
+}
+
+.in-file-search-bar button:hover:not(:disabled) {
+    background-color: var(--button-secondary-hover-bg);
+    border-color: var(--button-secondary-hover-border);
+}
+
+.in-file-search-bar button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* Snippet Navigation und Liste Container (Kind des .file-sidebar) */
+/* Das ist das div, das in deinem React Code um Nav und Liste ist */
+.file-sidebar>div:has(.search-snippet-list-container) {
+    /* Wähle das div, das die Snippet-Liste enthält */
+    display: flex;
+    flex-direction: column;
+    /* Nav und Liste untereinander */
+    gap: 0.75rem;
+    /* Abstand zwischen Nav und Liste */
+    /* Kein Margin oder Border hier, das ist am .file-sidebar oder zwischen Elementen */
+    margin: 0;
+    padding: 0;
+    border: none;
+    flex-shrink: 0;
+    /* Wichtig, damit es nicht schrumpft */
+}
+
+.snippet-navigation {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-secondary);
+    border-radius: 4px;
+    padding: 0 0.5rem;
+    /* margin-bottom: 0.75rem; */
+    /* Abstand zur Liste - ersetzt durch Parent Gap */
+}
+
+.snippet-navigation .snippet-count,
+.highlight-count {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    min-width: 3rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
+}
+
+.snippet-navigation button {
+    padding: 0.3rem 0.5rem !important;
+    font-size: 0.8rem !important;
+    line-height: 1 !important;
+    min-width: auto !important;
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--text-secondary) !important;
+    box-shadow: none !important;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.snippet-navigation button:hover:not(:disabled) {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+.snippet-navigation button:disabled {
+    opacity: 0.4 !important;
+    cursor: not-allowed;
+    color: var(--text-muted) !important;
+}
+
+/* Snippet-Liste (innerhalb des umgebenden divs) */
+.search-snippet-list-container {
+    margin: 0;
+    /* Kein Margin, Parent div hat Gap */
+    max-height: 10rem;
+    /* Maximale Höhe, scrollbar */
+    overflow-y: auto;
+    border: 1px solid var(--border-tertiary);
+    border-radius: 0.25rem;
+    background-color: var(--bg-secondary);
+    padding: 0.5rem;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+}
+
+.search-snippet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.snippet-item {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    margin-bottom: 0.3rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    border: 1px solid transparent;
+    outline: none;
+}
+
+.snippet-item:last-child {
+    margin-bottom: 0;
+}
+
+.snippet-item:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.snippet-item.active {
+    background-color: var(--bg-accent);
+    color: var(--text-primary);
+    font-weight: 500;
+    border-color: var(--accent-primary);
+}
+
+.snippet-item:focus-visible {
+    outline: 3px solid var(--accent-focus-ring);
+    outline-offset: 1px;
+}
+
+
+/* Styling für hervorgehobenen Text (Basis) */
+.highlighted-text {
+    background-color: var(--highlight-bg, #ffec3d);
+    color: var(--highlight-text, #000000);
+    padding: 0 0.05em;
+    border-radius: 3px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    display: inline;
+    cursor: pointer;
+}
+
+/* Styling für das *aktuell aktive* Highlight im Haupttext */
+.highlighted-text.active-highlight {
+    background-color: var(--active-highlight-bg, #ffaa00);
+    color: var(--active-highlight-text, #000000);
+    box-shadow: 0 0 0 2px var(--active-highlight-bg, #ffaa00), 0 0 8px var(--active-highlight-bg, #ffaa00);
+    /* animation: pulse-highlight 0.5s ease-in-out 2; */
+}
+
+/* Keyframes für Animation (falls verwendet) */
+/* @keyframes pulse-highlight { ... } */
+
+
+/* Lade-Spinner Container */
+/* Position ist relativ zum .file-content, da es nun der Parent ist */
+.spinner-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(var(--bg-primary-rgb), 0.8);
+    /* Hintergrund des Parents mit Transparenz */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Klasse hinzufügen, wenn nicht geladen wird */
+/* .spinner-container.hidden { opacity: 0; visibility: hidden; } */
+
+
+.spinner {
+    border: 4px solid var(--border-secondary);
+    border-top: 4px solid var(--accent-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+/* Keyframes für Spinner */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Aktionen (Kind des .file-sidebar) */
+.file-actions {
+    display: flex;
+    flex-direction: column;
+    /* Button-Gruppen untereinander */
+    gap: 0.75rem;
+    /* Abstand zwischen Button-Gruppen div's */
+    /* Kein Margin oder Border hier, das ist am .file-sidebar oder Parent Gap */
+    margin: 0;
+    padding: 0;
+    border: none;
+    flex-shrink: 0;
+    /* Wichtig, damit es nicht schrumpft */
+}
+
+/* Gruppe von Aktions-Buttons */
+.action-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    /* Buttons umbrechen, wenn Platz fehlt */
+    gap: 0.625rem;
+    /* Abstand zwischen Buttons innerhalb der Gruppe */
+    /* Dein Wunsch: Buttons in den inneren divs sollen Spalten bilden und volle Breite */
+    margin-top: 0.5rem;
+}
+
+/* Zusätzliches div innerhalb action-button-group für vertikales Stacking */
+.action-button-group>div {
+    /* Wähle die direkten div Kinder */
+    display: flex;
+    flex-direction: row;
+    /* Standardmäßig nebeneinander */
+    gap: 0.625rem;
+    /* Abstand zwischen Buttons im inneren div */
+    flex-grow: 1;
+    /* Lass die Gruppen wachsen */
+    min-width: 0;
+    /* Muss schrumpfen können */
+    align-items: stretch;
+    /* Buttons gleiche Höhe */
+    justify-content: flex-start;
+    /* Buttons links ausrichten */
+}
+
+/* Buttons innerhalb der inneren divs */
+.action-button-group>div button {
+    width: auto;
+    /* Breite wird durch flex-grow/shrink/basis im inneren div gesteuert */
+    height: auto;
+    /* Höhe wird durch Parent/Inhalt bestimmt */
+    display: flex;
+    /* Beibehalten für Icon/Text */
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    /* Lass die Buttons wachsen */
+    min-width: 0;
+    /* Muss schrumpfen können */
+    width: 10%;
+}
+
+/* Generelles Button Styling für Aktionen (behalten/konsolidiert) */
+.file-actions button {
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
+}
+
+.file-actions button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.file-actions button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.file-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Spezifische Button-Styles (behalten/konsolidiert) */
+.file-actions button.confirm {
+    background-color: var(--button-confirm-bg);
+    color: var(--button-confirm-text);
+    border: 1px solid var(--button-confirm-border);
+}
+
+.file-actions button.confirm:hover:not(:disabled) {
+    background-color: var(--button-confirm-hover-bg);
+    border-color: var(--button-confirm-hover-border);
+}
+
+.file-actions button.disfirm {
+    background-color: var(--button-disfirm-bg);
+    color: var(--button-disfirm-text);
+    border: 1px solid var(--button-disfirm-border);
+}
+
+.file-actions button.disfirm:hover:not(:disabled) {
+    background-color: var(--button-disfirm-hover-bg);
+    border-color: var(--button-disfirm-hover-border);
+}
+
+.file-actions .remove-button {
+    background-color: var(--accent-danger) !important;
+    border-color: var(--accent-danger) !important;
+    color: var(--text-on-accent) !important;
+    border-radius: 0.25rem !important;
+    /* 4px */
+    padding: 0.375rem 0.75rem !important;
+    /* 6px 12px */
+    font-size: 0.875rem !important;
+    /* 14px -> etwas größer */
+    height: 2.5rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    line-height: 1.2 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.file-actions .remove-button:hover {
+    background-color: var(--accent-danger-hover) !important;
+    border-color: var(--accent-danger-border-hover) !important;
+}
+
+.empty-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 2rem;
+    /* Passt sich dem Parent Padding an */
+}
+
+/* Klasse, die die Animation anwendet */
+.animate-spin {
+    animation: spin 1s linear infinite;
+    /* Name Dauer Timing Wiederholung */
+}

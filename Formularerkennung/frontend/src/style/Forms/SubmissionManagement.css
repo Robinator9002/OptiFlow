@@ -1,0 +1,377 @@
+/* src/styles/SubmissionManagement.css */
+
+/* I. Stile für StaffReceivedFormsView.tsx (Übersicht der eingegangenen Formulare) */
+
+.staff-received-forms-container {
+	padding: var(--spacing-lg) var(--spacing-xl);
+	background-color: var(--background-color-page);
+	height: calc(100vh - 11rem); /* Annahme: 11rem für Header/Navbar */
+	overflow-y: auto; /* Scrollen erlauben, falls Inhalt überläuft */
+}
+
+.staff-received-forms-header {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--spacing-xl);
+	padding-bottom: var(--spacing-lg);
+	border-bottom: 1px solid var(--border-color-light); /* Korrigiert: --border-color-light statt --border-primary für leichtere Trennung */
+}
+
+.staff-received-forms-header h2 {
+	margin: 0 0 var(--spacing-md) 0; /* Abstand bei Umbruch */
+	color: var(--text-color-heading);
+	font-size: var(--font-size-xl);
+	font-weight: 600;
+}
+
+.staff-form-filters {
+	display: flex;
+	flex-wrap: wrap; /* Erlaube Umbruch der Filter */
+	align-items: center;
+	gap: var(--spacing-md); /* Abstand zwischen Filtergruppen/Elementen */
+}
+
+.staff-form-filters .form-search-input {
+	padding: var(--input-padding-y) var(--input-padding-x); /* Standard Input Padding */
+	border-radius: var(--border-radius-md);
+	border: 1px solid var(--border-primary); /* Korrigiert: --border-primary */
+	font-size: var(--font-size-base);
+	min-width: 250px; /* Gute Breite für ein Suchfeld */
+	flex-grow: 1; /* Nimmt verfügbaren Platz ein */
+	background-color: var(
+		--background-color-content
+	); /* Hintergrund hinzufügen */
+	color: var(--text-color-primary); /* Textfarbe hinzufügen */
+}
+/* Fokus wird von global.css gehandhabt (:focus Selektor dort) */
+
+.staff-form-filters .filter-group {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+}
+
+.staff-form-filters .filter-group label {
+	font-size: var(--font-size-sm);
+	color: var(--text-color-secondary);
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+/* .form-filter-dropdown wird von global.css oder CustomerAssignedFormsView.css übernommen,
+   falls es dort schon gut definiert ist. Ansonsten hier spezifisch stylen: */
+.staff-form-filters .form-filter-dropdown {
+	padding: var(--input-padding-y) var(--input-padding-x); /* Standard Input Padding */
+	border-radius: var(--border-radius-md);
+	border: 1px solid var(--border-primary); /* Korrigiert: --border-primary */
+	background-color: var(
+		--background-color-content
+	); /* Korrigiert: --background-color-content */
+	font-size: var(--font-size-sm);
+	min-width: 200px;
+	color: var(--text-color-primary); /* Korrigiert: --text-color-primary */
+}
+/* Fokus wird von global.css gehandhabt (:focus Selektor dort) */
+
+.staff-form-filters .button-clear-filters {
+	/* Nutzt .button .button-secondary .button-small aus global.css */
+	padding: var(--spacing-xs) var(--spacing-sm); /* Kompakter */
+	/* Stelle sicher, dass die Klassen .button und .button-secondary angewendet werden */
+}
+
+.submitted-forms-table-container {
+	overflow-x: auto; /* Wichtig für Responsivität der Tabelle */
+	background-color: var(--background-color-content);
+	border-radius: var(--border-radius-lg);
+	box-shadow: var(--box-shadow-md);
+	margin-top: var(--spacing-lg);
+}
+
+.submitted-forms-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: var(--font-size-base);
+}
+
+.submitted-forms-table thead th {
+	/* Hellerer Hintergrund für Tabellenkopf, z.B. Tertiär oder Sekundär */
+	background-color: var(--bg-tertiary); /* Angepasst */
+	color: var(--text-color-secondary);
+	font-weight: 600;
+	padding: var(--spacing-md) var(--spacing-lg);
+	text-align: left;
+	border-bottom: 2px solid var(--border-primary); /* Korrigiert: --border-primary */
+	white-space: nowrap;
+}
+
+.submitted-forms-table tbody tr.submission-row {
+	border-bottom: 1px solid var(--border-color-light);
+	transition: background-color var(--transition-speed-fast)
+		var(--transition-easing); /* Schnellerer Übergang */
+}
+.submitted-forms-table tbody tr.submission-row:last-child {
+	border-bottom: none;
+}
+.submitted-forms-table tbody tr.submission-row:hover {
+	background-color: var(
+		--background-color-hover-light
+	); /* Korrigiert: --background-color-hover-light */
+}
+
+.submitted-forms-table td {
+	padding: var(--spacing-md) var(--spacing-lg);
+	vertical-align: middle;
+	color: var(--text-color-primary);
+}
+
+.submitted-forms-table .col-version,
+.submitted-forms-table .cell-center {
+	/* Für zentrierten Text in Spalten */
+	text-align: center;
+}
+
+.submitted-forms-table .col-actions,
+.submitted-forms-table .cell-actions {
+	/* Für Aktions-Spalte */
+	text-align: right;
+	white-space: nowrap;
+}
+.submitted-forms-table .cell-actions .button {
+	margin-left: var(--spacing-xs); /* Abstand zwischen Buttons */
+}
+
+.staff-forms-empty {
+	text-align: center;
+	padding: var(--spacing-xxl) var(--spacing-lg);
+	color: var(--text-color-secondary);
+	font-size: var(--font-size-lg);
+}
+
+/* Verwende globale Klassen .loading-message oder .error-message-global */
+.staff-view-loading,
+.staff-view-error {
+	/* Diese Klassen könnten entfernt werden, wenn globale Klassen genutzt werden */
+	text-align: center;
+	padding: var(--spacing-xl);
+	font-size: var(--font-size-lg);
+	/* Beispiel für Nutzung globaler Klassen: */
+	/* background-color: var(--danger-color-light-bg); */
+	/* color: var(--danger-color-text); */
+	/* border: 1px solid var(--danger-color-border); */
+	/* border-radius: var(--border-radius-md); */
+}
+
+/* II. Stile für SubmissionViewer.tsx (Detailansicht einer Einreichung) */
+
+.submission-viewer-page-container {
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 11rem); /* Höhe abzüglich App-Header/Navbar */
+	background-color: var(--background-color-page);
+	overflow: hidden; /* Verhindert Scrollen des Hauptcontainers */
+}
+
+.submission-viewer-error-state {
+	/* Wenn keine Submission ausgewählt ist */
+	padding: var(--spacing-xl);
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	color: var(--text-color-secondary); /* Textfarbe hinzufügen */
+}
+.submission-viewer-error-state h2 {
+	margin-bottom: var(--spacing-md);
+	color: var(--text-color-heading); /* Überschriftenfarbe */
+}
+
+.submission-viewer-header-bar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: var(--spacing-md) var(--spacing-lg);
+	background-color: var(--background-color-header);
+	border-bottom: 1px solid var(--border-primary); /* Korrigiert: --border-primary */
+	box-shadow: var(--box-shadow-sm);
+	flex-shrink: 0; /* Header soll nicht schrumpfen */
+}
+
+.submission-viewer-header-bar h3 {
+	margin: 0;
+	font-size: var(--font-size-lg);
+	color: var(--text-color-heading);
+	font-weight: 600;
+}
+
+.submission-viewer-page-actions {
+	display: flex;
+	gap: var(--spacing-sm);
+}
+
+.submission-viewer-content-area {
+	display: flex;
+	flex-direction: row; /* Sidebar und Canvas nebeneinander */
+	flex-grow: 1;
+	overflow: hidden; /* Kinder sollen scrollen, nicht dieser Container */
+	padding: var(--spacing-lg);
+	gap: var(--spacing-lg);
+}
+
+.submission-viewer-sidebar-details {
+	width: 300px; /* Etwas breiter für mehr Infos */
+	flex-shrink: 0;
+	background-color: var(--background-color-content);
+	border: 1px solid var(--border-color-light);
+	border-radius: var(--border-radius-lg);
+	padding: var(--spacing-lg);
+	box-shadow: var(--box-shadow-md);
+	overflow-y: auto; /* Scrollbar, falls viele Details */
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-lg);
+}
+
+.submission-viewer-sidebar-details h4 {
+	font-size: var(
+		--font-size-base
+	); /* Korrigiert: --font-size-base statt --font-size-md */
+	color: var(--text-color-heading);
+	margin-top: 0;
+	margin-bottom: var(--spacing-sm);
+	padding-bottom: var(--spacing-xs);
+	border-bottom: 1px solid var(--border-color-light);
+}
+
+.sidebar-submission-info p {
+	font-size: var(--font-size-sm);
+	color: var(--text-color-secondary);
+	margin-bottom: var(--spacing-xs);
+	line-height: 1.5;
+}
+.sidebar-submission-info strong {
+	color: var(--text-color-primary);
+	margin-right: var(--spacing-xxs);
+}
+.sidebar-submission-info .submission-id-value {
+	font-family: var(--font-mono); /* Korrigiert: --font-mono */
+	background-color: var(
+		--background-color-code
+	); /* Code Hintergrund verwenden */
+	padding: 2px 4px;
+	border-radius: var(--border-radius-sm);
+	font-size: 0.85em;
+	color: var(--text-color-secondary); /* Passende Textfarbe */
+}
+
+.submission-viewer-canvas-main {
+	flex-grow: 1;
+	display: flex; /* Um Canvas ggf. zu zentrieren oder zu steuern */
+	justify-content: center; /* Zentriert den Canvas horizontal, wenn er nicht volle Breite hat */
+	align-items: flex-start; /* Canvas oben ausrichten */
+	overflow: auto; /* Scrollen für den Main-Bereich erlauben, falls Canvas zu groß */
+	background-color: var(
+		--bg-primary
+	); /* Hintergrund für den Bereich um den Canvas */
+	padding: var(--spacing-md); /* Etwas Abstand um den Canvas */
+}
+
+.submission-form-canvas-display {
+	position: relative; /* Für absolut positionierte Elemente */
+	/* width und height werden per Inline-Style dynamisch gesetzt */
+	border: 1px solid var(--border-primary); /* Korrigiert: --border-primary */
+	background-color: var(--background-color-content); /* Weißer Canvas */
+	border-radius: var(--border-radius-md);
+	box-shadow: var(
+		--box-shadow-sm
+	); /* Korrigiert: --box-shadow-sm statt --box-shadow-subtle */
+	overflow: visible; /* Erlaube Elementen, über den Rand zu gehen (wird von .submission-viewer-canvas-main gehandhabt) */
+	/* Padding wird durch Elemente selbst gehandhabt */
+	flex-shrink: 0; /* Verhindert, dass der Canvas schrumpft */
+}
+.submission-form-canvas-display .canvas-empty-message {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	min-height: 200px;
+	color: var(--text-color-muted); /* Korrigiert: --text-color-muted */
+	font-style: italic;
+}
+
+/* Stile für die angezeigten Formularelemente im SubmissionViewer */
+/* Diese Klassen sind in CustomerFormEditor.tsx definiert und werden hier wiederverwendet/angepasst */
+.form-view-element {
+	/* position, left, top, width, height, fontSize, fontWeight, fontStyle kommen per Inline-Style */
+	box-sizing: border-box;
+	overflow: hidden; /* Standardmäßig Inhalt abschneiden */
+	position: absolute; /* Wichtig für die Positionierung im Canvas */
+}
+
+.form-view-text {
+	/* Inline-Styles für Textausrichtung etc. */
+	user-select: text; /* Erlaube Textauswahl */
+	color: var(
+		--text-color-primary
+	); /* Sicherstellen, dass Textfarbe gesetzt ist */
+	line-height: var(--line-height-base); /* Standard Zeilenhöhe */
+	padding: var(--spacing-xs); /* Kleines Padding für Text */
+}
+
+.form-element-label {
+	/* Wird auch im CustomerFormEditor verwendet */
+	color: var(--text-color-primary);
+	font-weight: 500;
+	user-select: none;
+	display: block; /* Sicherstellen, dass es ein Blockelement ist */
+	margin-bottom: var(--spacing-xs); /* Standardabstand unter dem Label */
+	/* margin-bottom etc. wird per Inline-Style je nach labelPosition gesetzt/überschrieben */
+}
+
+.form-element-input-readonly {
+	/* Spezifische Klasse für den Viewer */
+	/* fontSize, fontWeight, fontStyle, padding, borderRadius, textAlign, boxSizing, width kommen per Inline-Style */
+	border: 1px solid var(--border-color-light); /* Sehr heller Rand */
+	background-color: var(--bg-primary);/* Korrigiert: --disabled-bg-color */
+	color: var(--text-color-secondary); /* Korrigiert: --text-color-secondary statt --text-color-primary-muted */
+	cursor: default; /* Zeigt Nicht-Editierbarkeit an */
+	overflow: hidden; /* Verhindert, dass langer Text aus dem Feld ragt */
+	text-overflow: ellipsis; /* Zeigt ... an, wenn Text zu lang ist */
+	white-space: pre-wrap; /* Erhält Zeilenumbrüche und Leerzeichen */
+	line-height: 1.4; /* Bessere Lesbarkeit für mehrzeiligen Text */
+	padding: var(--input-padding-y) var(--input-padding-x); /* Standard Input Padding */
+	width: 100%; /* Standardmäßig volle Breite des Elements */
+	min-height: calc(
+		1.4em + (2 * var(--input-padding-y)) + 2px
+	); /* Basierend auf Padding und Border */
+	box-sizing: border-box; /* Padding und Border in Breite/Höhe einbeziehen */
+}
+.form-element-input-readonly:focus {
+	outline: none; /* Kein Fokus-Effekt */
+	box-shadow: none;
+}
+
+.form-view-image img {
+	display: block;
+	max-width: 100%; /* Stellt sicher, dass Bilder nicht überlaufen */
+	height: auto; /* Höhe automatisch anpassen */
+	/* width, height, objectFit, borderRadius kommen per Inline-Style */
+}
+
+.form-view-unknown {
+	border: 1px dashed var(--warning-color);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--warning-color);
+	font-style: italic;
+	font-size: var(--font-size-sm);
+	background-color: rgba(
+		var(--warning-color),
+		0.1
+	); /* Leichter Warn-Hintergrund */
+	padding: var(--spacing-sm);
+}

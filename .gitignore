@@ -1,0 +1,8 @@
+tools/
+.logs/
+@node_modules/
+__pycache__/
+.venv/
+data/
+count_lines.py
+environment/

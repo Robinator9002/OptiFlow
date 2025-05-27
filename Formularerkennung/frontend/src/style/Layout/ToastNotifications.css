@@ -1,0 +1,69 @@
+/* src/style/Layout/ToastNotifications.css */
+.toast-container {
+    position: fixed;
+    bottom: var(--spacing-lg); /* Position unten rechts */
+    right: var(--spacing-lg);
+    z-index: var(--z-index-popover);
+    display: flex;
+    flex-direction: column-reverse; /* Neue Toasts erscheinen oben in der Liste (visuell unten) */
+    gap: var(--spacing-md); /* Mehr Abstand */
+    max-width: 380px;
+    width: calc(100% - (2 * var(--spacing-lg))); /* Responsive Breite */
+}
+
+@media (min-width: 420px) { /* Ab einer bestimmten Breite fixe max-width */
+    .toast-container {
+        width: auto;
+    }
+}
+
+
+.toast {
+    background-color: var(--text-color-primary); /* Dunkler Hintergrund für Toasts */
+    color: var(--text-accent); /* Akzentreicher Text */
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--box-shadow-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(20px); /* Kommt von unten */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    cursor: pointer;
+    border-left: 6px solid; /* Dickerer Rand */
+    min-height: 50px;
+}
+
+.toast-container > .toast {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-success { border-left-color: var(--success-color); }
+.toast-error { border-left-color: var(--danger-color); }
+.toast-info { border-left-color: var(--info-color); }
+.toast-warning { border-left-color: var(--warning-color); }
+
+.toast-message {
+    flex-grow: 1;
+    margin-right: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+}
+
+.toast-close-button {
+    background: none;
+    border: none;
+    color: var(--secondary-color-light); /* Hellere Farbe für Schließbutton */
+    font-size: 1.6rem;
+    line-height: 1;
+    padding: 0 var(--spacing-xs);
+    margin-left: var(--spacing-md);
+    cursor: pointer;
+    opacity: 0.8;
+}
+.toast-close-button:hover {
+    opacity: 1;
+    color: var(--text-color-light);
+}

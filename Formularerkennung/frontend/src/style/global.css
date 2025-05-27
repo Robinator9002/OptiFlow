@@ -1,0 +1,678 @@
+/* src/styles/global.css */
+:root {
+	/* --- Standard Theme (Light) - Angelehnt an Windows --- */
+
+	/* Farbpalette - Gemappt von neuen Themes */
+	--primary-color: #3b82f6; /* War --accent-primary */
+	--primary-color-rgb: 59, 130, 246; /* War --accent-primary-rgb */
+	--primary-color-dark: #2563eb; /* War --accent-primary-hover */
+	--primary-color-light: #d0e4ff; /* War --bg-accent (angepasst) */
+	--primary-color-focus-shadow: rgba(
+		var(--primary-color-rgb),
+		0.45
+	); /* War --shadow-focus-ring (angepasst) */
+
+	--secondary-color: #6b7280; /* War --text-muted (angepasst) */
+	--secondary-color-dark: #374151; /* War --text-secondary (angepasst) */
+	--secondary-color-light: #9ca3af; /* War --border-secondary (angepasst) */
+
+	--accent-color: #10b981; /* War --accent-success */
+	--accent-color-dark: #059669; /* War --accent-success-hover */
+
+	--danger-color: #ef4444; /* War --accent-danger */
+	--danger-color-rgb: 239, 68, 68; /* Abgeleitet von #ef4444 */
+	--danger-color-dark: #dc2626; /* War --accent-danger-hover */
+	--danger-color-light-bg: #f8d7da; /* War --bg-accent-red */
+	--danger-color-border: #dc2626; /* War --border-danger */
+	--danger-color-text: #b91c1c; /* War --text-danger */
+	--danger-color-focus-shadow: rgba(
+		var(--danger-color-rgb),
+		0.45
+	); /* War --shadow-focus-ring-danger (angepasst) */
+
+	--success-color: var(--accent-color); /* Alias */
+	--warning-color: #f59e0b; /* Beispiel Gelbton, nicht im neuen Theme definiert */
+	--info-color: #0e7490; /* War --text-link */
+
+	/* Hintergrundfarben */
+	--background-color-page: #f3f6f9; /* War --bg-primary */
+	--background-color-content: #ffffff; /* Standard Weiß, nicht explizit im neuen Theme, aber logisch */
+	--background-color-header: #e9edf2; /* War --bg-secondary (für leichte Abhebung) */
+	--background-color-navbar: #e9edf2; /* War --bg-secondary */
+	--background-color-panel: #f3f6f9; /* War --bg-primary */
+	--background-color-card: #ffffff; /* Standard Weiß */
+	--background-color-hover-light: #e9edf2; /* War --bg-secondary */
+	--background-color-selected: rgba(
+		var(--primary-color-rgb),
+		0.1
+	); /* Eigene Definition, passt zu --primary-color-light */
+	--background-color-code: #eef1f4; /* War --bg-code */
+
+	/* Textfarben */
+	--text-color-primary: #1f2937; /* War --text-primary */
+	--text-color-secondary: #374151; /* War --text-secondary */
+	--text-color-muted: #6b7280; /* War --text-muted */
+	--text-color-light-on-dark-bg: #ffffff; /* Standard Weiß für dunkle Buttons */
+	--text-accent: #f3f6f9; /* War --text-on-accent */
+	--text-color-link: #0e7490; /* War --text-link */
+	--text-color-link-hover: #155e75; /* War --text-link-hover */
+	--text-color-heading: #1f2937; /* War --text-primary */
+	--text-color-danger: var(--danger-color-text); /* Alias */
+	--text-color-success: #059669; /* War --text-success */
+
+	/* Randfarben */
+	--border-color: #d1d5db; /* War --border-primary */
+	--border-color-light: #e5e7eb; /* War --border-tertiary */
+	--border-color-extra-light: #f3f6f9; /* War --bg-primary (für sehr helle Ränder) */
+	--border-color-accent: var(--primary-color); /* War --border-accent */
+	--border-color-accent-hover: var(
+		--primary-color-dark
+	); /* War --border-accent-hover */
+	--border-color-danger: var(--danger-color-border); /* Alias */
+	--border-color-danger-focus: #b91c1c; /* War --border-danger-focus */
+
+	/* Schriftgrößen - Basiswerte in px, Multiplikator wird von JS gesetzt */
+	--font-size-base-px: 16px;
+	--font-size-sm-px: 14px;
+	--font-size-lg-px: 18px;
+	--font-size-xl-px: 24px;
+	--font-size-xxl-px: 30px;
+	--font-size-xs-px: 12px;
+	--font-size-xxs-px: 10px;
+
+	--font-size-multiplier: 1;
+
+	/* Berechnete Schriftgrößen */
+	--font-size-base: calc(
+		var(--font-size-base-px) * var(--font-size-multiplier)
+	);
+	--font-size-sm: calc(var(--font-size-sm-px) * var(--font-size-multiplier));
+	--font-size-lg: calc(var(--font-size-lg-px) * var(--font-size-multiplier));
+	--font-size-xl: calc(var(--font-size-xl-px) * var(--font-size-multiplier));
+	--font-size-xxl: calc(var(--font-size-xxl-px) * var(--font-size-multiplier));
+	--font-size-xs: calc(var(--font-size-xs-px) * var(--font-size-multiplier));
+	--font-size-xxs: calc(var(--font-size-xxs-px) * var(--font-size-multiplier));
+
+	/* Schriftfamilien */
+	--font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	--font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
+		"Liberation Mono", "Courier New", monospace;
+	--font-mono: var(--font-family-monospace);
+
+	/* Zeilenhöhe */
+	--line-height-base: 1.65;
+	--line-height-heading: 1.3;
+
+	/* Abstände */
+	--spacing-xs: 0.25rem; /* 4px */
+	--spacing-sm: 0.5rem; /* 8px */
+	--spacing-md: 1rem; /* 16px */
+	--spacing-lg: 1.5rem; /* 24px */
+	--spacing-xl: 2rem; /* 32px */
+	--spacing-xxl: 2.5rem; /* 40px */
+
+	/* Input Paddings */
+	--input-padding-y: 0.5rem;
+	--input-padding-x: 0.75rem;
+
+	/* Radien */
+	--border-radius-sm: 0.2rem;
+	--border-radius-md: 0.25rem;
+	--border-radius-lg: 0.3rem;
+	--border-radius-xl: 0.5rem;
+
+	/* Schatten */
+	--shadow-color-rgb: 0, 0, 0; /* Definiert in neuen Themes */
+	--box-shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color-rgb), 0.05); /* War --shadow-sm */
+	--box-shadow-md: 0 4px 6px -1px rgba(var(--shadow-color-rgb), 0.1),
+		0 2px 4px -2px rgba(var(--shadow-color-rgb), 0.1); /* War --shadow-md */
+	--box-shadow-lg: 0 10px 15px -3px rgba(var(--shadow-color-rgb), 0.1),
+		0 4px 6px -4px rgba(var(--shadow-color-rgb), 0.1); /* War --shadow-lg */
+	--box-shadow-xl: 0 20px 25px -5px rgba(var(--shadow-color-rgb), 0.1),
+		0 10px 10px -5px rgba(var(--shadow-color-rgb), 0.04); /* Beibehalten, da kein direktes Äquivalent */
+	--box-shadow-focus: var(
+		--primary-color-focus-shadow
+	); /* Alias für Klarheit */
+	--box-shadow-focus-danger: var(
+		--danger-color-focus-shadow
+	); /* Alias für Klarheit */
+
+	/* Z-Indizes */
+	--z-index-dropdown: 1000;
+	--z-index-sticky: 1020;
+	--z-index-modal-backdrop: 1040;
+	--z-index-modal: 1050;
+	--z-index-popover: 1060;
+	--z-index-tooltip: 1070;
+	--z-index-snap-lines: 5;
+	--z-index-selected-element: 10;
+	--z-index-resize-handles: 20;
+
+	/* Übergänge */
+	--transition-speed-fast: 0.15s; /* War --transition-short */
+	--transition-speed: 0.2s; /* War --transition-base */
+	--transition-speed-slow: 0.4s; /* War --transition-long */
+	--transition-easing: ease-in-out; /* Definiert in neuen Themes */
+
+	/* Disabled Styles */
+	--disabled-bg-color: #9ca3af; /* War --accent-disabled */
+	--disabled-text-color: #e5e7eb; /* War --accent-disabled-text */
+	--disabled-border-color: var(--disabled-bg-color);
+}
+
+/* --- Dark Theme --- */
+body[data-theme="dark"] {
+	/* Farbpalette */
+	--primary-color: #60a5fa; /* War --accent-primary */
+	--primary-color-rgb: 96, 165, 250; /* War --accent-primary-rgb */
+	--primary-color-dark: #3b82f6; /* War --accent-primary-hover */
+	--primary-color-light: #334155; /* War --bg-accent */
+	--primary-color-focus-shadow: rgba(
+		var(--primary-color-rgb),
+		0.5
+	); /* War --shadow-focus-ring (angepasst) */
+
+	--secondary-color: #a1a1aa; /* War --text-muted (angepasst) */
+	--secondary-color-dark: #71717a; /* War --border-secondary (angepasst) */
+	--secondary-color-light: #52525b; /* War --border-primary (angepasst) */
+
+	--accent-color: #4ade80; /* War --accent-success */
+	--accent-color-dark: #22c55e; /* War --accent-success-hover */
+
+	--danger-color: #f87171; /* War --accent-danger */
+	--danger-color-rgb: 248, 113, 113; /* Abgeleitet von #f87171 */
+	--danger-color-dark: #ef4444; /* War --accent-danger-hover */
+	--danger-color-light-bg: #7f1d1d; /* War --bg-accent-red */
+	--danger-color-border: #f87171; /* War --border-danger */
+	--danger-color-text: var(--danger-color); /* War --text-danger */
+	--danger-color-focus-shadow: rgba(
+		var(--danger-color-rgb),
+		0.5
+	); /* War --shadow-focus-ring-danger (angepasst) */
+
+	/* Hintergrundfarben */
+	--background-color-page: #18181b; /* War --bg-primary */
+	--background-color-content: #27272a; /* War --bg-secondary */
+	--background-color-header: #18181b; /* War --bg-primary (oder --bg-secondary je nach Design) */
+	--background-color-navbar: #18181b; /* War --bg-primary */
+	--background-color-panel: #18181b; /* War --bg-primary */
+	--background-color-card: #27272a; /* War --bg-secondary */
+	--background-color-hover-light: #3f3f46; /* War --bg-tertiary */
+	--background-color-selected: rgba(
+		var(--primary-color-rgb),
+		0.15
+	); /* Eigene Definition */
+	--background-color-code: #1f2937; /* War --bg-code */
+
+	/* Textfarben */
+	--text-color-primary: #f4f4f5; /* War --text-primary */
+	--text-color-secondary: #d4d4d8; /* War --text-secondary */
+	--text-color-muted: #a1a1aa; /* War --text-muted */
+	--text-color-light-on-dark-bg: #f4f4f5; /* War --text-on-accent */
+	--text-accent: #18181b; /* War --text-on-accent */
+	--text-color-link: #60a5fa; /* War --text-link */
+	--text-color-link-hover: #3b82f6; /* War --text-link-hover */
+	--text-color-heading: #f4f4f5; /* War --text-primary */
+	--text-color-danger: var(--danger-color-text); /* Alias */
+	--text-color-success: #4ade80; /* War --text-success */
+
+	/* Randfarben */
+	--border-color: #52525b; /* War --border-primary */
+	--border-color-light: #71717a; /* War --border-secondary */
+	--border-color-extra-light: #3f3f46; /* War --border-tertiary */
+	--border-color-accent: var(--primary-color); /* War --border-accent */
+	--border-color-accent-hover: var(
+		--primary-color-dark
+	); /* War --border-accent-hover */
+	--border-color-danger: var(--danger-color-border); /* Alias */
+	--border-color-danger-focus: #ef4444; /* War --border-danger-focus */
+
+	/* Schatten */
+	--shadow-color-rgb: 0, 0, 0; /* Beibehalten */
+	--box-shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color-rgb), 0.2); /* Angepasst */
+	--box-shadow-md: 0 4px 6px -1px rgba(var(--shadow-color-rgb), 0.3),
+		0 2px 4px -2px rgba(var(--shadow-color-rgb), 0.3); /* Angepasst */
+	--box-shadow-lg: 0 10px 15px -3px rgba(var(--shadow-color-rgb), 0.4),
+		0 4px 6px -4px rgba(var(--shadow-color-rgb), 0.4); /* Angepasst */
+	--box-shadow-xl: 0 20px 25px -5px rgba(var(--shadow-color-rgb), 0.3),
+		0 10px 10px -5px rgba(var(--shadow-color-rgb), 0.2); /* Eigene Anpassung für Dark */
+
+	/* Disabled Styles */
+	--disabled-bg-color: #71717a; /* War --accent-disabled */
+	--disabled-text-color: #d4d4d8; /* War --accent-disabled-text */
+	--disabled-border-color: var(--disabled-bg-color);
+}
+
+/* --- High Contrast Theme --- */
+body[data-theme="high-contrast"] {
+	/* Farbpalette */
+	--primary-color: #0000ff; /* War --accent-primary */
+	--primary-color-rgb: 0, 0, 255; /* War --accent-primary-rgb */
+	--primary-color-dark: #00008b; /* War --accent-primary-hover */
+	--primary-color-light: #ffffff; /* Weiß, da Hintergründe weiß sind */
+	--primary-color-focus-shadow: var(
+		--primary-color
+	); /* Einfacher Rahmen statt Schatten */
+
+	--secondary-color: #333333; /* War --text-muted (angepasst) */
+	--secondary-color-dark: #000000; /* Schwarz */
+	--secondary-color-light: #666666; /* War --accent-disabled */
+
+	--accent-color: #008000; /* War --accent-success */
+	--accent-color-dark: #006400; /* War --accent-success-hover */
+
+	--danger-color: #ff0000; /* War --accent-danger */
+	--danger-color-rgb: 255, 0, 0; /* Abgeleitet von #ff0000 */
+	--danger-color-dark: #cc0000; /* War --accent-danger-hover */
+	--danger-color-light-bg: #ffffff; /* Weiß */
+	--danger-color-border: #ff0000; /* War --border-danger */
+	--danger-color-text: #ff0000; /* War --text-danger */
+	--danger-color-focus-shadow: var(--danger-color); /* Einfacher Rahmen */
+
+	/* Hintergrundfarben */
+	--background-color-page: #ffffff; /* War --bg-primary */
+	--background-color-content: #ffffff; /* War --bg-secondary */
+	--background-color-header: #ffffff; /* War --bg-secondary */
+	--background-color-navbar: #ffffff; /* War --bg-secondary */
+	--background-color-panel: #ffffff; /* War --bg-primary */
+	--background-color-card: #ffffff; /* War --bg-secondary */
+	--background-color-hover-light: #e0e0e0; /* War --bg-tertiary */
+	--background-color-selected: #e0e0e0; /* Helles Grau für Selektion */
+	--background-color-code: #ffffff; /* War --bg-code */
+
+	/* Textfarben */
+	--text-color-primary: #000000; /* War --text-primary */
+	--text-color-secondary: #000000; /* War --text-secondary */
+	--text-color-muted: #333333; /* War --text-muted */
+	--text-color-light-on-dark-bg: #ffffff; /* War --text-on-accent */
+	--text-accent: #ffffff; /* War --text-on-accent */
+	--text-color-link: #0000ff; /* War --text-link */
+	--text-color-link-hover: #00008b; /* War --text-link-hover */
+	--text-color-heading: #000000; /* War --text-primary */
+	--text-color-danger: var(--danger-color-text); /* Alias */
+	--text-color-success: #008000; /* War --text-success */
+
+	/* Randfarben */
+	--border-color: #000000; /* War --border-primary */
+	--border-color-light: #333333; /* War --border-tertiary */
+	--border-color-extra-light: #e0e0e0; /* Helles Grau */
+	--border-color-accent: var(--primary-color); /* War --border-accent */
+	--border-color-accent-hover: var(
+		--primary-color-dark
+	); /* War --border-accent-hover */
+	--border-color-danger: var(--danger-color-border); /* Alias */
+	--border-color-danger-focus: #cc0000; /* War --border-danger-focus */
+
+	/* Schatten - Deaktiviert für High Contrast */
+	--box-shadow-sm: none;
+	--box-shadow-md: none;
+	--box-shadow-lg: none;
+	--box-shadow-xl: none;
+	/* Fokus wird über border/outline realisiert, nicht box-shadow */
+
+	/* Übergänge - Deaktiviert für High Contrast */
+	--transition-speed-fast: 0s;
+	--transition-speed: 0s;
+	--transition-speed-slow: 0s;
+	--transition-easing: step-end; /* Sofortige Änderung */
+
+	/* Disabled Styles */
+	--disabled-bg-color: #666666; /* War --accent-disabled */
+	--disabled-text-color: #ffffff; /* War --accent-disabled-text */
+	--disabled-border-color: #000000; /* Schwarzer Rand */
+}
+
+/* Globale Resets und Basis-Stile */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	font-family: var(--font-family-sans-serif);
+	line-height: var(--line-height-base);
+	-webkit-text-size-adjust: 100%;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	scroll-behavior: smooth;
+	font-size: var(--font-size-base);
+}
+
+body {
+	margin: 0;
+	font-family: var(--font-family-sans-serif);
+	font-weight: 400;
+	line-height: var(--line-height-base);
+	color: var(--text-color-primary);
+	background-color: var(--background-color-page);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	/* Übergang für Theme-Wechsel */
+	transition: background-color var(--transition-speed-slow)
+			var(--transition-easing),
+		color var(--transition-speed-slow) var(--transition-easing);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin-top: 0;
+	margin-bottom: var(--spacing-md);
+	font-weight: 600;
+	line-height: var(--line-height-heading);
+	color: var(--text-color-heading);
+}
+
+h1 {
+	font-size: var(--font-size-xxl);
+}
+h2 {
+	font-size: var(--font-size-xl);
+}
+h3 {
+	font-size: var(--font-size-lg);
+}
+h4 {
+	font-size: var(--font-size-base);
+	font-weight: 500;
+}
+
+p {
+	margin-top: 0;
+	margin-bottom: var(--spacing-md);
+}
+
+a {
+	color: var(--text-color-link);
+	text-decoration: none;
+	background-color: transparent;
+	transition: color var(--transition-speed-fast) var(--transition-easing);
+}
+a:hover {
+	color: var(--text-color-link-hover);
+	text-decoration: underline;
+}
+
+button {
+	border-radius: var(--border-radius-md);
+	cursor: pointer;
+	font-family: inherit;
+	/* Übergänge für Buttons */
+	transition: background-color var(--transition-speed) var(--transition-easing),
+		border-color var(--transition-speed) var(--transition-easing),
+		box-shadow var(--transition-speed) var(--transition-easing),
+		transform var(--transition-speed-fast) var(--transition-easing),
+		color var(--transition-speed) var(--transition-easing);
+}
+
+input,
+button,
+select,
+textarea {
+	margin: 0;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	border: 1px solid var(--border-color);
+	border-radius: var(--border-radius-md);
+	padding: var(--input-padding-y) var(--input-padding-x);
+	background-color: var(--background-color-content);
+	color: var(--text-color-primary);
+	/* Übergänge für Formularelemente */
+	transition: border-color var(--transition-speed) var(--transition-easing),
+		box-shadow var(--transition-speed) var(--transition-easing),
+		background-color var(--transition-speed) var(--transition-easing),
+		color var(--transition-speed) var(--transition-easing);
+}
+input:focus,
+select:focus,
+textarea:focus {
+	outline: none;
+	border-color: var(--border-color-accent);
+	/* Verwende die neuen Fokus-Schatten-Variablen */
+	box-shadow: 0 0 0 3px var(--box-shadow-focus);
+}
+/* Spezifischer Fokus für Danger-Kontext (z.B. bei Validierungsfehlern) */
+input.error:focus,
+select.error:focus,
+textarea.error:focus {
+	border-color: var(--border-color-danger-focus);
+	box-shadow: 0 0 0 3px var(--box-shadow-focus-danger);
+}
+
+input::placeholder,
+textarea::placeholder {
+	color: var(--text-color-muted);
+	opacity: 0.8; /* Etwas transparenter */
+	transition: color var(--transition-speed) var(--transition-easing); /* Übergang für Theme-Wechsel */
+}
+
+/* Basis-Button-Stil */
+.button {
+	display: inline-block;
+	font-weight: 500;
+	color: var(--text-color-primary);
+	text-align: center;
+	vertical-align: middle;
+	user-select: none;
+	background-color: var(--background-color-content);
+	border: 1px solid var(--border-color);
+	padding: var(--input-padding-y) var(--spacing-lg);
+	font-size: var(--font-size-sm);
+	line-height: var(--line-height-base);
+	border-radius: var(--border-radius-md);
+}
+.button:not(:disabled):hover {
+	/* Hover nur wenn nicht deaktiviert */
+	background-color: var(--background-color-hover-light);
+	border-color: var(--border-color-light); /* Hellerer Hover-Rand */
+	transform: translateY(-1px);
+	box-shadow: var(--box-shadow-sm);
+}
+.button:not(:disabled):active {
+	/* Active nur wenn nicht deaktiviert */
+	transform: translateY(0px);
+	box-shadow: none;
+	background-color: var(--background-color-content); /* Zurück zum Standard */
+}
+.button:disabled,
+.button.disabled {
+	background-color: var(--disabled-bg-color) !important;
+	border-color: var(--disabled-border-color) !important;
+	color: var(--disabled-text-color) !important;
+	cursor: not-allowed !important;
+	opacity: 0.7 !important;
+	transform: none !important;
+	box-shadow: none !important;
+}
+
+.button-primary {
+	color: var(--text-color-light-on-dark-bg);
+	background-color: var(--primary-color);
+	border-color: var(--primary-color);
+}
+.button-primary:not(:disabled):hover {
+	background-color: var(--primary-color-dark);
+	border-color: var(--primary-color-dark); /* Verwende die neue Variable */
+	color: var(--text-color-light-on-dark-bg);
+}
+
+.button-secondary {
+	color: var(
+		--text-color-primary
+	); /* Angepasst für besseren Kontrast auf hellem Grund */
+	background-color: var(
+		--background-color-hover-light
+	); /* Hellerer Sekundärbutton */
+	border-color: var(--border-color);
+}
+body[data-theme="dark"] .button-secondary {
+	color: var(--text-color-primary); /* Heller Text im Dark Mode */
+	background-color: var(--background-color-hover-light);
+	border-color: var(--border-color);
+}
+.button-secondary:not(:disabled):hover {
+	background-color: var(
+		--background-color-content
+	); /* Etwas dunkler/heller je nach Theme */
+	border-color: var(--border-color-light);
+	color: var(--text-color-primary);
+}
+
+.button-danger {
+	color: var(--text-color-light-on-dark-bg);
+	background-color: var(--danger-color);
+	border-color: var(--danger-color);
+}
+.button-danger:not(:disabled):hover {
+	background-color: var(--danger-color-dark);
+	border-color: var(--danger-color-dark); /* Verwende die neue Variable */
+	color: var(--text-color-light-on-dark-bg);
+}
+
+/* Anpassungen für High Contrast Buttons */
+body[data-theme="high-contrast"] .button {
+	color: var(--text-color-primary);
+	background-color: var(--background-color-content);
+	border: 2px solid var(--border-color); /* Dickere Ränder */
+	padding: calc(var(--input-padding-y) - 1px) calc(var(--spacing-lg) - 1px); /* Padding anpassen wegen dickerem Rand */
+}
+body[data-theme="high-contrast"] .button:not(:disabled):hover {
+	background-color: var(--text-color-primary); /* Invertieren */
+	color: var(--background-color-content);
+	border-color: var(--text-color-primary);
+	transform: none;
+	box-shadow: none;
+}
+body[data-theme="high-contrast"] .button-primary {
+	color: var(--text-color-light-on-dark-bg);
+	background-color: var(--primary-color);
+	border-color: var(--primary-color);
+}
+body[data-theme="high-contrast"] .button-primary:not(:disabled):hover {
+	background-color: var(--primary-color-dark);
+	border-color: var(--primary-color-dark);
+	color: var(--text-color-light-on-dark-bg);
+}
+body[data-theme="high-contrast"] .button-danger {
+	color: var(--text-color-light-on-dark-bg);
+	background-color: var(--danger-color);
+	border-color: var(--danger-color);
+}
+body[data-theme="high-contrast"] .button-danger:not(:disabled):hover {
+	background-color: var(--danger-color-dark);
+	border-color: var(--danger-color-dark);
+	color: var(--text-color-light-on-dark-bg);
+}
+body[data-theme="high-contrast"] .button:disabled,
+body[data-theme="high-contrast"] .button.disabled {
+	background-color: var(--disabled-bg-color) !important;
+	border-color: var(--disabled-border-color) !important;
+	color: var(--disabled-text-color) !important;
+}
+
+/* Hilfsklassen */
+.mt-1 {
+	margin-top: var(--spacing-xs) !important;
+}
+.mb-1 {
+	margin-bottom: var(--spacing-xs) !important;
+}
+/* ... (weitere Abstands-Hilfsklassen nach Bedarf) ... */
+
+.p-1 {
+	padding: var(--spacing-xs) !important;
+}
+.p-2 {
+	padding: var(--spacing-sm) !important;
+}
+.p-3 {
+	padding: var(--spacing-md) !important;
+}
+
+.text-center {
+	text-align: center !important;
+}
+.text-danger {
+	color: var(--text-color-danger) !important;
+}
+.text-success {
+	color: var(--text-color-success) !important;
+}
+.text-warning {
+	color: var(--warning-color) !important;
+}
+.text-info {
+	color: var(--info-color) !important;
+}
+
+/* Allgemeine Nachrichten (Loading, Error) */
+.loading-message,
+.error-message-global {
+	padding: var(--spacing-md);
+	border-radius: var(--border-radius-md);
+	margin: var(--spacing-md) 0;
+	text-align: center;
+	font-size: var(--font-size-base);
+	border: 1px solid; /* Rand wird durch spezifische Klassen gefärbt */
+}
+.loading-message {
+	background-color: var(--background-color-content);
+	color: var(--text-color-secondary);
+	border-color: var(--border-color);
+}
+.error-message-global {
+	background-color: var(--danger-color-light-bg);
+	color: var(--danger-color-text);
+	border-color: var(--danger-color-border);
+}
+
+/* Buttons innerhalb von Nachrichten anpassen */
+.error-message-global .button {
+	margin-left: var(--spacing-sm);
+	background-color: rgba(
+		0,
+		0,
+		0,
+		0.05
+	); /* Leichter Overlay auf hellem Fehlerhintergrund */
+	border-color: rgba(0, 0, 0, 0.1);
+	color: var(--danger-color-text); /* Behält die Fehlertextfarbe bei */
+}
+.error-message-global .button:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+	border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Anpassung für Dark Mode Nachrichten-Button */
+body[data-theme="dark"] .error-message-global .button {
+	background-color: rgba(255, 255, 255, 0.1);
+	border-color: rgba(255, 255, 255, 0.2);
+	color: var(--text-color-primary); /* Heller Text im Dark Mode */
+}
+body[data-theme="dark"] .error-message-global .button:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+	border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Anpassung für High Contrast Nachrichten-Button */
+body[data-theme="high-contrast"] .error-message-global {
+	background-color: var(--background-color-content); /* Weißer Hintergrund */
+	color: var(--danger-color-text); /* Roter Text */
+	border: 2px solid var(--danger-color-border); /* Roter, dicker Rand */
+}
+body[data-theme="high-contrast"] .error-message-global .button {
+	background-color: var(--background-color-content);
+	color: var(--text-color-primary); /* Schwarz */
+	border: 2px solid var(--border-color); /* Schwarz */
+}
+body[data-theme="high-contrast"] .error-message-global .button:hover {
+	background-color: var(--text-color-primary); /* Invertiert */
+	color: var(--background-color-content);
+	border-color: var(--text-color-primary);
+}

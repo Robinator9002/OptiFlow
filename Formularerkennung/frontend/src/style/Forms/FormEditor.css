@@ -1,0 +1,405 @@
+/* src/styles/Forms/FormEditor.css */
+/* Stile für den FormEditorContainer und seine Unterkomponenten */
+
+.form-editor-container-shell {
+	max-height: 80vh;
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 11rem); /* Beispielhöhe, anpassen */
+	/* Verwende primären Rand und sekundären Hintergrund für den Rahmen */
+	border: 1px solid var(--border-primary);
+	border-radius: var(--border-radius-lg);
+	background-color: var(
+		--bg-secondary
+	); /* Heller Hintergrund für den gesamten Shell */
+	overflow: hidden;
+	box-shadow: var(
+		--box-shadow-md
+	); /* Optional: leichter Schatten für Abhebung */
+}
+
+.form-editor-header {
+	padding: var(--spacing-sm) var(--spacing-md);
+	/* Hellerer Header-Hintergrund, z.B. Tertiär oder Sekundär */
+	background-color: var(--bg-tertiary);
+	border-bottom: 1px solid var(--border-primary);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-shrink: 0; /* Verhindert Schrumpfen des Headers */
+}
+
+.form-editor-header h2 {
+	margin: 0;
+	font-size: 1.2rem;
+	color: var(--text-color-heading); /* Überschriftenfarbe verwenden */
+}
+
+.form-editor-header .editor-actions button {
+	margin-left: var(--spacing-sm);
+}
+
+.form-editor-main {
+	display: flex;
+	flex-grow: 1;
+	overflow: hidden; /* Wichtig, damit interne Bereiche scrollen können */
+	/* Hintergrund für den Hauptbereich, könnte auch --bg-primary sein */
+	background-color: var(--bg-primary);
+}
+
+/* Palette Stile */
+.palette {
+	width: 220px;
+	padding: var(--spacing-md);
+	border-right: 1px solid var(--border-primary);
+	/* Hintergrund passend zur Shell oder Header */
+	background-color: var(--bg-secondary);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-sm);
+	user-select: none;
+	overflow-y: auto;
+	flex-shrink: 0; /* Verhindert Schrumpfen der Palette */
+}
+
+.palette h3 {
+	margin-top: 0;
+	margin-bottom: var(--spacing-sm);
+	font-size: 1.1rem;
+	color: var(--text-color-secondary);
+	padding-bottom: var(--spacing-xs);
+	/* Hellerer Rand für die Trennlinie */
+	border-bottom: 1px solid var(--border-light);
+}
+
+.palette-item {
+	padding: var(--spacing-sm);
+	border: 1px solid var(--border-primary);
+	border-radius: var(--border-radius-md);
+	/* Heller Inhalts-Hintergrund für Palette-Items */
+	background-color: var(--background-color-content);
+	cursor: grab;
+	text-align: center;
+	font-size: var(--font-size-sm);
+	color: var(--text-color-primary); /* Standard Textfarbe */
+	transition: background-color var(--transition-speed) var(--transition-easing),
+		box-shadow var(--transition-speed) var(--transition-easing),
+		color var(--transition-speed) var(--transition-easing),
+		border-color var(--transition-speed) var(--transition-easing);
+	box-shadow: var(--box-shadow-sm);
+}
+
+.palette-item:hover {
+	/* Heller Akzent-Hintergrund beim Hovern */
+	background-color: var(--primary-color-light);
+	color: var(--primary-color-dark); /* Dunklere Akzentfarbe für Text */
+	border-color: var(--primary-color); /* Akzentfarbe für Rand */
+	box-shadow: var(--box-shadow-md);
+}
+
+/* CanvasArea Stile */
+.canvas-area {
+	flex-grow: 1;
+	padding: var(--spacing-md);
+	position: relative;
+	/* Haupt-Inhalts-Hintergrund für die Arbeitsfläche */
+	background-color: var(--background-color-content);
+	overflow: auto; /* Scrollen erlauben, wenn Inhalt größer wird */
+	/* Kein rechter Rand mehr hier, da PropertiesPanel den linken Rand hat */
+}
+
+.canvas-area-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	color: var(--text-color-muted); /* Gedämpfte Farbe für Platzhalter */
+	font-style: italic;
+	user-select: none;
+}
+
+/* Snap Linien Styling */
+.snap-line {
+	position: absolute;
+	/* Info-Farbe oder Akzentfarbe für Snap-Linien */
+	background-color: var(--info-color);
+	opacity: 0.7;
+	z-index: var(--z-index-snap-lines);
+}
+
+.snap-line.vertical {
+	width: 1px;
+	height: 100%;
+	top: 0;
+}
+
+.snap-line.horizontal {
+	height: 1px;
+	width: 100%;
+	left: 0;
+}
+
+/* FormElement Stile */
+.form-element {
+	position: absolute;
+	border: 1px dashed transparent; /* Standardmäßig transparenter Rand */
+	cursor: move;
+	box-sizing: border-box;
+	/* Hintergrund leicht abgesetzt vom Canvas, z.B. Tertiär oder Sekundär */
+	background-color: var(
+		--bg-secondary
+	); /* Oder --background-color-content, je nach gewünschtem Kontrast */
+	transition: border-color var(--transition-speed-fast) var(--transition-easing),
+		background-color var(--transition-speed-fast) var(--transition-easing),
+		box-shadow var(--transition-speed-fast) var(--transition-easing);
+}
+
+.form-element:hover:not(.selected) {
+	/* Heller Rand beim Hovern */
+	border-color: var(--border-secondary);
+}
+
+.form-element.selected {
+	/* Deutlicher Akzentrand bei Auswahl */
+	border: 2px solid var(--primary-color);
+	/* Heller Akzent-Schatten */
+	box-shadow: 0 0 5px var(--primary-color-focus-shadow);
+	z-index: var(--z-index-selected-element);
+	/* Heller Akzent-Hintergrund bei Auswahl */
+	background-color: var(--background-color-selected);
+}
+
+.form-element-label {
+	/* Verhindert Textauswahl beim Verschieben */
+	user-select: none;
+	padding: var(--spacing-xs); /* Kleiner Innenabstand für Labels */
+	color: var(--text-color-primary);
+	font-size: var(--font-size-sm);
+	/* Weitere Label-spezifische Stile hier */
+}
+
+/* Resize Handles */
+.resize-handle {
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	/* Akzentfarbe für Handles */
+	background-color: var(--primary-color);
+	/* Heller Rand für Kontrast */
+	border: 1px solid var(--background-color-content);
+	border-radius: 2px;
+	z-index: var(--z-index-resize-handles);
+	box-shadow: var(--box-shadow-sm);
+}
+
+/* Cursor bleiben gleich */
+.resize-handle-nw {
+	top: -5px;
+	left: -5px;
+	cursor: nwse-resize;
+}
+.resize-handle-ne {
+	top: -5px;
+	right: -5px;
+	cursor: nesw-resize;
+}
+.resize-handle-sw {
+	bottom: -5px;
+	left: -5px;
+	cursor: nesw-resize;
+}
+.resize-handle-se {
+	bottom: -5px;
+	right: -5px;
+	cursor: nwse-resize;
+}
+.resize-handle-n {
+	top: -5px;
+	left: 50%;
+	transform: translateX(-50%);
+	cursor: ns-resize;
+}
+.resize-handle-s {
+	bottom: -5px;
+	left: 50%;
+	transform: translateX(-50%);
+	cursor: ns-resize;
+}
+.resize-handle-w {
+	top: 50%;
+	left: -5px;
+	transform: translateY(-50%);
+	cursor: ew-resize;
+}
+.resize-handle-e {
+	top: 50%;
+	right: -5px;
+	transform: translateY(-50%);
+	cursor: ew-resize;
+}
+
+/* PropertiesPanel Stile */
+.properties-panel {
+	width: 280px;
+	padding: var(--spacing-md);
+	/* Hintergrund passend zur Palette/Shell */
+	background-color: var(--bg-secondary);
+	border-left: 1px solid var(--border-primary); /* Linker Rand zur Trennung vom Canvas */
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+	overflow-y: auto;
+	flex-shrink: 0; /* Verhindert Schrumpfen */
+}
+
+.properties-panel h3 {
+	margin-top: 0;
+	margin-bottom: var(--spacing-sm);
+	font-size: 1.1rem;
+	color: var(--text-color-secondary);
+	padding-bottom: var(--spacing-xs);
+	/* Hellerer Rand für die Trennlinie */
+	border-bottom: 1px solid var(--border-light);
+}
+
+.properties-panel .element-properties-editor {
+	/* Container für die spezifischen Element-Props */
+	border: 1px solid var(--border-primary);
+	padding: var(--spacing-md); /* Etwas mehr Padding */
+	border-radius: var(--border-radius-md);
+	/* Heller Inhalts-Hintergrund */
+	background-color: var(--background-color-content);
+	box-shadow: var(--box-shadow-sm);
+}
+
+.properties-panel .element-properties-editor h4 {
+	margin-top: 0;
+	margin-bottom: var(--spacing-md); /* Mehr Abstand nach der Überschrift */
+	font-size: 1rem;
+	color: var(--text-color-heading);
+	border-bottom: 1px solid var(--border-tertiary); /* Leichte Trennlinie */
+	padding-bottom: var(--spacing-xs);
+}
+
+.properties-panel .element-properties-editor > div {
+	margin-bottom: var(--spacing-md); /* Mehr Abstand zwischen Property-Gruppen */
+}
+/* Letztes Element hat keinen unteren Rand */
+.properties-panel .element-properties-editor > div:last-child {
+	margin-bottom: 0;
+}
+
+.properties-panel .element-properties-editor > div > label {
+	display: block;
+	margin-bottom: var(--spacing-xs);
+	font-size: var(--font-size-sm);
+	color: var(--text-color-secondary);
+	font-weight: 500;
+}
+
+.properties-panel input[type="text"],
+.properties-panel input[type="number"],
+.properties-panel input[type="color"],
+.properties-panel select,
+.properties-panel textarea {
+	width: 100%;
+	padding: var(--input-padding-y) var(--input-padding-x); /* Standard Input-Padding verwenden */
+	border: 1px solid var(--border-primary); /* Primärer Rand */
+	border-radius: var(--border-radius-md); /* Standard Rand-Radius */
+	font-size: var(--font-size-sm);
+	box-sizing: border-box;
+	background-color: var(
+		--background-color-content
+	); /* Standard Input Hintergrund */
+	color: var(--text-color-primary); /* Standard Textfarbe */
+}
+/* Fokus-Stil aus global.css wird automatisch angewendet */
+
+.properties-panel textarea {
+	min-height: 60px;
+	resize: vertical;
+}
+
+.properties-panel .property-buttons {
+	display: flex; /* Buttons nebeneinander */
+	gap: var(--spacing-xs); /* Kleiner Abstand */
+}
+
+.properties-panel .property-buttons button {
+	padding: 0.3rem 0.6rem;
+	/* Kein rechter Rand mehr nötig wegen gap */
+	border: 1px solid var(--border-primary);
+	/* Heller Hintergrund für Buttons */
+	background-color: var(--background-color-content);
+	color: var(--text-color-secondary); /* Sekundäre Textfarbe */
+	cursor: pointer;
+	border-radius: var(--border-radius-sm);
+	font-size: var(--font-size-sm);
+	flex-grow: 1; /* Buttons füllen den verfügbaren Platz */
+	text-align: center;
+	transition: background-color var(--transition-speed-fast)
+			var(--transition-easing),
+		color var(--transition-speed-fast) var(--transition-easing),
+		border-color var(--transition-speed-fast) var(--transition-easing);
+}
+.properties-panel .property-buttons button:hover {
+	background-color: var(--background-color-hover-light);
+	border-color: var(--border-secondary);
+	color: var(--text-color-primary);
+}
+
+.properties-panel .property-buttons button.active {
+	background-color: var(--primary-color);
+	/* Heller Text auf Akzentfarbe */
+	color: var(--text-color-light-on-dark-bg);
+	border-color: var(--primary-color-dark);
+}
+
+.properties-panel .delete-element-button {
+	margin-top: var(--spacing-md);
+	width: 100%;
+	/* Nutzen der .button-danger Klasse aus global.css */
+}
+
+/* JSON Preview */
+.json-preview-container {
+	margin-top: var(--spacing-md);
+	border-top: 1px solid var(--border-light); /* Trennlinie oben */
+	padding-top: var(--spacing-md); /* Abstand zur Trennlinie */
+}
+
+.json-preview-container h4 {
+	margin-bottom: var(--spacing-xs);
+	font-size: var(--font-size-sm);
+	color: var(--text-color-secondary);
+}
+
+.json-preview {
+	width: 100%;
+	min-height: 80px;
+	max-height: 150px; /* Etwas niedriger */
+	overflow-y: auto;
+	border: 1px solid var(--border-primary);
+	border-radius: var(--border-radius-sm);
+	padding: var(--spacing-sm); /* Mehr Padding */
+	font-family: var(--font-mono); /* Monospace Variable verwenden */
+	font-size: var(--font-size-xs); /* Kleinere Schrift für Code */
+	/* Code-Hintergrund verwenden */
+	background-color: var(--background-color-code);
+	white-space: pre-wrap;
+	box-sizing: border-box;
+	color: var(--text-color-secondary); /* Sekundäre Textfarbe für JSON */
+}
+
+/* Allgemeine Nachrichten (Loading, Error) - Nutzen die globalen Klassen */
+/* .loading-message und .error-message werden jetzt von global.css gestyled */
+/* Beispiel: <div class="loading-message">Laden...</div> */
+/* Beispiel: <div class="error-message-global">Fehler!</div> */
+
+/* Überschreibe ggf. globale Stile, falls nötig */
+.properties-panel .loading-message,
+.properties-panel .error-message-global {
+	font-size: var(--font-size-sm); /* Kleinere Schrift im Panel */
+	margin: 0; /* Kein extra Margin im Panel */
+	margin-bottom: var(--spacing-md); /* Aber Abstand nach unten */
+}

@@ -1,0 +1,213 @@
+/* src/styles/Editor/CustomerEditor.css */
+
+/* Hauptcontainer für den Kunden-Formular-Editor */
+.customer-form-editor-container {
+	display: flex;
+	flex-direction: column; /* Header oben, dann Main-Content-Area */
+	background-color: var(--background-color-page, #f4f7f6);
+	border-radius: var(--border-radius-xl, 12px);
+	margin: var(--spacing-md, 15px);
+	padding: var(--spacing-lg, 20px);
+	max-height: 90vh; /* Maximale Höhe des gesamten Editors */
+	box-shadow: var(--box-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.1));
+	overflow: hidden; /* Verhindert, dass der Container selbst scrollt */
+}
+
+/* Header-Bereich des Editors */
+.customer-form-editor-header {
+	margin-bottom: var(--spacing-lg, 20px);
+	padding-bottom: var(--spacing-md, 15px);
+	border-bottom: 1px solid var(--border-color-light, #e0e0e0);
+	flex-shrink: 0;
+}
+
+.customer-form-editor-header h2 {
+	color: var(--text-color-heading, #2c3e50);
+	font-size: var(--font-size-xxl, 2rem);
+	margin-top: 0;
+	margin-bottom: var(--spacing-xs, 5px);
+}
+
+.customer-form-editor-header .form-meta {
+	font-size: var(--font-size-base, 1rem);
+	color: var(--text-color-secondary, #7f8c8d);
+	margin-bottom: 0;
+}
+
+/* NEU: Hauptbereich, der Canvas und Sidebar nebeneinander anordnet */
+.customer-form-editor-main-content {
+	display: flex;
+	flex-direction: row; /* Canvas und Sidebar nebeneinander */
+	gap: var(--spacing-lg, 20px);
+	flex-grow: 1; /* Nimmt den restlichen Platz im Container ein */
+	overflow: hidden; /* Wichtig, damit die Kinder (Canvas, Sidebar) scrollen können */
+}
+
+/* Der "Canvas"-Bereich, der die Formularelemente anzeigt */
+.customer-form-canvas-wrapper {
+	flex-grow: 1; /* Canvas-Wrapper nimmt den meisten Platz */
+	/* max-width: 80%; */ /* Wird jetzt durch flex-grow und die Sidebar-Breite gesteuert */
+	display: flex; /* Um den Canvas selbst zentrieren oder zu steuern */
+	flex-direction: column; /* Falls noch etwas über/unter dem Canvas im Wrapper sein soll */
+	overflow: hidden; /* Wrapper soll nicht scrollen */
+}
+
+.customer-form-canvas {
+	position: relative;
+	width: 100%; /* Volle Breite des Wrappers */
+	flex-grow: 1; /* Canvas nimmt den verfügbaren Platz im Wrapper ein */
+	border: 1px solid var(--border-color, #d1d9e6);
+	background-color: var(--background-color-content, #ffffff);
+	padding: var(--spacing-lg, 20px);
+	border-radius: var(--border-radius-lg, 8px);
+	box-shadow: var(--box-shadow-inset, inset 0 1px 3px rgba(0, 0, 0, 0.05));
+	overflow-y: auto; /* Nur vertikal scrollen, wenn nötig */
+	overflow-x: auto; /* Auch horizontales Scrollen erlauben, wenn Formulare sehr breit sind */
+	min-height: 30rem;
+}
+
+/* NEU: Sidebar für Aktionen und zusätzliche Informationen */
+.customer-form-editor-sidebar {
+	width: 280px; /* Feste Breite für die Sidebar, oder flex-basis verwenden */
+	flex-shrink: 0; /* Sidebar soll nicht schrumpfen */
+	padding: var(--spacing-md, 15px);
+	background-color: var(
+		--background-color-content,
+		#e9ecef
+	); /* Leicht andere Hintergrundfarbe */
+	border-radius: var(--border-radius-lg, 8px);
+	border: 1px solid var(--border-color, #d1d9e6);
+	box-shadow: var(--box-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.05));
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-lg, 20px);
+	overflow-y: auto; /* Scrollbar, falls Inhalt zu lang wird */
+}
+
+.customer-form-editor-sidebar h4 {
+	color: var(--text-color-heading, #2c3e50);
+	font-size: var(--font-size-lg, 1.25rem);
+	margin-top: 0;
+	margin-bottom: var(--spacing-sm, 10px);
+	border-bottom: 1px solid var(--border-color-light, #e0e0e0);
+	padding-bottom: var(--spacing-xs, 5px);
+}
+
+.sidebar-form-info p {
+	font-size: var(--font-size-sm, 0.9rem);
+	color: var(--text-color-secondary, #555);
+	margin-bottom: var(--spacing-xs, 5px);
+	line-height: 1.4;
+}
+.sidebar-form-info strong {
+	color: var(--text-color-primary, #333);
+}
+
+/* Aktionsbuttons in der Sidebar */
+.customer-form-editor-actions {
+	display: flex;
+	flex-direction: column; /* Buttons untereinander */
+	gap: var(--spacing-md, 10px);
+	margin-top: auto; /* Schiebt Buttons in der Sidebar nach unten, falls Platz ist */
+}
+
+.customer-form-editor-actions .button {
+	width: 100%; /* Buttons nehmen volle Breite der Sidebar ein */
+}
+
+.remove-button {
+	background: var(--danger-color);
+	border-color: var(--danger-color);
+}
+.remove-button:hover {
+	background: var(--danger-color-dark) !important;
+	border-color: var(--danger-color-dark) !important;
+}
+
+/* Lokale Fehlermeldung (z.B. beim Absenden), positioniert in der Sidebar oder global */
+.error-message-local.customer-editor-submit-error {
+	background-color: var(--danger-background-color, #f8d7da);
+	color: var(--danger-color-text, #721c24);
+	border: 1px solid var(--danger-border-color, #f5c6cb);
+	padding: var(--spacing-sm, 10px);
+	border-radius: var(--border-radius-md, 4px);
+	text-align: center;
+	font-size: var(--font-size-sm, 0.9rem);
+	/* margin-bottom: var(--spacing-md, 15px); */ /* Wird in der Sidebar platziert */
+}
+
+/* Allgemeine Klasse für alle gerenderten Formularelemente im Ansichtsmodus */
+.form-view-element {
+	border: 1px dashed transparent;
+	transition: border-color 0.2s ease;
+	overflow: hidden;
+}
+
+/* Spezifische Stile für Text-Elemente */
+.form-view-text {
+	user-select: text;
+}
+
+/* Label für Input-Felder */
+.form-element-label {
+	color: var(--text-color-primary, #34495e);
+	font-weight: 500;
+	padding-bottom: 2px;
+	user-select: none;
+}
+
+/* Input-Felder selbst */
+.form-element-input-field {
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-element-input-field:focus {
+	border-color: var(--primary-color, #3498db);
+	box-shadow: 0 0 0 0.2rem
+		var(--primary-color-transparent, rgba(52, 152, 219, 0.25));
+	outline: none;
+}
+
+.form-element-input-field:disabled {
+	background-color: var(--disabled-background-color, #e9ecef);
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+
+/* Bild-Elemente */
+.form-view-image img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+/* Unbekannte Elemente (Fallback) */
+.form-view-unknown {
+	border: 1px dashed var(--warning-color, #f39c12);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--warning-color, #f39c12);
+	font-style: italic;
+	font-size: var(--font-size-sm, 0.9rem);
+}
+
+/* Lade- und Fehlermeldungen (spezifisch für diesen Editor, falls globale nicht passen) */
+.customer-editor-loading,
+.customer-editor-error,
+.customer-editor-no-template {
+	text-align: center;
+	padding: var(--spacing-xl, 30px);
+	font-size: var(--font-size-lg, 1.2rem);
+	color: var(--text-color-secondary, #7f8c8d);
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%; /* Damit es den Platz im Main-Content einnimmt */
+}
+
+.customer-editor-error .button {
+	margin-top: var(--spacing-md, 15px);
+}

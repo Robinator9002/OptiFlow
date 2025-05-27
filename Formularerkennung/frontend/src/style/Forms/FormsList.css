@@ -1,0 +1,182 @@
+/* src/styles/Forms/CustomerAssignedFormsView.css */
+
+/* Hauptcontainer für die Kundenansicht der zugewiesenen Formulare */
+.customer-assigned-forms-container {
+	padding: var(--spacing-md, 15px) var(--spacing-lg, 20px); /* Mehr seitliches Padding */
+	background-color: var(
+		--background-color-page,
+		#f8f9fa
+	); /* Sehr heller, neutraler Hintergrund */
+	/* Kein eigener Schatten für den Hauptcontainer, soll sich in die Seite einfügen */
+}
+
+/* Header-Bereich: Titel und Filter */
+.customer-assigned-forms-header {
+	display: flex;
+	flex-wrap: wrap; /* Erlaube Umbruch auf kleinen Bildschirmen */
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--spacing-xl, 25px); /* Mehr Abstand nach unten */
+	padding-bottom: var(--spacing-md, 15px);
+	border-bottom: 2px solid var(--primary-color-light, #a5d8ff); /* Subtile Akzentlinie */
+}
+
+.customer-assigned-forms-header h2 {
+	margin: 0 0 var(--spacing-sm, 10px) 0; /* Abstand, falls Filter umbricht */
+	color: var(--text-color-heading, #212529);
+	font-size: var(
+		--font-size-xl,
+		1.8rem
+	); /* Etwas kleiner für eine "leichtere" Optik */
+	font-weight: 600; /* Moderat fett */
+}
+
+/* Filter-Steuerung (Design gefällt dem Nutzer, bleibt also ähnlich) */
+.form-filter-controls {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm, 8px);
+	background-color: var(--background-color-content, #fff);
+	padding: var(--spacing-xs, 6px) var(--spacing-sm, 10px);
+	border-radius: var(--border-radius-lg, 8px);
+	box-shadow: var(--box-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
+}
+
+.form-filter-controls label {
+	font-size: var(--font-size-sm, 0.9rem);
+	color: var(--text-color-secondary, #6c757d);
+	font-weight: 500;
+}
+
+.form-filter-dropdown {
+	padding: var(--spacing-xs, 6px) var(--spacing-sm, 10px);
+	border-radius: var(--border-radius-md, 6px);
+	border: 1px solid var(--border-color, #ced4da) !important;
+	background-color: var(--background-color-content, #fff) !important;
+	font-size: var(--font-size-sm, 0.9rem);
+	min-width: 200px; /* Gute Breite für Lesbarkeit */
+	color: var(--text-color-primary, #495057) !important;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.form-filter-dropdown:focus {
+	border-color: var(--primary-color, #80bdff);
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem
+		var(--primary-color-transparent, rgba(0, 123, 255, 0.25));
+}
+
+.forms-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+	gap: var(--spacing-lg); /* Mehr Abstand zwischen Karten */
+	grid-template-columns: repeat(
+		auto-fill,
+		minmax(320px, 1fr)
+	); /* Etwas breitere Karten */
+}
+
+.form-list-item {
+	background-color: var(--background-color-content);
+	border: 1px solid var(--border-color);
+	border-radius: var(--border-radius-lg); /* Konsistenter Radius */
+	padding: var(--spacing-lg); /* Mehr Padding in Karten */
+	box-shadow: var(--box-shadow-md); /* Deutlicherer Schatten */
+	transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.form-list-item:hover {
+	/* transform: translateY(-4px); Etwas stärkerer Hover-Effekt */
+	box-shadow: var(--box-shadow-lg); /* Stärkerer Schatten bei Hover */
+}
+
+/* .form-list-item.selected - Selektionslogik wurde entfernt, da Klick direkt zum Editor führt */
+
+.form-list-item .form-info {
+	margin-bottom: var(--spacing-md); /* Abstand zum Action-Bereich */
+}
+
+.form-list-item .form-info h3 {
+	margin-top: 0;
+	margin-bottom: var(--spacing-sm);
+	color: var(--text-color-heading); /* Überschriftenfarbe verwenden */
+	font-size: var(--font-size-lg); /* Größer */
+	cursor: pointer; /* Zeigt an, dass der Titel klickbar ist (für Edit) */
+}
+.form-list-item .form-info h3:hover {
+	color: var(--primary-color);
+}
+
+.form-list-item .form-info p.description {
+	/* Klasse für Beschreibung */
+	font-size: var(--font-size-base); /* Standardgröße für bessere Lesbarkeit */
+	color: var(--text-color-secondary);
+	margin-bottom: var(--spacing-md);
+	line-height: 1.5;
+	min-height: 48px; /* Ca. 2 Zeilen Beschreibung */
+	display: -webkit-box; /* Für Text-Truncation */
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.form-list-item .form-meta-grid {
+	display: grid;
+	grid-template-columns: repeat(
+		auto-fit,
+		minmax(120px, 1fr)
+	); /* Responsive Spalten */
+	gap: var(--spacing-sm);
+	font-size: var(--font-size-sm);
+	color: var(--text-color-secondary);
+	margin-top: var(--spacing-sm);
+}
+.form-list-item .form-meta-item strong {
+	color: var(--text-color-primary);
+	margin-right: var(--spacing-xs);
+}
+.form-list-item .form-meta-item .form-id-value {
+	font-family: var(--font-family-monospace);
+	font-size: 0.8em;
+	background-color: var(--background-color-page);
+	padding: 2px 4px;
+	border-radius: var(--border-radius-sm);
+}
+
+.form-list-item .form-actions {
+	margin-top: auto; /* Schiebt Aktionen nach unten, falls Karte unterschiedlich hoch ist */
+	padding-top: var(--spacing-md);
+	border-top: 1px solid var(--border-color);
+	display: flex;
+	gap: var(--spacing-sm);
+	flex-wrap: wrap;
+}
+
+.form-list-item .form-actions .button {
+	flex-grow: 1;
+	padding: var(--spacing-sm) var(--spacing-md); /* Konsistentes Button-Padding */
+	font-size: var(--font-size-sm);
+}
+.form-list-item .form-actions .button-danger {
+	flex-grow: 0; /* Löschen-Button nicht strecken */
+}
+
+.forms-list-empty {
+	text-align: center;
+	padding: var(--spacing-xxl) var(--spacing-md);
+	background-color: var(--background-color-content);
+	border-radius: var(--border-radius-lg);
+	box-shadow: var(--box-shadow-sm);
+}
+.forms-list-empty p {
+	font-size: var(--font-size-lg);
+	color: var(--text-color-secondary);
+	margin-bottom: var(--spacing-lg);
+}
+/* .loading-message und .error-message-global werden von global.css gehandhabt */

@@ -1,0 +1,477 @@
+/* styles/global.css */
+/* Grundlegende Stile, Typografie, Layouts, Scrollbar, Animationen */
+/* Enthält die Definition der CSS-Variablen für die Themes */
+
+/* ------------------------- */
+/* --- Theme Variablen --- */
+/* ------------------------- */
+
+:root {
+    /* Standard (Light) Theme - Angelehnt an modernes Windows (10/11) */
+    --bg-primary: #f3f6f9; /* Sehr helles, leicht bläuliches Grau */
+    --bg-secondary: #e9edf2; /* Helles Grau */
+    --bg-tertiary: #dee3e9; /* Mittleres Grau */
+    --bg-accent: #d0e4ff; /* Sanftes, klares Blau */
+    --bg-accent-green: #d4edda; /* Sanftes Grün */
+    --bg-accent-red: #f8d7da; /* Sanftes Rot */
+    --bg-code: #eef1f4; /* Code Hintergrund, leicht abgesetzt */
+
+    --text-primary: #1f2937; /* Dunkles Blau-Grau */
+    --text-secondary: #374151; /* Mittleres Dunkelgrau */
+    --text-muted: #6b7280; /* Gedämpftes Grau */
+    --text-on-accent: #1f2937; /* Dunkler Text auf hellen Akzenten */
+    --text-link: #0e7490; /* Türkis-Blau für Links */
+    --text-link-hover: #155e75; /* Dunkleres Türkis-Blau */
+    --text-danger: #b91c1c; /* Gedämpftes, klares Rot */
+    --text-success: #059669; /* Gedämpftes, klares Grün */
+
+    --border-primary: #d1d5db; /* Mittlerer Border */
+    --border-secondary: #9ca3af; /* Dunklerer Border */
+    --border-tertiary: #e5e7eb; /* Heller Border */
+    --border-accent: #3b82f6; /* Akzent Border */
+    --border-accent-hover: #2563eb; /* Akzent Border Hover */
+    --border-danger: #dc2626; /* Danger Border */
+    --border-danger-focus: #b91c1c; /* Danger Border Focus */
+
+    --accent-primary: #3b82f6; /* Klares Akzentblau */
+    --accent-primary-rgb: 59, 130, 246;
+    --accent-primary-hover: #2563eb; /* Dunkleres Akzentblau */
+    --accent-primary-border-hover: #1e40af;
+    --accent-success: #10b981; /* Akzent Grün */
+    --accent-success-hover: #059669;
+    --accent-success-border-hover: #047857;
+    --accent-danger: #ef4444; /* Akzent Rot */
+    --accent-danger-hover: #dc2626;
+    --accent-danger-border-hover: #b91c1c;
+    --accent-disabled: #9ca3af; /* Gedämpftes Grau für Disabled */
+    --accent-disabled-text: #e5e7eb; /* Helles Grau für Text */
+
+    --shadow-color-rgb: 0, 0, 0;
+    --shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color-rgb), 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(var(--shadow-color-rgb), 0.1), 0 2px 4px -2px rgba(var(--shadow-color-rgb), 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(var(--shadow-color-rgb), 0.1), 0 4px 6px -4px rgba(var(--shadow-color-rgb), 0.1);
+    --shadow-focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45); /* Akzent Fokus Ring */
+    --shadow-focus-ring-danger: 0 0 0 3px rgba(239, 68, 68, 0.45); /* Danger Fokus Ring */
+
+    --transition-short: 0.15s ease-in-out;
+    --transition-base: 0.2s ease-in-out;
+    --transition-long: 0.4s ease-in-out;
+}
+
+/* Dark Theme Overrides - Modern, harmonisch, augenfreundlich */
+body[data-theme='dark'] {
+    --bg-primary: #18181b; /* Sehr dunkles Grau */
+    --bg-secondary: #27272a; /* Dunkles Grau */
+    --bg-tertiary: #3f3f46; /* Mittleres Grau */
+    --bg-accent: #334155; /* Gedämpftes Blau-Grau */
+    --bg-accent-green: #164e35; /* Dunkles, gedämpftes Grün */
+    --bg-accent-red: #7f1d1d; /* Dunkles, gedämpftes Rot */
+    --bg-code: #1f2937; /* Dunkler Code Hintergrund */
+
+    --text-primary: #f4f4f5; /* Sehr helles Grau */
+    --text-secondary: #d4d4d8; /* Helles Grau */
+    --text-muted: #a1a1aa; /* Gedämpftes Grau */
+    --text-on-accent: #f4f4f5; /* Helles Text auf Akzenten */
+    --text-link: #60a5fa; /* Helles Blau */
+    --text-link-hover: #3b82f6; /* Mittleres Blau */
+    --text-danger: #f87171; /* Akzent Rot */
+    --text-success: #4ade80; /* Akzent Grün */
+
+    --border-primary: #52525b; /* Mittlerer Border */
+    --border-secondary: #71717a; /* Hellerer Border */
+    --border-tertiary: #3f3f46; /* Dunklerer Border */
+    --border-accent: #60a5fa; /* Akzent Border */
+    --border-accent-hover: #3b82f6;
+    --border-danger: #f87171; /* Danger Border */
+    --border-danger-focus: #ef4444;
+
+    --accent-primary: #60a5fa; /* Akzent Blau */
+    --accent-primary-rgb: 96, 165, 250;
+    --accent-primary-hover: #3b82f6;
+    --accent-primary-border-hover: #2563eb;
+    --accent-success: #4ade80; /* Akzent Grün */
+    --accent-success-hover: #22c55e;
+    --accent-success-border-hover: #16a363;
+    --accent-danger: #f87171; /* Akzent Rot */
+    --accent-danger-hover: #ef4444;
+    --accent-danger-border-hover: #dc2626;
+    --accent-disabled: #71717a; /* Gedämpftes Grau für Disabled */
+    --accent-disabled-text: #d4d4d8; /* Helles Grau für Text */
+
+    --shadow-color-rgb: 0, 0, 0; /* Schattenfarbe bleibt schwarz */
+    --shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color-rgb), 0.2); /* Etwas stärkere Schatten im Dunkeln */
+    --shadow-md: 0 4px 6px -1px rgba(var(--shadow-color-rgb), 0.3), 0 2px 4px -2px rgba(var(--shadow-color-rgb), 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(var(--shadow-color-rgb), 0.4), 0 4px 6px -4px rgba(var(--shadow-color-rgb), 0.4);
+    --shadow-focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.5); /* Akzent Fokus Ring */
+    --shadow-focus-ring-danger: 0 0 0 3px rgba(248, 113, 113, 0.5); /* Danger Fokus Ring */
+
+    --transition-short: 0.15s ease-in-out;
+    --transition-base: 0.2s ease-in-out;
+    --transition-long: 0.4s ease-in-out;
+}
+
+/* High Contrast (Light) Theme Overrides - Maximale Lesbarkeit */
+body[data-theme='high-contrast'] {
+    --bg-primary: #ffffff; /* Weiß */
+    --bg-secondary: #ffffff; /* Weiß */
+    --bg-tertiary: #e0e0e0; /* Helles Grau */
+    --bg-accent: #ffffff; /* Weiß */
+    --bg-accent-green: #ffffff; /* Weiß */
+    --bg-accent-red: #ffffff; /* Weiß */
+    --bg-code: #ffffff; /* Weiß */
+
+    --text-primary: #000000; /* Schwarz */
+    --text-secondary: #000000; /* Schwarz */
+    --text-muted: #333333; /* Dunkles Grau */
+    --text-on-accent: #ffffff; /* Weiß */
+    --text-link: #0000ff; /* Blau */
+    --text-link-hover: #00008b; /* Dunkles Blau */
+    --text-danger: #ff0000; /* Rot */
+    --text-success: #008000; /* Grün */
+
+    --border-primary: #000000; /* Schwarz */
+    --border-secondary: #000000; /* Schwarz */
+    --border-tertiary: #333333; /* Dunkles Grau */
+    --border-accent: #0000ff; /* Blau */
+    --border-accent-hover: #00008b; /* Dunkles Blau */
+    --border-danger: #ff0000; /* Rot */
+    --border-danger-focus: #cc0000; /* Dunkleres Rot */
+
+    --accent-primary: #0000ff; /* Blau */
+    --accent-primary-rgb: 0, 0, 255;
+    --accent-primary-hover: #00008b; /* Dunkles Blau */
+    --accent-primary-border-hover: #00008b;
+    --accent-success: #008000; /* Grün */
+    --accent-success-hover: #006400; /* Dunkles Grün */
+    --accent-success-border-hover: #006400;
+    --accent-danger: #ff0000; /* Rot */
+    --accent-danger-hover: #cc0000; /* Dunkleres Rot */
+    --accent-danger-border-hover: #cc0000;
+    --accent-disabled: #666666; /* Mittleres Grau */
+    --accent-disabled-text: #ffffff; /* Weiß */
+
+    --shadow-sm: none; /* Keine Schatten */
+    --shadow-md: none; /* Keine Schatten */
+    --shadow-lg: none; /* Keine Schatten */
+    --shadow-focus-ring: 0 0 0 2px var(--accent-primary); /* Deutlicher Fokus Ring */
+    --shadow-focus-ring-danger: 0 0 0 2px var(--accent-danger); /* Deutlicher Danger Fokus Ring */
+
+    --transition-short: 0s; /* Keine Übergänge */
+    --transition-base: 0s; /* Keine Übergänge */
+    --transition-long: 0s; /* Keine Übergänge */
+}
+
+/* ------------------------- */
+/* --- Globale Stile --- */
+/* ------------------------- */
+
+html {
+    font-size: calc(100% * var(--font-size-multiplier));
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+body {
+    /* Standard-Schriftart (wird ggf. überschrieben) */
+    font-family: var(--font-sans);
+    margin: 0;
+    padding: 1.25rem;
+    /* 20px */
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    transition: background-color 0.3s ease, color 0.3s ease, font-family 0.1s ease;
+    /* Font-Übergang hinzugefügt */
+    font-size: 1rem;
+}
+
+/* --- NEUE REGELN FÜR SCHRIFTART-AUSWAHL --- */
+body[data-font='serif'] {
+    font-family: var(--font-serif);
+}
+
+body[data-font='monospace'] {
+    font-family: var(--font-mono);
+}
+
+/* Wenn data-font="sans-serif" oder nicht gesetzt ist, gilt der Standard von body */
+/* --- Ende neue Regeln --- */
+
+
+/* ... (Rest der global.css wie zuvor: header, h1, container, button, input etc.) ... */
+/* Header */
+header {
+    display: flex; /* Make header a flex container */
+    justify-content: space-between; /* Space out the title and logout container */
+    align-items: center; /* Vertically center items */
+    margin-bottom: 1.25rem;
+    /* 20px */
+}
+
+h1 {
+    font-size: 2.5rem;
+    /* 32px */
+    color: var(--accent-primary);
+    margin-left: 0.9375rem;
+    /* 15px */
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 0; /* Remove default margin-bottom from h1 */
+}
+
+.user-container {
+    display: flex; /* Make logout container a flex container */
+    gap: 1rem; /* Add some gap between the username and button */
+    margin-right: 25rem;
+    align-items: center;
+}
+.user-container p {
+    font-size: 1.3rem;
+}
+
+.user-container-buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+.settings-tab-button {
+    margin-right: 0.5rem;
+    /* 8px */
+    color: var(--text-on-accent);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.settings-tab-button:hover {
+    border-color: var(--accent-primary-border-hover);
+}
+
+h2 {
+    font-size: 1.5rem;
+    /* 24px */
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+h3 {
+    font-size: 1.25rem;
+    /* 20px */
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+/* Allgemeine Container & Layout */
+.container {
+    padding: 1.25rem;
+    /* 20px */
+    border-radius: 0.5rem;
+    /* 8px */
+    box-shadow: var(--shadow-md);
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tab-content {
+    display: flex;
+    justify-content: left;
+    gap: 1.25rem;
+    /* 20px */
+    flex-grow: 1;
+}
+
+/* Allgemeine Button-Stile (Basis) */
+button {
+    background: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
+    color: var(--text-on-accent);
+    padding: 0.75rem 1.25rem;
+    /* 12px 20px */
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 0.3125rem;
+    /* 5px */
+    box-shadow: var(--shadow-sm);
+    transition: background-color var(--transition-base), border-color var(--transition-base), transform var(--transition-short), box-shadow var(--transition-base);
+    line-height: 1.2;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    font-family: inherit;
+}
+
+button:hover {
+    background: var(--accent-primary-hover);
+    border-color: var(--accent-primary-border-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+button:active {
+    transform: translateY(0px);
+    box-shadow: inset 0 1px 2px rgba(var(--shadow-color-rgb), 0.1);
+}
+
+/* Allgemeine Eingabefelder (Basis) */
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 0.625rem;
+    /* 10px */
+    margin: 0.3125rem 0;
+    /* 5px */
+    border-radius: 0.3125rem;
+    /* 5px */
+    border: 1px solid var(--border-secondary);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base), color var(--transition-base);
+    font-family: inherit;
+    line-height: inherit;
+}
+
+/* Allgemeine Fokus-Stile */
+button:focus-visible,
+input:focus,
+select:focus,
+textarea:focus,
+input[type="checkbox"]:focus-visible,
+.tab:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    border-color: var(--border-accent) !important;
+    box-shadow: var(--shadow-focus-ring) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 0;
+}
+
+/* Fehlerhafte Inputs */
+.error-input {
+    border-color: var(--border-danger) !important;
+    background-color: var(--bg-accent-red);
+}
+
+.error-input:focus {
+    box-shadow: var(--shadow-focus-ring-danger) !important;
+    border-color: var(--border-danger-focus) !important;
+}
+
+/* Disabled State */
+.disabled {
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+button:disabled,
+button.disabled {
+    background-color: var(--accent-disabled) !important;
+    border-color: var(--accent-disabled) !important;
+    color: var(--accent-disabled-text) !important;
+    transform: none !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+    opacity: 0.65;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--border-primary) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+}
+
+input[type='checkbox']:disabled,
+input[type='checkbox']:disabled:hover {
+    border-color: var(--accent-disabled) !important;
+    background-color: var(--bg-tertiary) !important;
+    box-shadow: none !important;
+    transform: none !important;
+    cursor: not-allowed !important;
+    opacity: 0.5;
+}
+
+input[type='checkbox']:disabled::before {
+    background-color: var(--text-muted) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 0.625rem;
+    /* 10px */
+    height: 0.625rem;
+    /* 10px */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--text-muted);
+    border-radius: 0.3125rem;
+    /* 5px */
+    border: 2px solid var(--bg-secondary);
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-secondary);
+}
+
+::-webkit-scrollbar-track {
+    background-color: var(--bg-tertiary);
+    border-radius: 0.3125rem;
+    /* 5px */
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Animationen */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.97) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,8 @@
+OptiFlow Dateimanager:
+- Datei Interne Suche einbauen
+- Semantische Suche (KI Einbauen)
+- Entduplizierung Optimieren
+- Alte Dateien finden und Anzeigen
+
+Zu klären:
+- Formulare Ausfüllen und Verschicken

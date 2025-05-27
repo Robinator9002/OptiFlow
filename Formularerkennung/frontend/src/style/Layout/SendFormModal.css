@@ -1,0 +1,193 @@
+/* src/styles/Layout/SendModal.css */
+
+/* Overlay für das Modal */
+.send-form-modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.6); /* Etwas dunklerer Overlay */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1050; /* Stellt sicher, dass es über anderen Inhalten liegt (z.B. Navbar) */
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.send-form-modal-overlay.active {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Inhalt des Modals */
+.send-form-modal-content {
+	background-color: var(
+		--background-color-content,
+		white
+	); /* Fallback zu Weiß */
+	color: var(--text-color-primary, black);
+	padding: var(--spacing-lg, 20px);
+	border-radius: var(--border-radius-lg, 8px);
+	width: 90%;
+	max-width: 600px; /* Maximale Breite des Modals */
+	max-height: 85vh; /* Maximale Höhe, um Scrollen auf kleinen Bildschirmen zu ermöglichen */
+	display: flex;
+	flex-direction: column;
+	box-shadow: var(--box-shadow-xl, 0 8px 24px rgba(0, 0, 0, 0.15));
+	transform: scale(0.95);
+	transition: transform 0.3s ease;
+}
+
+.send-form-modal-overlay.active .send-form-modal-content {
+	transform: scale(1);
+}
+
+.send-form-modal-content h3 {
+	margin-top: 0;
+	margin-bottom: var(--spacing-md, 15px);
+	color: var(--text-color-heading, #333);
+	font-size: var(--font-size-lg, 1.5rem);
+	border-bottom: 1px solid var(--border-color, #eee);
+	padding-bottom: var(--spacing-sm, 10px);
+}
+
+/* Suchleiste im Modal */
+.send-form-modal-search-input {
+	width: 100%;
+	padding: var(--spacing-sm, 10px) var(--spacing-md, 12px);
+	margin-bottom: var(--spacing-md, 15px);
+	border: 1px solid var(--border-color, #ccc);
+	border-radius: var(--border-radius-md, 4px);
+	box-sizing: border-box;
+	font-size: var(--font-size-base, 1rem);
+}
+.send-form-modal-search-input:focus {
+	border-color: var(--primary-color, #007bff);
+	box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Ähnlich wie Bootstrap Focus */
+	outline: none;
+}
+
+/* Checkbox für "An alle senden" */
+.send-form-modal-send-to-all-label {
+	display: flex;
+	align-items: center;
+	margin-bottom: var(--spacing-md, 15px);
+	font-size: var(--font-size-base, 1rem);
+	cursor: pointer;
+}
+
+.send-form-modal-send-to-all-label input[type="checkbox"] {
+	margin-right: var(--spacing-sm, 8px);
+	transform: scale(1.1); /* Checkbox etwas größer */
+}
+
+/* Liste der Benutzer/Kunden */
+.send-form-modal-user-list {
+	overflow-y: auto;
+	max-height: calc(
+		85vh - 250px
+	); /* Dynamische Höhe basierend auf Modalhöhe und anderen Elementen */
+	min-height: 100px; /* Mindesthöhe, um nicht zu kollabieren */
+	border: 1px solid var(--border-color, #eee);
+	border-radius: var(--border-radius-md, 4px);
+	padding: var(--spacing-xs, 5px) var(--spacing-sm, 10px);
+	margin-bottom: var(--spacing-md, 15px);
+	background-color: var(
+		--background-color-page,
+		#f9f9f9
+	); /* Leichter Hintergrund für die Liste */
+}
+
+.send-form-modal-user-item {
+	padding: var(--spacing-sm, 1rem);
+	border-bottom: 1px solid var(--border-color-light, #f0f0f0);
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	border-radius: 1rem;
+}
+.send-form-modal-user-item:last-child {
+	border-bottom: none;
+}
+.send-form-modal-user-item:hover {
+	background-color: var(--background-color-hover-light, #e9ecef);
+}
+
+.send-form-modal-user-item label {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	cursor: pointer;
+	font-size: var(--font-size-base, 1rem);
+}
+
+.send-form-modal-user-item input[type="checkbox"] {
+	margin-right: var(--spacing-sm, 10px);
+	transform: scale(1.1);
+}
+
+.send-form-modal-user-email {
+	color: var(--text-color-secondary, #6c757d);
+	font-size: var(--font-size-sm, 0.9rem);
+	margin-left: var(--spacing-xs, 5px);
+}
+
+/* Info-Text (z.B. "Keine Kunden gefunden") */
+.send-form-modal-info-text {
+	padding: var(--spacing-md, 15px);
+	text-align: center;
+	color: var(--text-color-secondary, #6c757d);
+	font-style: italic;
+}
+
+/* Zähler für ausgewählte Kunden */
+.send-form-modal-selection-count {
+	font-size: var(--font-size-sm, 0.9rem);
+	color: var(--text-color-secondary, #6c757d);
+	margin-bottom: var(--spacing-md, 15px);
+	text-align: right;
+}
+
+/* Aktionsbuttons am Ende des Modals */
+.send-form-modal-actions {
+	margin-top: auto; /* Schiebt Buttons nach unten */
+	padding-top: var(--spacing-md, 15px);
+	border-top: 1px solid var(--border-color, #eee);
+	display: flex;
+	justify-content: flex-end; /* Buttons rechtsbündig */
+	gap: var(--spacing-sm, 10px); /* Abstand zwischen Buttons */
+}
+
+/* Allgemeine Button-Stile werden von global.css oder App.css übernommen.
+    Hier können spezifische Anpassungen für Modal-Buttons erfolgen, falls nötig.
+    .send-form-modal-actions .button {}
+    .send-form-modal-actions .button-primary {}
+    .send-form-modal-actions .button-secondary {}
+*/
+.send-form-modal-actions .button:disabled {
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+
+/* Lade- und Fehlermeldungen im Modal */
+.send-form-modal-loading-message,
+.send-form-modal-error-message {
+	padding: var(--spacing-md, 15px);   
+	text-align: center;
+	border-radius: var(--border-radius-md, 4px);
+	margin-bottom: var(--spacing-md, 15px);
+}
+
+.send-form-modal-loading-message {
+	color: var(--text-color-secondary, #6c757d);
+}
+
+.send-form-modal-error-message {
+	background-color: var(--danger-background-color, #f8d7da);
+	color: var(--danger-color-text, #721c24);
+	border: 1px solid var(--danger-border-color, #f5c6cb);
+}

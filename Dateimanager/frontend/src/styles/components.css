@@ -1,0 +1,780 @@
+/* styles/components.css */
+/* Stile für wiederverwendbare UI-Komponenten (nutzen Variablen und rem) */
+
+/* Tabs */
+.tabs {
+	display: flex;
+	margin-bottom: 1rem;
+	/* 5px */
+	border-radius: 2rem;
+	border-bottom: 3px solid var(--border-primary);
+	padding: 0 0 0.55rem 1.125rem;
+	/* 12px 18px */
+	gap: 0.5rem;
+	/* 8px */
+	transition: border-color var(--transition-base);
+}
+
+.tabs:hover {
+	border-bottom-color: var(--border-accent-hover);
+}
+
+.tab {
+	background: var(--bg-primary);
+	color: var(--text-secondary);
+	padding: 0.625rem 0.9375rem;
+	/* 10px 15px */
+	border: 2px solid var(--border-primary);
+	border-radius: 0.3125rem;
+	/* 5px */
+	font-size: 1rem;
+	/* Basisgröße */
+	cursor: pointer;
+	transition: background-color var(--transition-base),
+		color var(--transition-base), border-color var(--transition-base);
+	text-align: center;
+	white-space: nowrap;
+}
+
+.tab.active {
+	background: var(--bg-tertiary);
+	color: var(--accent-primary);
+	font-weight: 500;
+}
+
+.tab:hover:not(.active) {
+	background: var(--bg-tertiary);
+	color: var(--text-primary);
+	border-color: var(--border-secondary);
+}
+
+/* Fokus-Stil wird von global.css geerbt */
+
+/* Fortschrittsbalken */
+.progress-bar {
+	width: 100%;
+	background-color: var(--bg-tertiary);
+	height: 0.625rem;
+	/* 10px */
+	border-radius: 0.3125rem;
+	/* 5px */
+	margin-top: 0.625rem;
+	/* 10px */
+	overflow: hidden;
+}
+
+.progress-bar span {
+	display: block;
+	height: 100%;
+	width: 0%;
+	background-color: var(--accent-primary);
+	border-radius: 0.3125rem;
+	/* 5px */
+	transition: width var(--transition-long);
+}
+
+/* Overlay / Modal / Spinner */
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(var(--shadow-color-rgb), 0.6);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+	backdrop-filter: blur(3px);
+	transition: background-color 0.3s ease;
+}
+
+.overlay h1 {
+	position: static !important;
+	color: var(--text-on-accent);
+	text-shadow: 0 1px 2px rgba(var(--shadow-color-rgb), 0.5);
+}
+
+.modal-content {
+	background: var(--bg-primary);
+	padding: 1.5625rem 1.875rem;
+	/* 25px 30px */
+	border-radius: 0.5rem;
+	/* 8px */
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	width: 90%;
+	max-width: 25rem;
+	/* 400px */
+	animation: fadeIn 0.2s ease-out;
+	border: 1px solid var(--border-primary);
+	box-shadow: var(--shadow-lg);
+	transition: background-color 0.3s ease, border-color 0.3s ease,
+		box-shadow 0.3s ease;
+	text-wrap: initial;
+}
+
+.modal-content p,
+.overlay p {
+	color: var(--text-secondary);
+	font-size: 1.125rem;
+	/* 18px -> Etwas größer */
+	font-weight: 500;
+	margin-bottom: 1.25rem;
+	/* 20px */
+}
+
+.modal-buttons {
+	display: flex;
+	gap: 0.625rem;
+	/* 10px */
+	justify-content: center;
+	margin-top: 0.625rem;
+	/* 10px */
+}
+
+.modal-content button {
+	width: auto;
+	min-width: 6.25rem;
+	/* 100px */
+	height: auto;
+	padding: 0.625rem 1.25rem;
+	/* 10px 20px */
+	margin: 0;
+	font-size: 1rem;
+}
+
+/* ----- MODAL DANGER STYLING ----- */
+
+.modal-content.modal-danger {
+	background-color: var(--bg-accent-red);
+	border-color: var(--border-danger);
+	color: var(--text-danger); /* Haupttextfarbe im Danger-Modal */
+}
+
+.modal-content.modal-danger h3 {
+	color: var(--text-danger); /* Titel im Danger-Modal */
+}
+
+.modal-content.modal-danger p {
+	/* Überprüfe den Kontrast von --text-danger auf --bg-accent-red.
+     Oft ist --text-danger eine dunklere Farbe für Text auf hellem Hintergrund.
+     --bg-accent-red ist typischerweise ein heller Rotton.
+     Das sollte in den meisten deiner Themes passen.
+     Im High-Contrast-Theme ist --text-danger hellrot und --bg-accent-red weiß, was gut ist.
+     Im Dark-Theme ist --text-danger hellrot und --bg-accent-red dunkelrot, auch gut.
+  */
+	color: var(--text-danger);
+}
+
+/* Der "Ja" Button, der die gefährliche Aktion auslöst */
+.modal-content.modal-danger .confirm {
+	background-color: var(--accent-danger);
+	border-color: var(
+		--accent-danger
+	); /* Oder spezifischer: var(--accent-danger-border-hover) für einen subtil dunkleren Rand */
+
+	/* Textfarbe auf dem roten Akzent-Button:
+     Wir brauchen eine helle Farbe für guten Kontrast.
+     --text-on-accent ist im Light-Theme dunkel, was auf --accent-danger (rot) nicht ideal ist.
+     Eine explizite helle Farbe ist hier sicherer.
+     Im Dark-Theme ist --text-on-accent hell, was passen würde.
+     Im High-Contrast ist --text-on-accent weiß, was passt.
+     Alternative: Prüfen, ob --text-primary im Dark Theme (sehr hell) universell genug ist,
+     oder einfach #FFFFFF.
+  */
+	color: #ffffff; /* Sicherste Wahl für durchgehend guten Kontrast auf rotem Button */
+	/* Alternativ: var(--text-primary) wenn body[data-theme='dark'], sonst #FFFFFF, aber das wird komplexer im CSS */
+}
+
+.modal-content.modal-danger .confirm:hover {
+	background-color: var(--accent-danger-hover);
+	border-color: var(--accent-danger-border-hover);
+	color: #ffffff; /* Farbe beibehalten */
+}
+
+.modal-content.modal-danger .confirm:focus {
+	outline: none;
+	box-shadow: var(--shadow-focus-ring-danger);
+	/* Wichtig, dass der Fokusring auch im Danger-Fall klar erkennbar ist. */
+}
+
+/* Der "Nein" Button im Danger-Modal */
+.modal-content.modal-danger .disfirm {
+	background-color: transparent; /* Macht ihn weniger dominant */
+	color: var(--text-danger); /* Textfarbe passend zum "Danger"-Kontext */
+	border-color: var(--border-danger); /* Rand passend zum Modal-Rand */
+}
+
+.modal-content.modal-danger .disfirm:hover {
+	background-color: rgba(
+		var(--accent-danger-rgb),
+		0.1
+	); /* Leichter roter Schimmer beim Hover */
+	/* RGB-Variable hier sehr nützlich! */
+	border-color: var(
+		--border-danger-focus
+	); /* Rand wird beim Hover intensiver/dunkler */
+	color: var(--text-danger); /* Farbe beibehalten oder leicht anpassen */
+}
+
+.modal-content.modal-danger .disfirm:focus {
+	outline: none;
+	border-color: var(--border-danger-focus);
+	box-shadow: var(
+		--shadow-focus-ring-danger
+	); /* Auch hier den Danger-Fokusring */
+}
+
+.confirm {
+	background-color: var(--accent-success) !important;
+	border-color: var(--accent-success) !important;
+	color: var(--text-on-accent) !important;
+	transition: all ease-in-out var(--transition-base);
+}
+
+.confirm:hover {
+	background-color: var(--accent-success-hover) !important;
+	border-color: var(--accent-success-border-hover) !important;
+	transform: scale(1.03);
+}
+
+.disfirm {
+	background-color: var(--accent-danger) !important;
+	border-color: var(--accent-danger) !important;
+	color: var(--text-on-accent) !important;
+	transition: all ease-in-out var(--transition-base);
+}
+
+.disfirm:hover {
+	background-color: var(--accent-danger-hover) !important;
+	border-color: var(--accent-danger-border-hover) !important;
+	transform: scale(1.03);
+}
+
+/* Spinner */
+.spinner-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1.25rem;
+	/* 20px */
+}
+
+.spinner-container p {
+	font-size: 1.5rem;
+	/* 24px -> Deutlich größer */
+	color: var(--text-secondary);
+	font-weight: 500;
+	text-shadow: none;
+	text-align: center;
+}
+
+.spinner {
+	width: 3.125rem;
+	/* 50px */
+	height: 3.125rem;
+	/* 50px */
+	border: 5px solid rgba(var(--accent-primary-rgb, 0, 123, 255), 0.2);
+	border-top-color: var(--accent-primary);
+	border-radius: 50%;
+	animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+	/* Weichere Animation */
+	box-shadow: none;
+}
+
+body[data-theme="dark"] .spinner {
+	border: 5px solid rgba(var(--accent-primary-rgb, 59, 130, 246), 0.3);
+	border-top-color: var(--accent-primary);
+}
+
+body[data-theme="high-contrast"] .spinner {
+	border: 5px solid var(--text-primary);
+	border-top-color: var(--accent-primary);
+}
+
+/* Folder Selector Overlay */
+.folder-selector-overlay {
+	position: fixed;
+	inset: 0;
+	background-color: rgba(
+		var(--shadow-color-rgb),
+		0.5
+	); /* Nutzt Schattenfarbe für Overlay */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000; /* Sicherstellen, dass es über allem liegt */
+	padding: 1rem;
+	backdrop-filter: blur(4px); /* Leichter Blur-Effekt */
+	transition: background-color var(--transition-base),
+		backdrop-filter var(--transition-base); /* Übergang für Blur */
+}
+
+/* Folder Selector Container (Das Modal-Fenster) */
+.folder-selector-container {
+	background-color: var(--bg-secondary);
+	border-radius: 0.75rem; /* 12px */
+	box-shadow: var(--shadow-lg);
+	width: fit-content;
+	min-width: 37.5rem; /* 600px */
+	max-width: 70vw;
+	max-height: 85vh;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden; /* Wichtig für abgerundete Ecken und innere Scrollbereiche */
+	border: 1px solid var(--border-primary);
+	transition: background-color var(--transition-base),
+		border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+/* Header des Folder Selectors */
+.folder-selector-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.8rem 1.2rem;
+	background-color: var(--bg-primary); /* Primärer Hintergrund im Header */
+	border-bottom: 1px solid var(--border-primary);
+	flex-shrink: 0; /* Verhindert Schrumpfen des Headers */
+	transition: background-color var(--transition-base),
+		border-color var(--transition-base);
+}
+
+.folder-selector-header h2 {
+	margin: 0;
+	font-size: 1.2rem; /* 19.2px */
+	font-weight: 600;
+	color: var(--text-primary);
+}
+
+/* Close Button im Header (nutzt globale Klasse, falls vorhanden) */
+/* Wenn 'close-button' keine globale Klasse ist, hier definieren */
+/*
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem; // Behält Größe bei
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: background-color var(--transition-base), color var(--transition-base);
+    line-height: 1;
+    width: 2rem; // 32px
+    height: 2rem; // 32px
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-button:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+*/
+
+/* Inhaltsbereich des Folder Selectors (mit dem Baum) */
+.folder-selector-content {
+	padding: 0.8rem 1.2rem;
+	overflow-y: auto; /* Scrollen des Bauminhalts */
+	background-color: var(--bg-primary); /* Primärer Hintergrund im Content */
+	flex-grow: 1; /* Nimmt verfügbaren Platz ein */
+	transition: background-color var(--transition-base);
+}
+
+/* Nachrichten (Ladezustand, Fehler, keine Ordner) */
+.folder-selector-message {
+	text-align: center;
+	color: var(--text-muted);
+	padding: 2rem 0;
+	font-style: italic;
+	font-size: 0.9375rem; /* 15px */
+}
+
+/* Fehlermeldung */
+.folder-selector-error {
+	color: var(--text-danger);
+	font-weight: 600;
+	margin-bottom: 0.75rem;
+	text-align: center;
+	padding: 1rem;
+	background-color: var(--bg-accent-red); /* Akzent Hintergrund für Fehler */
+	border: 1px solid var(--border-danger); /* Danger Border */
+	border-radius: 0.375rem; /* 6px */
+	transition: background-color var(--transition-base),
+		border-color var(--transition-base), color var(--transition-base);
+	font-size: 0.9375rem; /* 15px */
+}
+
+/* Basisstil für den Ordnerbaum (UL) */
+.folder-tree {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+/* Stil für verschachtelte Ordnerbäume (UL) */
+.folder-tree-nested {
+	margin-left: 1.125rem; /* 18px Einzug */
+	border-left: 1px solid var(--border-primary); /* Vertikale Verbindungslinie */
+	padding-left: 0.75rem; /* 12px Abstand zur Linie */
+	transition: border-color var(--transition-base);
+}
+
+/* Stil für einzelne Ordner-Items (LI) */
+.folder-item {
+	margin-bottom: 0.125rem; /* 2px Abstand zwischen Items */
+	background-color: transparent; /* Default transparent background */
+	border-radius: 0.25rem; /* 4px */
+	/* Remove background transition from here, handled by .folder-item-content */
+}
+
+/* Stil für das vorläufig ausgewählte Ordner-Item */
+/* Apply background and border directly to the content div when parent LI is pre-selected */
+.folder-item.pre-selected > .folder-item-content {
+	background-color: var(--bg-accent); /* Akzent Hintergrundfarbe */
+	border-color: var(--border-accent); /* Akzent Border */
+	/* Optional: Textfarbe ändern */
+	/* color: var(--accent-primary); */
+}
+
+/* Inhalt eines Ordner-Items (Div, das jetzt anklickbar ist) */
+.folder-item-content {
+	display: flex;
+	align-items: center;
+	padding: 0.4rem 0.5rem;
+	border-radius: 0.25rem; /* 4px */
+	cursor: pointer; /* Zeigt an, dass es anklickbar ist */
+	user-select: none; /* Verhindert Textauswahl bei Klick */
+	outline: none; /* Remove default outline */
+	border: 1px solid transparent; /* Add transparent border to prevent layout shift on pre-select */
+	/* Apply background and border transition here */
+	transition: background-color var(--transition-short),
+		border-color var(--transition-short);
+}
+
+/* Fokus-Stil für Barrierefreiheit */
+.folder-item-content:focus-visible {
+	outline: 2px solid var(--accent-primary); /* Outline für Barrierefreiheit */
+	outline-offset: 2px; /* Abstand zum Element */
+	/* background-color: var(--bg-tertiary); /* Hintergrund auch bei Fokus - kann mit pre-selected kollidieren */
+}
+
+/* Toggle-Icon (Pfeil oder Ordner-Icon) */
+.folder-item-toggle {
+	width: 1.25rem; /* 20px fester Platz */
+	text-align: center;
+	color: var(--text-muted); /* Gedämpfte Farbe */
+	margin-right: 0.3rem;
+	user-select: none;
+	font-size: 1rem; /* Basisgröße Icon */
+	transition: color var(--transition-short);
+	flex-shrink: 0; /* Verhindert Schrumpfen */
+	display: flex; /* Zentriert das Icon */
+	align-items: center;
+	justify-content: center;
+	/* cursor: pointer; /* Cursor für das Toggle-Icon - Klick ist jetzt auf der ganzen Zeile */
+}
+
+.folder-item-toggle:hover {
+	color: var(--text-primary); /* Farbe bei Hover */
+}
+
+/* Icon für den Ordner selbst (optional) */
+/* Entfernt, da Toggle-Icon jetzt auch Ordner-Icon ist */
+/*
+.folder-item-icon {
+    margin-right: 0.4rem;
+    color: var(--accent-primary);
+    flex-shrink: 0;
+}
+*/
+
+/* Ordnername */
+.folder-item-name {
+	flex-grow: 1; /* Nimmt verfügbaren Platz ein */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis; /* Punkte bei Überlauf */
+	padding-right: 0.5rem;
+	color: var(--text-primary);
+	font-weight: 400;
+	font-size: 0.9rem; /* 14.4px -> Beibehalten */
+}
+
+/* Entfernte Stile für den alten "Auswählen" Button */
+/*
+.folder-item-select-button { ... }
+.folder-item:hover .folder-item-select-button { ... }
+.folder-item-select-button:hover { ... }
+*/
+
+/* Footer für den Aktualisieren-Button und Auswählen-Button */
+.folder-selector-footer {
+	flex-shrink: 0; /* Verhindert Schrumpfen */
+	padding: 0.8rem 1.2rem;
+	background-color: var(--bg-primary); /* Primärer Hintergrund */
+	border-top: 1px solid var(--border-primary); /* Trennlinie */
+	display: flex;
+	justify-content: flex-end; /* Buttons rechts ausrichten */
+	gap: 0.8rem; /* Abstand zwischen den Buttons */
+	transition: background-color var(--transition-base),
+		border-color var(--transition-base);
+}
+
+/* Stil für die Buttons im Footer (Aktualisieren und Auswählen) */
+.folder-selector-button {
+	/* Beispiel: Kann durch globale .btn .btn-secondary ersetzt werden */
+	padding: 0.6rem 1rem;
+	font-size: 0.95rem;
+	border-radius: 0.375rem;
+	cursor: pointer;
+	transition: background-color var(--transition-base),
+		color var(--transition-base), border-color var(--transition-base);
+	border: 1px solid var(--border-primary); /* Border wie andere Buttons */
+	background-color: var(--bg-secondary); /* Sekundärer Hintergrund */
+	color: var(--text-primary); /* Primäre Textfarbe */
+	display: inline-flex; /* Für Icon und Text nebeneinander */
+	align-items: center;
+	gap: 0.5rem; /* Abstand zwischen Icon und Text */
+}
+
+.folder-selector-button:hover:not(:disabled) {
+	background-color: var(--bg-tertiary); /* Hintergrund bei Hover */
+	border-color: var(--border-secondary);
+}
+
+.folder-selector-button:disabled {
+	background-color: var(--accent-disabled); /* Gedämpfter Hintergrund */
+	color: var(--accent-disabled-text); /* Gedämpfter Text */
+	cursor: not-allowed;
+	border-color: var(--accent-disabled);
+}
+
+/* Spezifischer Stil für den "Auswählen" Button (Bestätigungs-Button) */
+.folder-selector-button.confirm-button {
+	background-color: var(--accent-primary); /* Akzent Farbe */
+	color: var(--text-on-accent); /* Textfarbe auf Akzent */
+	border-color: var(--accent-primary); /* Akzent Border */
+}
+
+.folder-selector-button.confirm-button:hover:not(:disabled) {
+	background-color: var(--accent-primary-hover); /* Akzent Farbe Hover */
+	border-color: var(--accent-primary-border-hover);
+}
+
+.folder-selector-button .animate-spin {
+	animation: spin 1s linear infinite; /* Animation für Lade-Icon */
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Tooltip */
+.path-tooltip {
+	visibility: hidden;
+	opacity: 0;
+	position: absolute;
+	background-color: rgba(var(--shadow-color-rgb), 0.85);
+	color: var(--accent-disabled-text);
+	padding: 0.375rem 0.625rem;
+	/* 6px 10px */
+	font-size: 1rem;
+	/* Basisgröße */
+	border-radius: 0.25rem;
+	/* 4px */
+	white-space: nowrap;
+	z-index: 10;
+	top: 100%;
+	left: 0.625rem;
+	/* 10px */
+	margin-bottom: 0.3125rem;
+	/* 5px */
+	transition: opacity var(--transition-base), visibility var(--transition-base);
+	pointer-events: none;
+}
+
+.input-with-tooltip:hover .path-tooltip,
+.base-dir-item:hover .path-tooltip {
+	visibility: visible;
+	opacity: 1;
+}
+
+/* File Card */
+.file-card {
+	display: flex;
+	align-items: center;
+	background: var(--bg-primary);
+	padding: 0.75rem 0.9375rem;
+	/* 12px 15px */
+	border-radius: 0.25rem;
+	/* 4px */
+	border: 1px solid var(--border-tertiary);
+	box-shadow: none;
+	transition: background-color var(--transition-base),
+		border-color var(--transition-base);
+	cursor: pointer;
+}
+
+.file-card:hover {
+	background: var(--bg-tertiary);
+	border-color: var(--border-secondary);
+}
+
+.file-icon {
+	margin-right: 0.75rem;
+	/* 12px */
+	font-size: 1.3rem;
+	/* Beibehalten */
+	color: var(--accent-primary);
+	flex-shrink: 0;
+}
+
+.file-info {
+	flex-grow: 1;
+	min-width: 0;
+}
+
+.file-name {
+	font-size: 1rem;
+	/* Basisgröße */
+	color: var(--text-primary);
+	margin: 0;
+	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.file-path {
+	font-size: 0.8rem;
+	/* 12.8px -> Beibehalten */
+	color: var(--text-muted);
+	margin-top: 0.125rem;
+	/* 2px */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Password Change */
+.password-change-field {
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	width: 100%;
+	max-width: 35rem;
+	padding: 2rem 3rem;
+	background: var(--bg-primary);
+	border-radius: 1rem;
+}
+
+.password-change-field .button-container {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.password-change-field .button-container button {
+	margin: 0 0.5rem 0 0.5rem;
+	width: 100%;
+}
+
+.old-files-container {
+	width: 100vw !important;
+}
+
+.old-files-list-container {
+	max-height: 39vh; /* Oder eine andere passende Höhe */
+	overflow-y: auto;
+	padding-right: 1rem; /* Platz für die Scrollbar */
+}
+
+.old-files-list-container ul {
+	padding-right: 5px; /* Zusätzlicher Platz, falls Scrollbar den Inhalt überdeckt */
+}
+
+.old-files-list-container li {
+	cursor: pointer;
+}
+
+.old-files-list-container li:hover {
+	background: var(--bg-tertiary) !important;
+}
+
+/* Custom Checkbox */
+input[type="checkbox"] {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: 1.25rem;
+	/* 20px */
+	height: 1.25rem;
+	/* 20px */
+	border-radius: 0.3125rem;
+	/* 5px */
+	background-color: var(--bg-primary);
+	border: 1.5px solid var(--border-secondary);
+	/* Angepasst */
+	position: relative;
+	cursor: pointer;
+	transition: all var(--transition-base);
+	flex-shrink: 0;
+	vertical-align: middle;
+}
+
+input[type="checkbox"]:checked {
+	background-color: var(--accent-primary);
+	border-color: var(--accent-primary);
+}
+
+input[type="checkbox"]::before {
+	content: "";
+	display: block;
+	width: 0.75rem;
+	/* 12px */
+	height: 0.75rem;
+	/* 12px */
+	background-color: var(--text-on-accent);
+	border-radius: 0.1875rem;
+	/* 3px */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) scale(0);
+	transition: transform var(--transition-base);
+	-webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"%3E%3Cpath fill-rule="evenodd" d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0L2.22 9.78a.75.75 0 0 1 1.06-1.06L6 10.94l7.22-7.22a.75.75 0 0 1 1.06 0z" clip-rule="evenodd" /%3E%3C/svg%3E');
+	mask-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"%3E%3Cpath fill-rule="evenodd" d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0L2.22 9.78a.75.75 0 0 1 1.06-1.06L6 10.94l7.22-7.22a.75.75 0 0 1 1.06 0z" clip-rule="evenodd" /%3E%3C/svg%3E');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+
+input[type="checkbox"]:checked::before {
+	transform: translate(-50%, -50%) scale(1);
+}
+
+input[type="checkbox"]:not(:checked):hover {
+	border-color: var(--accent-primary);
+	box-shadow: 0 0 8px rgba(var(--accent-primary-rgb, 0, 123, 255), 0.3);
+	transform: scale(1.05);
+}
+
+input[type="checkbox"]:checked:hover {
+	box-shadow: 0 0 8px rgba(var(--accent-primary-rgb, 0, 123, 255), 0.3);
+	transform: scale(1.05);
+}
+
+/* Fokus-Stil wird von global.css geerbt */

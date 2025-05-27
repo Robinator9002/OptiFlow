@@ -1,0 +1,166 @@
+/* src/style/Auth/AuthStyles.css */
+/* Allgemeine Stile für Login- und Registrierungsformulare */
+
+/* Container für die gesamte Auth-Seite (Login oder Register) */
+.auth-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center; /* Zentriert das Formular vertikal */
+	padding: var(--spacing-xl) var(--spacing-lg); /* Mehr Padding oben/unten */
+	min-height: calc(
+		100vh - var(--header-height, 60px)
+	); /* Höhe abzüglich Header */
+	box-sizing: border-box;
+	background-color: var(--background-color-page);
+}
+
+/* Das eigentliche Formular-Panel */
+.auth-form {
+	background-color: var(--background-color-content);
+	padding: var(--spacing-xl) var(--spacing-xxl);
+	border-radius: var(--border-radius-xl);
+	box-shadow: var(--box-shadow-lg);
+	width: 100%;
+	/* NEU: Deutlich breiter für Desktop-Ansicht */
+	max-width: 700px; /* Vorher 480px, kann bei Bedarf weiter angepasst werden */
+	border: 1px solid var(--border-color-light);
+}
+
+.auth-form h2 {
+	text-align: center;
+	margin-bottom: var(--spacing-xl); /* Etwas mehr Abstand */
+	color: var(--text-color-heading);
+	font-size: var(--font-size-xxl); /* Größerer Titel */
+	font-weight: 600;
+}
+
+.auth-form .form-description {
+	text-align: center;
+	color: var(--text-color-secondary);
+	margin-bottom: var(--spacing-lg);
+	font-size: var(--font-size-base); /* Etwas größer für bessere Lesbarkeit */
+}
+
+.auth-form fieldset {
+	border: 1px solid var(--border-color);
+	border-radius: var(--border-radius-md);
+	padding: var(--spacing-lg); /* Gleichmäßigeres Padding */
+	margin-bottom: var(--spacing-xl); /* Mehr Abstand zwischen Fieldsets */
+}
+
+.auth-form legend {
+	font-weight: 600;
+	color: var(--text-color-primary);
+	padding: 0 var(--spacing-md); /* Etwas mehr Padding */
+	font-size: var(--font-size-lg); /* Größere Legende */
+}
+
+/* Gruppe für Label + Input */
+.auth-form .form-group {
+	margin-bottom: var(--spacing-lg);
+}
+
+.auth-form label {
+	display: block;
+	margin-bottom: var(--spacing-sm); /* Etwas mehr Platz zum Input */
+	font-weight: 500;
+	color: var(--text-color-secondary);
+	font-size: var(--font-size-base); /* Größere Labels */
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="password"],
+.auth-form input[type="email"],
+.auth-form select {
+	width: 65%;
+	padding: var(--input-padding-y, 0.6rem) var(--input-padding-x, 0.8rem); /* Großzügigeres Padding für Inputs */
+	font-size: var(--font-size-base); /* Konsistente Schriftgröße */
+}
+
+.auth-form input[type="text"]:focus,
+.auth-form input[type="password"]:focus,
+.auth-form input[type="email"]:focus,
+.auth-form select:focus {
+	border-color: var(--primary-color-dark);
+	box-shadow: 0 0 0 0.25rem var(--primary-color-focus-shadow); /* Etwas größerer Fokus-Schatten */
+}
+
+/* Haupt-Aktionsbutton (Login/Registrieren) */
+.auth-form .auth-button {
+	width: 100%;
+	padding: var(--spacing-md) var(--spacing-lg); /* Button Padding angepasst */
+	font-size: var(--font-size-lg); /* Größerer Button-Text */
+	margin-top: var(--spacing-lg); /* Mehr Abstand nach oben */
+}
+
+/* Globale Fehlermeldung im Formular */
+.auth-form .error-message.global-error-message {
+	background-color: var(--danger-color-light-bg);
+	border: 1px solid var(--danger-color-border);
+	color: var(--danger-color-dark);
+	padding: var(--spacing-lg); /* Mehr Padding */
+	border-radius: var(--border-radius-md);
+	margin-bottom: var(--spacing-lg);
+	text-align: center;
+	font-size: var(--font-size-base); /* Größere Fehlermeldung */
+}
+
+/* Kleine Hilfstexte (z.B. Passwort-Hinweis) */
+.auth-form small.form-text {
+	font-size: var(--font-size-sm); /* Beibehalten oder leicht vergrößern */
+	color: var(--text-color-light);
+	display: block;
+	margin-top: var(--spacing-xs);
+	text-align: left;
+}
+.auth-form small.text-muted {
+	color: var(--text-color-light);
+}
+
+/* Stile für den Umschaltbereich zwischen Login und Registrierung */
+.auth-switch {
+	margin-top: var(--spacing-xl);
+	text-align: center;
+	font-size: var(--font-size-base); /* Etwas größer */
+	padding-top: var(--spacing-lg); /* Mehr Padding oben */
+	border-top: 1px solid var(--border-color-extra-light);
+}
+
+.auth-switch p {
+	margin-bottom: var(--spacing-sm); /* Etwas mehr Abstand */
+	color: var(--text-color-secondary);
+}
+
+/* Stile für den Umschalt-Button, der wie ein Link aussehen soll */
+.auth-switch .button-link {
+	background-color: transparent;
+	color: var(--primary-color);
+	border: none;
+	padding: var(--spacing-sm) var(--spacing-md); /* Etwas mehr Padding */
+	text-decoration: none;
+	font-weight: 500;
+	font-size: var(--font-size-base); /* Konsistente Größe */
+	cursor: pointer;
+	border-radius: var(--border-radius-sm);
+	transition: color var(--transition-speed),
+		background-color var(--transition-speed);
+}
+
+.auth-switch .button-link:hover,
+.auth-switch .button-link:focus {
+	color: var(--primary-color-dark);
+	background-color: var(--primary-color-hover-bg);
+}
+
+.auth-switch .button-link:focus {
+	outline: 2px solid var(--primary-color-focus-shadow);
+	outline-offset: 2px;
+}
+
+/* Styling für Fehlermeldungen direkt bei den Feldern (optional, falls implementiert) */
+.form-group .error-message {
+	color: var(--danger-color);
+	font-size: var(--font-size-sm); /* Etwas größer */
+	margin-top: var(--spacing-xs); /* Etwas mehr Abstand */
+}

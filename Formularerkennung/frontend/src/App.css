@@ -1,0 +1,255 @@
+/* src/styles/App.css */
+@import "./style/global.css";
+/* Für Form Editoren */
+@import "./style/Forms/FormEditor.css";
+@import "./style/Forms/FormsList.css";
+@import "./style/Forms/CustomerEditor.css";
+@import "./style/Forms/SubmissionManagement.css";
+/* Für Layout */
+@import "./style/Layout/ConfirmModal.css";
+@import "./style/Layout/SendFormModal.css";
+@import "./style/Layout/ToastNotifications.css";
+@import "./style/Layout/PasswordModals.css";
+/* Für Authentifizierung (Login und Registrierung) */
+@import "./style/Auth/AuthStyles.css";
+/* Für die Einstellungen */
+@import "./style/Settings/Settings.css";
+
+body {
+	padding: 0;
+}
+
+.app-shell {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	background-color: var(--background-color-page);
+}
+
+.app-header {
+	background-color: var(--background-color-header);
+	color: var(--text-color-primary);
+	padding: 0 var(--spacing-lg);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	box-shadow: var(--box-shadow-sm);
+	height: 70px;
+	border-bottom: 1px solid var(--border-color);
+	position: sticky;
+	top: 0;
+	z-index: var(--z-index-sticky);
+}
+
+.app-header .app-title {
+	font-size: var(--font-size-xl);
+	font-weight: 700;
+	margin: 0;
+	color: var(--text-color-heading);
+}
+.app-header .app-title-version {
+	font-size: var(--font-size-sm);
+	color: var(--text-color-secondary);
+	margin-left: var(--spacing-sm);
+	font-weight: 400;
+}
+
+/* User Actions wurden aus dem Header entfernt, sind jetzt in NavbarTop */
+
+/* Navbar (Top-Tab-Leiste) */
+.app-navbar-top {
+	background-color: var(--background-color-navbar);
+	padding: 0 var(--spacing-sm); /* Etwas weniger Padding, da User-Section Platz braucht */
+	border-bottom: 1px solid var(--border-color);
+	box-shadow: var(--box-shadow-sm);
+	display: flex;
+	justify-content: space-between; /* Tabs links, User-Section rechts */
+	align-items: center;
+	min-height: 3.25rem;
+	overflow-x: auto;
+}
+
+.app-navbar-top .navbar-tabs {
+	/* Neuer Container für die Tabs selbst */
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	height: 100%;
+	flex-grow: 1; /* Nimmt verfügbaren Platz, drückt User-Section nach rechts */
+}
+
+.app-navbar-top .navbar-tabs li {
+	display: flex;
+	align-items: center;
+}
+
+.app-navbar-top .navbar-tab-button {
+	/* Klasse für Tab-Buttons umbenannt/spezifiziert */
+	padding: 0 var(--spacing-lg);
+	height: 100%;
+	border: none;
+	border-bottom: 3px solid transparent;
+	background-color: transparent;
+	color: var(--text-color-secondary);
+	border-radius: 0;
+	cursor: pointer;
+	font-size: var(--font-size-base);
+	font-weight: 500;
+	transition: color 0.2s ease, border-color 0.2s ease,
+		background-color 0.2s ease;
+	white-space: nowrap;
+}
+
+.app-navbar-top .navbar-tab-button:hover {
+	color: var(--primary-color);
+	background-color: var(--primary-color-light);
+}
+
+.app-navbar-top .navbar-tab-button.active {
+	color: var(--primary-color);
+	font-weight: 600;
+	border-bottom-color: var(--primary-color);
+}
+
+/* User Section in der NavbarTop */
+.app-navbar-top .navbar-user-section {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-md);
+	padding-right: var(--spacing-md); /* Etwas Abstand zum rechten Rand */
+}
+
+.app-navbar-top .navbar-username {
+	font-size: var(--font-size-sm);
+	color: var(--text-color-secondary);
+	white-space: nowrap; /* Verhindert Umbruch des Namens */
+}
+.app-navbar-top .navbar-username strong {
+	/* Falls du den Namen fett machen willst */
+	color: var(--text-color-primary);
+}
+
+.app-navbar-top .navbar-logout-button {
+	font-size: var(--font-size-sm);
+	padding: var(--spacing-xs) var(--spacing-sm);
+	/* Die .button-danger Klasse aus global.css wird den Button rot machen */
+	/* Zusätzliche Anpassungen, falls nötig */
+	line-height: 1.2; /* Kleinere Zeilenhöhe für kompakten Button */
+}
+
+.app-content-area {
+	flex-grow: 1;
+	padding: var(--spacing-lg);
+	overflow-y: auto;
+	background-color: var(--background-color-content);
+}
+
+/* Login Container Styling (bleibt gleich) */
+.login-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	background-color: var(--background-color-page);
+	padding: var(--spacing-lg);
+}
+
+.login-form {
+	background-color: var(--background-color-content);
+	padding: var(--spacing-xl);
+	border-radius: var(--border-radius-lg);
+	box-shadow: var(--box-shadow-md);
+	width: 100%;
+	max-width: 420px;
+	text-align: center;
+	display: flex;
+	gap: 0.5rem;
+	flex-direction: column;
+}
+
+.login-form h2 {
+	margin-bottom: var(--spacing-lg);
+	color: var(--text-color-heading);
+	font-size: var(--font-size-xl);
+}
+.login-form div {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.login-form .error-message {
+	color: var(--danger-color);
+	background-color: rgba(220, 53, 69, 0.1);
+	border: 1px solid rgba(220, 53, 69, 0.3);
+	padding: var(--spacing-sm);
+	border-radius: var(--border-radius-md);
+	margin-top: var(--spacing-md);
+	font-size: var(--font-size-sm);
+}
+
+/* Placeholder-Styling (bleibt gleich) */
+.placeholder-component {
+	padding: var(--spacing-xl);
+	border: 1px solid var(--border-color);
+	border-radius: var(--border-radius-lg);
+	background-color: var(--background-color-content);
+	text-align: center;
+	min-height: 300px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	box-shadow: var(--box-shadow-sm);
+}
+.placeholder-component h2 {
+	color: var(--text-color-heading);
+	margin-bottom: var(--spacing-md);
+}
+.placeholder-component p {
+	color: var(--text-color-secondary);
+	max-width: 600px;
+}
+
+/* Modal Stile (bleiben gleich) */
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: var(--z-index-modal-backdrop);
+	padding: var(--spacing-md);
+}
+.modal-content {
+	background-color: var(--background-color-content);
+	padding: var(--spacing-lg);
+	border-radius: var(--border-radius-lg);
+	box-shadow: var(--box-shadow-lg);
+	width: 100%;
+	max-width: 500px;
+	z-index: var(--z-index-modal);
+}
+.modal-content h2 {
+	margin-top: 0;
+	margin-bottom: var(--spacing-lg);
+	color: var(--text-color-heading);
+	font-size: var(--font-size-lg);
+}
+.modal-content label {
+	display: block;
+	margin-bottom: var(--spacing-xs);
+	font-weight: 500;
+	color: var(--text-color-secondary);
+}
+.modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--spacing-md);
+	margin-top: var(--spacing-lg);
+}

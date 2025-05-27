@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dateimanager - Login System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Dateimanager - Login System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Übersicht</a></li>
+                <li><a href="einstellungen.html">Einstellungen</a></li>
+                <li class="active"><a href="login.html">Login-System</a></li>
+                <li><a href="neue-funktionen.html">Neue Funktionen</a></li>
+                <li><a href="technik.html">Technik</a></li>
+                <li><a href="roadmap.html">Roadmap</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="login-system-ubersicht">
+            <h2>Überblick</h2>
+            <p>
+                Das Login-System des Dateimanagers ist ein zentraler Bestandteil, der die Sicherheit und den Datenschutz
+                der Benutzerdaten gewährleistet.
+                Es regelt den Zugriff auf die Anwendung und stellt sicher, dass nur autorisierte Benutzer auf ihre
+                Dateien und Einstellungen zugreifen können.
+                Dieses Dokument beschreibt die verschiedenen Aspekte des Login-Systems, einschließlich der
+                Benutzerverwaltung, der Authentifizierung und der Sicherheitsmaßnahmen.
+            </p>
+        </section>
+
+        <section id="benutzerverwaltung">
+            <h2>Benutzerverwaltung</h2>
+            <p>
+                Der Dateimanager speichert Benutzerdaten lokal und sichert diese, um einen unbefugten Zugriff zu
+                verhindern. Zu den gespeicherten Benutzerdaten gehören unter anderem:
+            </p>
+            <ul>
+                <li><strong>Benutzername:</strong> Ein eindeutiger Identifikator für jeden Benutzer.</li>
+                <li><strong>Passwort-Hash:</strong> Ein kryptografischer Hash des Benutzerpassworts. Das eigentliche
+                    Passwort wird niemals im Klartext gespeichert.</li>
+                <li><strong>Einstellungen:</strong> Jeder Benutzer hat seine eigenen Einstellungen, die individuell
+                    angepasst werden können. Einige Einstellungen werden global geteilt, sind aber nur mit
+                    Administratorrechten änderbar.</li>
+                <li><strong>Administratorstatus:</strong> Ein Flag, das angibt, ob ein Benutzer Administratorrechte hat
+                    oder nicht. Administratoren haben zusätzliche Berechtigungen, wie z.B. das Verwalten anderer
+                    Benutzer.</li>
+            </ul>
+            <p>
+                Diese Daten werden lokal gespeichert, um die Abhängigkeit von externen Servern zu minimieren und die
+                Leistung zu verbessern. Es werden jedoch geeignete Sicherheitsmaßnahmen ergriffen, um die Integrität und
+                Vertraulichkeit der Daten zu gewährleisten.
+            </p>
+        </section>
+
+        <section id="authentifizierung">
+            <h2>Authentifizierung</h2>
+            <p>
+                Die Authentifizierung ist der Prozess, bei dem die Identität eines Benutzers überprüft wird. Der
+                Dateimanager verwendet ein mehrstufiges Verfahren, um eine sichere Authentifizierung zu gewährleisten:
+            </p>
+            <ul>
+                <li><strong>Login:</strong> Der Benutzer gibt seinen Benutzernamen und sein Passwort ein. Das Passwort
+                    wird dann in einen Hash umgewandelt und mit dem in der Datenbank gespeicherten Hash verglichen.</li>
+                <li><strong>Token-basierte Authentifizierung:</strong> Nach erfolgreichem Login erhält der Client ein
+                    temporäres Token zur Authentifizierung. Dieses Token wird bei nachfolgenden Anfragen an den Server
+                    gesendet, um die Identität des Benutzers zu bestätigen.</li>
+                <li><strong>Token-Ablauf:</strong> Die Token sind nur für einen begrenzten Zeitraum (24 Stunden) gültig.
+                    Nach Ablauf des Tokens muss sich der Benutzer erneut anmelden, um ein neues Token zu erhalten. Dies
+                    reduziert das Risiko, das mit gestohlenen oder kompromittierten Tokens verbunden ist.</li>
+            </ul>
+            <p>
+                Die Verwendung von Token anstelle von Benutzernamen und Passwörtern bei jeder Anfrage verbessert die
+                Sicherheit erheblich, da das Risiko eines Passwortdiebstahls minimiert wird.
+            </p>
+            <div class="img-container">
+                <img src="../img/login/login.png" alt="Login Feld" class="featire-image">
+                <p>Login Feld: Die Eingabefelder für Benutzername und Passwort.</p>
+            </div>
+        </section>
+
+        <section id="passwort-sicherheit">
+            <h2>Passwort-Sicherheit</h2>
+            <p>
+                Die Sicherheit der Benutzerpasswörter hat oberste Priorität. Der Dateimanager ergreift die folgenden
+                Maßnahmen, um Passwörter zu schützen:
+            </p>
+            <ul>
+                <li><strong>Passwort-Hashing:</strong> Passwörter werden nicht im Klartext gespeichert, sondern als
+                    60-stellige Hashes aus Sonderzeichen. Dies macht es praktisch unmöglich, das ursprüngliche Passwort
+                    aus dem Hash zu rekonstruieren.</li>
+                <li><strong>Passwort-Anforderungen:</strong> Bei der Erstellung eines Passworts muss der Benutzer
+                    bestimmte Anforderungen erfüllen, um ein starkes Passwort zu gewährleisten. Diese Anforderungen
+                    können die Mindestlänge, die Verwendung von Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen
+                    umfassen.</li>
+            </ul>
+            <p>
+                Durch die Verwendung von starken Hashing-Algorithmen und die Durchsetzung von Passwort-Anforderungen
+                wird das Risiko eines unbefugten Zugriffs aufgrund schwacher oder kompromittierter Passwörter minimiert.
+            </p>
+        </section>
+
+        <section id="sonderpasswort">
+            <h2>Sonderpasswort</h2>
+            <p>
+                Für den Fall, dass ein Administrator seinen Account verliert oder sein Passwort vergisst und keine
+                anderen Administrator-Accounts existieren,
+                ist ein Sonderpasswort eingebaut. Dieses Sonderpasswort ist lokal gesichert und ermöglicht den Zugriff
+                auf das System, um einen neuen
+                Administrator-Account zu erstellen oder das Passwort eines bestehenden Administrators zurückzusetzen.
+            </p>
+            <p>
+                Es ist äußerst wichtig, dieses Sonderpasswort sicher aufzubewahren und nur im Notfall zu verwenden. Der
+                Zugriff auf das System über das
+                Sonderpasswort sollte protokolliert und überwacht werden, um Missbrauch zu verhindern.
+            </p>
+        </section>
+
+        <section id="benutzer-settings">
+            <h2>Benutzer-Einstellungen</h2>
+            <p>
+                Jeder Benutzer hat seine eigenen Einstellungen, die individuell angepasst werden können. Einige
+                Einstellungen werden jedoch global geteilt
+                und können nur von Administratoren geändert werden. Dies ermöglicht eine flexible Anpassung des
+                Dateimanagers an die Bedürfnisse jedes
+                einzelnen Benutzers, während gleichzeitig eine einheitliche Konfiguration für bestimmte Parameter
+                gewährleistet wird.
+            </p>
+            <p>
+                Die Benutzer-Einstellungen umfassen unter anderem:
+            </p>
+            <ul>
+                <li><strong>Allgemeine Einstellungen:</strong> Einstellungen wie Farbschema, Schriftart und
+                    Schriftgröße, die das Erscheinungsbild des Dateimanagers beeinflussen.</li>
+                <li><strong>Sucheinstellungen:</strong> Einstellungen wie die maximale Anzahl der Suchergebnisse und die
+                    Anzeige von Relevanz-Scores.</li>
+                <li><strong>Scannereinstellungen:</strong> Einstellungen für den Scanvorgang.</li>
+                <li><strong>OCR Einstellungen:</strong> Einstellungen für die OCR-Verarbeitung.</li>
+                <li><strong>Datenbank-Verwaltung:</strong> Einstellungen für die Datenbankverwaltung.</li>
+                <li><strong>Systemeinstellungen:</strong> Einstellungen für zeitgesteuerte Events und das Herunterfahren
+                    des Servers.</li>
+            </ul>
+        </section>
+
+        <section id="benutzerrollen">
+            <h2>Benutzerrollen</h2>
+            <p>
+                Der Dateimanager unterscheidet zwischen zwei Benutzerrollen:
+            </p>
+            <ul>
+                <li><strong>Normaler Benutzer:</strong> Ein Benutzer mit Standardberechtigungen. Ein normaler Benutzer
+                    kann auf seine eigenen Dateien und Einstellungen zugreifen und die ihm zugewiesenen Aufgaben
+                    ausführen.</li>
+                <li><strong>Administrator:</strong> Ein Benutzer mit erweiterten Berechtigungen. Ein Administrator kann
+                    alle Funktionen des Dateimanagers nutzen, einschließlich der Verwaltung anderer Benutzer, der
+                    Konfiguration globaler Einstellungen und der Durchführung von Systemwartungsaufgaben.</li>
+            </ul>
+            <p>
+                Der Administratorstatus eines Benutzers wird lokal gespeichert und kann bei Bedarf geändert werden. Ein
+                Administrator kann andere Benutzer zu Administratoren befördern oder deren Administratorstatus
+                entziehen.
+            </p>
+            <div class="img-container">
+                <img src="../img/login/admin-view.png" alt="Administrator Ansicht" class="feature-image">
+                <p>Administrator Ansicht: Die Ansicht des Dateimanagers für Benutzer mit Administratorrechten.</p>
+            </div>
+            <div class="img-container">
+                <img src="../img/login/non-admin-view.png" alt="Normale Benutzer Ansicht" class="feature-image">
+                <p>Normale Benutzer Ansicht: Die Ansicht des Dateimanagers für Benutzer mit Standardberechtigungen.</p>
+            </div>
+        </section>
+
+        <section id="registrierung">
+            <h2>Registrierung</h2>
+            <p>
+                Die Registrierung neuer Benutzer ist ein geschützter Prozess, der erfordert, dass der Benutzer, der die
+                Registrierung durchführt,
+                Administratorrechte besitzt. Dies dient dazu, unbefugte Benutzerkonten zu verhindern und die Sicherheit
+                des Systems zu gewährleisten.
+            </p>
+            <p>
+                Bei der Registrierung eines neuen Benutzers müssen die folgenden Informationen angegeben werden:
+            </p>
+            <ul>
+                <li><strong>Benutzername:</strong> Ein eindeutiger Identifikator für den neuen Benutzer.</li>
+                <li><strong>Passwort:</strong> Das Passwort für den neuen Benutzer. Es muss den definierten
+                    Passwort-Anforderungen entsprechen.</li>
+                <li><strong>Administratorstatus:</strong> Ein Flag, das angibt, ob der neue Benutzer Administratorrechte
+                    haben soll oder nicht. Standardmäßig wird ein neuer Benutzer ohne Administratorrechte erstellt.</li>
+            </ul>
+            <p>
+                Nur ein Administrator kann diese Informationen eingeben und den neuen Benutzer registrieren. Dies stellt
+                sicher, dass die Benutzerverwaltung
+                in einer kontrollierten und sicheren Umgebung erfolgt.
+            </p>
+            <div class="img-container">
+                <img src="../img/login/register.png" alt="Registrierungs-Feld" class="feature-image">
+                <p>Registrierungs-Feld: Die Eingabefelder für die Registrierung eines neuen Benutzers durch einen
+                    Administrator.</p>
+            </div>
+        </section>
+        <section id="passwort-zurücksetzen">
+            <h2>Passwort zurücksetzen</h2>
+            <p>
+                Administratoren haben die Möglichkeit, das Passwort eines Benutzers zurückzusetzen. Dies ist nützlich,
+                wenn ein Benutzer sein Passwort vergessen hat oder aus anderen Gründen nicht auf sein Konto zugreifen
+                kann.
+            </p>
+            <p>
+                Beim Zurücksetzen des Passworts wird ein temporäres Passwort generiert, das dem Benutzer mitgeteilt
+                wird. Der Benutzer muss sich dann mit diesem temporären Passwort anmelden und ein neues, eigenes
+                Passwort wählen.
+            </p>
+            <div class="img-container">
+                <img src="../img/password-reset.png" alt="Passwort Zurücksetzen" class="feature-image">
+                <p>Passwort zurücksetzen: Die Ansicht während des Passwortzurücksetzungsprozesses.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Robin Schumacher</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,338 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    /* Moderne, gut lesbare Sans-Serif */
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    /* Sehr helles Grau */
+    color: #333;
+    font-size: 18px;
+    line-height: 1.7;
+}
+
+header {
+    background-color: #fff;
+    color: #2c3e50;
+    /* Dunkles Blaugrau */
+    padding: 2em 0;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 2.5em;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5em;
+    display: flex;
+    justify-content: center;
+}
+
+nav li {
+    margin: 0 1.5em;
+}
+
+nav a {
+    color: #7f8c8d;
+    /* Mittleres Graublau */
+    text-decoration: none;
+    padding: 0.75em 1.5em;
+    border-radius: 25px;
+    /* Stark abgerundete Ecken */
+    transition: color 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+    /*Sanfte Übergänge*/
+    font-size: 1.1em;
+    font-weight: 400;
+}
+
+nav a:hover {
+    color: #fff;
+    background-color: #3498db;
+    /* Helleres Blau */
+    transform: translateY(-2px);
+}
+
+.active a {
+    color: #fff;
+    background-color: #3498db;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.active a:hover {
+    background-color: #2980b9;
+}
+
+main {
+    padding: 3em;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+main ul li {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0.75em;
+    text-indent: 0;
+}
+
+main ul ul {
+    padding-left: 2em;
+    list-style-type: disc;
+}
+
+main ul li::before {
+    content: none;
+}
+
+.link-list li::before {
+    content: '•';
+    color: #3498db;
+    margin-right: 0.75em;
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+
+main a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    font-weight: 500;
+}
+
+main a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+p {
+    max-width: 100%;
+    margin-bottom: 1.5em;
+    color: #555;
+    font-size: 1.1em;
+    line-height: 1.7;
+}
+
+section {
+    margin-bottom: 3em;
+}
+
+h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.75em;
+    margin-bottom: 2em;
+    font-size: 2.5em;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+h3 {
+    color: #34495e;
+    margin-bottom: 1em;
+    font-size: 1.5em;
+    font-weight: 500;
+}
+
+img {
+    max-width: 100%;
+    max-height: 35em;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 2em;
+}
+
+img:hover {
+    transform: translateY(-4px);
+}
+
+.img-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 2em;
+    margin-bottom: 2em;
+}
+
+.img-container img {
+    max-width: 100%;
+    max-height: 35em;
+    border-radius: 10px;
+    margin-right: 0;
+}
+
+.img-container p {
+    font-size: 1.1em;
+    color: #666;
+    line-height: 1.7;
+}
+
+@media (min-width: 768px) {
+    .img-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .img-container img {
+        max-width: 45%;
+        margin-right: 2em;
+    }
+}
+
+.requirements-list li {
+    position: relative;
+    padding-left: 2.5em;
+    margin-bottom: 1em;
+}
+
+.requirements-list li::before {
+    content: '❗';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    font-size: 1.2em;
+    color: #e74c3c;
+}
+
+/* Roadmap-spezifisches CSS */
+
+#roadmap h3 {
+    color: #3498db;
+    margin-bottom: 1em;
+}
+
+#roadmap ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#roadmap li {
+    margin-bottom: 2em;
+    padding-left: 0;
+}
+
+#roadmap li p {
+    margin-top: 1em;
+    font-size: 1.1em;
+    color: #666;
+    line-height: 1.7;
+}
+
+#roadmap section {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 3em;
+    margin-bottom: 3em;
+}
+
+#roadmap section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Zusätzliche Stile für die Roadmap */
+
+#roadmap h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.75em;
+    margin-bottom: 2em;
+    font-size: 2.5em;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+#roadmap ul {
+    list-style-type: disc;
+    padding-left: 2em;
+}
+
+#roadmap li {
+    margin-bottom: 2em;
+    position: relative;
+}
+
+#roadmap li strong {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.2em;
+}
+
+#roadmap li p {
+    margin-top: 1em;
+    font-size: 1.1em;
+    color: #666;
+    line-height: 1.7;
+}
+
+#roadmap section {
+    margin-bottom: 3em;
+}
+
+#roadmap section:last-child {
+    margin-bottom: 0;
+}
+
+/* Stil für abgeschlossene Funktionen */
+.abgeschlossen-list li::before {
+    content: '✔';
+    color: green;
+    font-size: 1.2em;
+    margin-right: 0.75em;
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    font-weight: bold;
+}
+
+.abgeschlossen-list li {
+    position: relative;
+    padding-left: 2.5em;
+}
+
+/* Stil für zukünftige Funktionen */
+.zukuenftig-list li::before {
+    content: '⏳';
+    color: #f1c40f;
+    font-size: 1.2em;
+    margin-right: 0.75em;
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+}
+
+.zukuenftig-list li {
+    position: relative;
+    padding-left: 2.5em;
+}
+
+footer {
+    background-color: #2c3e50;
+    color: #fff;
+    text-align: center;
+    padding: 2em;
+    margin-top: 3em;
+    border-top: 1px solid #34495e;
+}
+
+footer p {
+    font-size: 0.9em;
+    color: #95a5a6;
+}
+
+.feature-image {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.feature-image:hover {
+    transform: translateY(-4px);
+}

@@ -1,0 +1,558 @@
+/* Verbessertes CSS für die DeDuping Komponente */
+
+.dedupe-container {
+    /* Base padding and layout from settings-section */
+    padding: 20px;
+    background-color: var(--bg-primary);
+    /* Nutze primäre Hintergrundfarbe */
+    border-radius: 8px;
+    box-shadow: var(--shadow-elevation-1);
+    /* Nutze deine Schattenvariable */
+    width: 100%;
+    /* Volle Breite */
+    color: var(--text-primary);
+    /* Nutze primäre Textfarbe */
+    font-family: var(--font-sans);
+    /* Nutze deine Schriftart */
+    line-height: 1.6;
+    /* Verbesserte Lesbarkeit */
+    height: 70vh;
+}
+
+.dedupe-container h2 {
+    color: var(--text-primary);
+    /* Konsistente Überschriftenfarbe */
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-secondary);
+    /* Trennlinie */
+    padding-bottom: 10px;
+    font-size: calc(1.5rem * var(--font-size-multiplier));
+    /* Skaliere mit Multiplier */
+}
+
+.deduping-results-container {
+    display: flex;
+    gap: 1.5rem;
+    /* Etwas mehr Abstand zwischen den Spalten */
+    flex-wrap: wrap;
+    /* Erlaube das Stapeln auf kleineren Bildschirmen */
+    align-items: flex-start;
+    /* Elemente oben ausrichten */
+}
+
+/* Standardmäßig (für kleine Bildschirme oder wenn umgebrochen wird) volle Breite */
+.deduping-results-container .dedupe-groups-list-container,
+.deduping-results-container .filter-controls {
+    width: 100%;
+    box-sizing: border-box;
+    /* Stellt sicher, dass Padding zur Breite gehört */
+}
+
+/* Media Query für größere Bildschirme: Side-by-Side Layout */
+@media (min-width: 992px) {
+
+    /* Du kannst diesen Breakpoint anpassen */
+    .deduping-results-container .dedupe-groups-list-container {
+        flex: 1;
+        /* Nimm den restlichen verfügbaren Platz ein (flex-grow: 1, flex-shrink: 1, flex-basis: 0) */
+        width: auto;
+        /* Überschreibe die 100% für kleine Bildschirme */
+    }
+
+    .deduping-results-container .filter-controls {
+        flex: 0 0 300px;
+        /* Feste Breite von 300px, nicht wachsen oder schrumpfen */
+        width: auto;
+        /* Überschreibe die 100% für kleine Bildschirme */
+        /* Die margin-bottom: 20px aus der .filter-controls Regel gilt hier weiterhin,
+           spielt aber keine Rolle mehr für den Abstand zur Liste, da gap das übernimmt.
+           Sie sorgt nur für Abstand zum Element *nach* dem Container. */
+    }
+}
+
+
+.action-button-group {
+    /* Layout für Buttons wie Find/Load/Save */
+    display: flex;
+    gap: 10px;
+    /* Abstand zwischen Buttons */
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    /* Erlaube Umbruch auf kleinen Bildschirmen */
+}
+
+.action-button-group button:hover:not(:disabled) {
+    background-color: var(--accent-primary-hover);
+    /* Hover-Farbe */
+    border-color: var(--accent-primary-border-hover);
+    /* Hover-Border-Farbe */
+    box-shadow: var(--shadow-md);
+    /* Stärkerer Schatten bei Hover */
+}
+
+.action-button-group button:focus-visible {
+    outline: none;
+    /* Standard-Outline entfernen */
+    box-shadow: var(--shadow-focus-ring);
+    /* Fokus-Ring Schatten */
+    border-color: var(--accent-primary-border-hover);
+}
+
+.action-button-group button:disabled {
+    opacity: 0.6;
+    /* Weniger opak, wenn disabled */
+    cursor: not-allowed;
+    background-color: var(--accent-disabled);
+    /* Disabled Hintergrund */
+    color: var(--accent-disabled-text);
+    /* Disabled Textfarbe */
+    border-color: var(--accent-disabled);
+    /* Disabled Border */
+    box-shadow: none;
+    /* Kein Schatten, wenn disabled */
+}
+
+.filter-controls {
+    /* Layout für search, sort, filter dropdowns */
+    display: flex;
+    flex-direction: column;
+    /* Elemente innerhalb der Controls untereinander */
+    gap: 15px;
+    /* Etwas mehr Abstand */
+    align-items: center;
+    /* Elemente innerhalb der Controls zentrieren */
+    margin-bottom: 20px;
+    /* Abstand nach unten (relevant, wenn gestapelt) */
+    padding: 15px;
+    /* Mehr Padding */
+    background-color: var(--bg-tertiary);
+    /* Heller Hintergrund für Controls */
+    border-radius: 6px;
+    /* Etwas mehr abgerundete Ecken */
+    border: 1px solid var(--border-tertiary);
+    /* flex-wrap: wrap; /* Diese Regel ist hier unnötig, da direction column ist */
+    box-shadow: var(--shadow-sm);
+    /* Leichter Schatten */
+}
+
+.filter-controls>div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Abstand zwischen Label und Input/Select */
+    width: 25vw;
+    /* Child divs within controls nehmen volle Breite des Controls-Containers ein */
+}
+
+.filter-controls label {
+    font-weight: 600;
+    /* Etwas fetter */
+    color: var(--text-secondary);
+    /* Sekundäre Textfarbe */
+    white-space: nowrap;
+    /* Verhindere Umbruch des Labels */
+    font-size: calc(0.9rem * var(--font-size-multiplier));
+    /* Skaliere Schriftgröße */
+}
+
+.filter-controls input[type="text"],
+.filter-controls select {
+    padding: 8px 12px;
+    /* Mehr Padding */
+    border: 1px solid var(--border-secondary);
+    /* Sekundäre Border */
+    border-radius: 4px;
+    /* Abgerundete Ecken */
+    background-color: var(--bg-primary);
+    /* Primärer Hintergrund */
+    color: var(--text-primary);
+    /* Primäre Textfarbe */
+    font-size: calc(1rem * var(--font-size-multiplier));
+    /* Skaliere Schriftgröße */
+    transition: border-color var(--transition-short) ease, box-shadow var(--transition-short) ease;
+    /* Sanfte Übergänge */
+    flex-grow: 1;
+    /* Input/Select füllen den restlichen Platz in ihrem div aus */
+}
+
+.filter-controls input[type="text"]:focus,
+.filter-controls select:focus {
+    outline: none;
+    /* Standard-Outline entfernen */
+    border-color: var(--border-accent-hover);
+    /* Accent-Farbe bei Fokus */
+    box-shadow: var(--shadow-focus-ring);
+    /* Fokus-Ring Schatten */
+}
+
+
+.filter-controls input[type="text"]:disabled,
+.filter-controls select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--bg-secondary);
+    /* Disabled Hintergrund */
+    color: var(--text-muted);
+    /* Gedämpfte Textfarbe */
+    border-color: var(--border-tertiary);
+    /* Disabled Border */
+    box-shadow: none;
+}
+
+.dedupe-groups-list-container h3 {
+    color: var(--text-primary);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: calc(1.2rem * var(--font-size-multiplier));
+    /* Skaliere Schriftgröße */
+    border-bottom: 1px solid var(--border-tertiary);
+    /* Leichte Trennlinie */
+    padding-bottom: 8px;
+}
+
+.dedupe-groups-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 40vh;
+    /* !important ist selten ideal, aber manchmal nötig */
+    overflow-y: auto;
+}
+
+.dedupe-group-item {
+    border: 1px solid var(--border-tertiary);
+    border-radius: 6px;
+    /* Etwas mehr abgerundet */
+    padding: 15px;
+    /* Mehr Padding */
+    margin-bottom: 15px;
+    /* Mehr Abstand zwischen Gruppen */
+    background-color: var(--bg-secondary);
+    /* Sekundärer Hintergrund */
+    cursor: pointer;
+    transition: background-color var(--transition-short) ease, box-shadow var(--transition-short) ease;
+    /* Sanfte Übergänge */
+    display: flex;
+    flex-direction: column;
+    /* Staple Header und Dateiliste */
+    box-shadow: var(--shadow-sm);
+    /* Leichter Schatten */
+}
+
+.dedupe-group-item:hover:not(.expanded) {
+    background-color: var(--bg-tertiary);
+    /* Hover-Hintergrund */
+    box-shadow: var(--shadow-md);
+    /* Stärkerer Schatten bei Hover */
+}
+
+.dedupe-group-item.expanded {
+    background-color: var(--bg-tertiary) !important;
+    /* Anderer Hintergrund, wenn aufgeklappt */
+    box-shadow: var(--shadow-md);
+    /* Schatten auch, wenn aufgeklappt */
+    cursor: default;
+    /* Cursor ändern, wenn aufgeklappt */
+}
+
+.dedupe-group-item>div:first-child {
+    /* Styling für den Gruppen-Header (enthält Summary und Actions) */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    /* Erlaube Umbruch im Header */
+    gap: 10px;
+    /* Abstand zwischen Summary und Actions */
+}
+
+.dedupe-group-item .group-summary {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin-right: 10px;
+    gap: 10px;
+    /* Abstand zwischen Icon, Titel und Details */
+    flex-wrap: wrap;
+    /* Erlaube Umbruch im Summary */
+}
+
+.dedupe-group-item .group-summary .group-title {
+    font-weight: bold;
+    color: var(--text-primary);
+    font-size: calc(1rem * var(--font-size-multiplier));
+}
+
+.dedupe-group-item .group-summary .group-details {
+    font-size: calc(0.9rem * var(--font-size-multiplier));
+    color: var(--text-muted);
+}
+
+
+.dedupe-group-item .group-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Abstand zwischen Buttons/Icons */
+}
+
+
+.dedupe-group-item .dedupe-group-files {
+    list-style: none;
+    padding: 15px 0 0 0;
+    /* Mehr Padding oben */
+    margin: 15px 0 0 0;
+    /* Mehr Margin oben */
+    border-top: 1px solid var(--border-secondary);
+    /* Stärkere Trennlinie */
+}
+
+.dedupe-group-item .dedupe-group-files li {
+    padding: 10px;
+    /* Mehr Padding */
+    margin-bottom: 8px;
+    /* Mehr Abstand */
+    background-color: var(--bg-primary) !important;
+    /* Dateielement Hintergrund */
+    border-radius: 4px;
+    /* Abgerundete Ecken */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color var(--transition-short) ease, box-shadow var(--transition-short) ease;
+    /* Sanfte Übergänge */
+    box-shadow: var(--shadow-sm);
+    /* Leichter Schatten */
+    flex-wrap: wrap;
+    /* Erlaube Umbruch bei Dateielementen */
+    gap: 10px;
+    /* Abstand zwischen Dateiinfo und Actions */
+}
+
+.dedupe-group-item .dedupe-group-files li:hover {
+    background-color: var(--bg-tertiary) !important;
+    /* Dateielement Hover-Hintergrund */
+    box-shadow: var(--shadow-md);
+    /* Stärkerer Schatten bei Hover */
+}
+
+.dedupe-group-item .dedupe-group-files li:last-child {
+    margin-bottom: 0;
+    /* Kein Bottom Margin für das letzte Dateielement */
+}
+
+.dedupe-group-item .file-info {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin-right: 10px;
+    gap: 8px;
+    /* Abstand zwischen Icon, Name und Pfad */
+    flex-wrap: wrap;
+    /* Erlaube Umbruch bei Dateiinfos */
+}
+
+.dedupe-group-item .file-info .file-name {
+    font-weight: normal;
+    color: var(--text-primary);
+    font-size: calc(1rem * var(--font-size-multiplier));
+    word-break: break-word;
+    /* Lange Dateinamen umbrechen */
+}
+
+.dedupe-group-item .file-info .file-path {
+    font-size: calc(0.8rem * var(--font-size-multiplier));
+    color: var(--text-secondary);
+    word-break: break-all;
+    /* Pfad aggressiver umbrechen */
+}
+
+.dedupe-group-item .file-details {
+    font-size: calc(0.8rem * var(--font-size-multiplier));
+    color: var(--text-muted);
+    white-space: nowrap;
+    /* Details nicht umbrechen */
+}
+
+/* Style for delete buttons within group/file items */
+.dedupe-group-item button.disfirm,
+.dedupe-group-item .dedupe-group-files li button.disfirm-small {
+    padding: 6px 12px;
+    /* Etwas mehr Padding */
+    border: 1px solid var(--border-danger);
+    /* Danger Border */
+    border-radius: 4px;
+    /* Abgerundete Ecken */
+    cursor: pointer;
+    background-color: var(--accent-danger);
+    /* Danger Hintergrund */
+    color: var(--text-on-accent);
+    /* Textfarbe für Danger Hintergrund */
+    transition: background-color var(--transition-short) ease, border-color var(--transition-short) ease, box-shadow var(--transition-short) ease;
+    /* Sanfte Übergänge */
+    font-size: calc(0.85rem * var(--font-size-multiplier));
+    /* Skaliere Schriftgröße */
+    white-space: nowrap;
+    /* Verhindere Textumbruch */
+    box-shadow: var(--shadow-sm);
+    /* Leichter Schatten */
+    display: inline-flex;
+    /* Flex für Zentrierung/Icon */
+    align-items: center;
+    gap: 4px;
+    /* Abstand zwischen Text und Icon, falls vorhanden */
+}
+
+.dedupe-group-item .dedupe-group-files li button.disfirm-small {
+    padding: 4px 8px;
+    /* Kleineres Padding für Datei-Buttons */
+    font-size: calc(0.8rem * var(--font-size-multiplier));
+}
+
+
+.dedupe-group-item button.disfirm:hover:not(:disabled),
+.dedupe-group-item .dedupe-group-files li button.disfirm-small:hover:not(:disabled) {
+    background-color: var(--accent-danger-hover);
+    /* Danger Hover-Hintergrund */
+    border-color: var(--accent-danger-border-hover);
+    /* Danger Hover-Border */
+    box-shadow: var(--shadow-md);
+    /* Stärkerer Schatten bei Hover */
+}
+
+.dedupe-group-item button.disfirm:focus-visible,
+.dedupe-group-item .dedupe-group-files li button.disfirm-small:focus-visible {
+    outline: none;
+    /* Standard-Outline entfernen */
+    box-shadow: var(--shadow-focus-ring-danger);
+    /* Fokus-Ring Schatten (Danger) */
+    border-color: var(--accent-danger-border-hover);
+}
+
+
+.dedupe-group-item button.disfirm:disabled,
+.dedupe-group-item .dedupe-group-files li button.disfirm-small:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--accent-disabled);
+    /* Disabled Hintergrund */
+    color: var(--accent-disabled-text);
+    /* Disabled Textfarbe */
+    border-color: var(--accent-disabled);
+    /* Disabled Border */
+    box-shadow: none;
+}
+
+
+/* Spinner container and spinner (assuming you have these styles globally) */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.spinner {
+    border: 4px solid var(--border-tertiary);
+    border-top: 4px solid var(--accent-primary);
+    /* Nutze Accent-Farbe für Spinner */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.folder-selector-error {
+    color: var(--text-danger);
+    /* Nutze Danger Textfarbe */
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: calc(1rem * var(--font-size-multiplier));
+    font-weight: bold;
+}
+
+/* Icons innerhalb der Liste */
+.dedupe-group-item .group-summary svg,
+.dedupe-group-item .file-info svg {
+    color: var(--text-secondary);
+    /* Gedämpfte Farbe für Icons */
+    flex-shrink: 0;
+    /* Verhindert Schrumpfen der Icons */
+}
+
+/* --- Anpassungen für den neuen Suchen Button und X Button --- */
+.filter-controls .action-button {
+    /* Passe das Styling des neuen Suchen-Buttons an */
+    /* Verwende ähnliche Stile wie die anderen Action-Buttons, aber vielleicht kleiner */
+    padding: 8px 12px;
+    /* Beispiel: Etwas kleiner als die Hauptbuttons */
+    border: 1px solid var(--border-secondary);
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: var(--bg-primary);
+    /* Oder eine andere passende Farbe */
+    color: var(--text-primary);
+    transition: background-color var(--transition-short) ease, border-color var(--transition-short) ease, box-shadow var(--transition-short) ease;
+    font-size: calc(1rem * var(--font-size-multiplier));
+    white-space: nowrap;
+    box-shadow: var(--shadow-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.filter-controls .action-button:hover:not(:disabled) {
+    background-color: var(--bg-hover);
+    border-color: var(--border-accent-hover);
+    box-shadow: var(--shadow-md);
+}
+
+.filter-controls .action-button:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus-ring);
+    border-color: var(--border-accent-hover);
+}
+
+.filter-controls .action-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--bg-secondary);
+    color: var(--text-muted);
+    border-color: var(--border-tertiary);
+    box-shadow: none;
+}
+
+/* Spezifisches Styling für den X Button, wenn nötig */
+.filter-controls .action-button.clear-search-button {
+    padding: 8px;
+    /* Quadratisches Padding */
+    min-width: auto;
+    /* Mindestbreite entfernen */
+    /* Weitere spezifische Stile, falls gewünscht */
+}
+
+.clear-dedupe-search-button {
+    position: absolute;
+    left: 23%;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    color: var(--accent-danger) !important;
+}
+
+.clear-dedupe-search-button:hover {
+    color: var(--accent-danger-hover) !important;
+}

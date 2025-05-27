@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dateimanager - Neue Funktionen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Dateimanager - Neue Funktionen</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Übersicht</a></li>
+                <li><a href="einstellungen.html">Einstellungen</a></li>
+                <li><a href="login.html">Login-System</a></li>
+                <li class="active"><a href="neue-funktionen.html">Neue Funktionen</a></li>
+                <li><a href="technik.html">Technik</a></li>
+                <li><a href="roadmap.html">Roadmap</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="neue-funktionen-ubersicht">
+            <h2>Überblick</h2>
+            <p>
+                In diesem Dokument werden die neuen Funktionen des Dateimanagers detailliert beschrieben.
+                Ich habe diese Funktionen entwickelt, um die Benutzererfahrung zu verbessern und Ihnen mehr Kontrolle
+                und Flexibilität zu bieten.
+                Ich bin zuversichtlich, dass diese Erweiterungen Ihren Arbeitsablauf optimieren und Ihnen helfen
+                werden.
+            </p>
+        </section>
+
+        <section id="hauptfunktionen">
+            <h2>Hauptfunktionen</h2>
+            <p>
+                Die folgenden Funktionen sind das Herzstück des Dateimanagers und bieten einen enormen Mehrwert
+                gegenüber dem Standard. Diese Funktionen
+                wurden entwickelt, um die Benutzerfreundlichkeit zu erhöhen, die Produktivität zu steigern und die
+                Sicherheit Ihrer Daten zu gewährleisten.
+                Jede Funktion wird im Detail erläutert, um Ihnen ein umfassendes Verständnis ihrer Möglichkeiten und
+                Vorteile zu vermitteln.
+            </p>
+            <ul class="feature-list">
+                <li><strong>Eigener Ordner-Selektor:</strong> Ein neu entwickelter Ordner-Selektor ermöglicht es dem
+                    Benutzer, bequem einen Zielordner
+                    auszuwählen. Diese Funktion verbessert die Benutzerfreundlichkeit, da sie eine intuitive
+                    und effiziente Auswahl von
+                    Speicherorten ermöglicht.</li>
+                <li><strong>PDF zu OCR Umwandlung:</strong> Der Dateimanager bietet die Möglichkeit, PDFs in das
+                    OCR-Format umzuwandeln. Diese
+                    Funktion kann entweder während des Scanvorgangs oder separat über einen eigenen Tab ausgeführt
+                    werden. Die OCR-Umwandlung
+                    ermöglicht es, Text aus gescannten Dokumenten zu extrahieren und bearbeitbar zu machen.
+                </li>
+                <li><strong>Relevanz-Scores für das Suchsystem:</strong> Das Suchsystem verwendet nun Relevanz-Scores,
+                    um die Suchergebnisse
+                    besser zu ordnen. Diese Funktion erleichtert es dem Benutzer, die relevantesten Dateien schnell zu
+                    finden. Die Relevanz-Scores
+                    werden basierend auf verschiedenen Faktoren berechnet, wie z.B. Übereinstimmungen im Dateinamen und
+                    im Inhalt.</li>
+                <li><strong>Login System:</strong> Ein robustes Login-System wurde implementiert, um die Sicherheit und
+                    den Datenschutz der Benutzerdaten
+                    zu gewährleisten. Dieses System wird in einer separaten HTML-Datei detailliert dokumentiert.</li>
+                <li><strong>Event System:</strong> Ein Event-System ermöglicht die automatische Ausführung von Aufgaben
+                    zu bestimmten, dynamisch
+                    veränderbaren Uhrzeiten. Diese Funktion automatisiert wiederkehrende Aufgaben und verbessert die
+                    Effizienz des Dateimanagers.</li>
+                <li><strong>Einstellungen:</strong> Die Einstellungen des Dateimanagers sind nun in einem eigenen Tab
+                    übersichtlich zusammengefasst
+                    und detailliert dokumentiert. Benutzer können verschiedene Aspekte des Dateimanagers an ihre
+                    Bedürfnisse anpassen.</li>
+                <li><strong>Deduping System (in Wartung):</strong> Das System zum Entfernen doppelter Dateien wird aktuell überarbeitet, da es noch nicht
+                    die erforderliche Geschwindigkeit erreicht. Geschwindigkeitsverbesserungen sind jedoch in Planung.
+                    Weitere Informationen
+                    dazu finden Sie in der <a href="roadmap.html">Roadmap</a>.</li>
+                <li><strong>Dynamischeres System zum Auslesen von Dateien:</strong> Ein dynamischeres System zum
+                    Auslesen von Dateien wird nun für
+                    die Datenbankverwaltung, die Dateiauswahl über den Ordner-Selektor und das Scannen verwendet. Dieses
+                    System verbessert die
+                    Flexibilität und Effizienz des Dateimanagers.</li>
+                <li><strong>Tokensystem:</strong> Zur Erhöhung der Sicherheit der Kommunikation zwischen Client und
+                    Server wird ein Tokensystem
+                    verwendet. Dieses System wird in der separaten HTML-Datei zum Login-System genauer erläutert.</li>
+            </ul>
+        </section>
+
+        <section id="neuer-ordner-selektor">
+            <h2>Eigener Ordner-Selektor</h2>
+            <p>
+                Der neue Ordner-Selektor ist eine benutzerfreundliche Oberfläche, die es dem Benutzer ermöglicht, bequem
+                einen Zielordner auszuwählen.
+                Anstatt sich durch verschachtelte Dateisysteme zu navigieren, bietet der Ordner-Selektor eine klare und
+                intuitive Möglichkeit, den
+                gewünschten Ordner auszuwählen. Dies ist besonders nützlich bei der Konfiguration von Scans, dem
+                Speichern von Dateien und anderen
+                Operationen, die eine Ordnerauswahl erfordern.
+            </p>
+            <div class="img-container">
+                <img src="../img/folder-selector.png" alt="Ordnerauswahl" class="feature-image">
+                <p>Ordnerauswahl: Der Ordner-Selektor präsentiert eine übersichtliche, boxenförmige Ansicht des
+                    Dateisystems, die die Auswahl von Ordnern vereinfacht.</p>
+            </div>
+        </section>
+
+        <section id="pdf-zu-ocr-umwandlung">
+            <h2>PDF zu OCR Umwandlung</h2>
+            <p>
+                Die Fähigkeit, PDFs in das OCR-Format umzuwandeln, ist eine der Kernfunktionen des Dateimanagers. OCR
+                (Optical Character Recognition)
+                ermöglicht es, Text aus Bildern oder gescannten Dokumenten zu extrahieren und in ein bearbeitbares
+                Format zu überführen. Diese
+                Funktion ist sowohl während des Scanvorgangs als auch separat über einen eigenen Tab verfügbar.
+            </p>
+            <p>
+                Die Umwandlung von PDF in OCR kann in verschiedenen Szenarien von großem Nutzen sein. Stellen Sie sich
+                vor, Sie haben ein gescanntes
+                Dokument oder ein PDF-Bild, aus dem Sie Text extrahieren müssen. Mit der OCR-Funktion können Sie den
+                Text einfach kopieren und in
+                einem Textverarbeitungsprogramm oder einer anderen Anwendung einfügen.
+            </p>
+            <div class="img-container">
+                <img src="../img/tabs/pdf-to-ocr.png" alt="PDF zu OCR Tab" class="feature-image">
+                <p>PDF zu OCR Tab: Ein eigener Tab ermöglicht die separate Durchführung der PDF zu OCR Umwandlung,
+                    unabhängig vom Scanvorgang.</p>
+            </div>
+        </section>
+
+        <section id="relevanz-scores">
+            <h2>Relevanz-Scores für das Suchsystem</h2>
+            <p>
+                Das Suchsystem des Dateimanagers verwendet nun Relevanz-Scores, um die Suchergebnisse zu ordnen. Dies
+                bedeutet, dass die Dateien,
+                die am besten zu Ihrer Suchanfrage passen, ganz oben in den Ergebnissen angezeigt werden. Die
+                Relevanz-Scores werden basierend auf
+                verschiedenen Faktoren berechnet, wie z.B. exakte oder teilweise Übereinstimmungen im Dateinamen und
+                Übereinstimmungen im Dateiinhalt.
+            </p>
+            <p>
+                Diese Funktion ist besonders nützlich, wenn Sie mit einer großen Anzahl von Dateien arbeiten. Anstatt
+                eine lange Liste von Suchergebnissen
+                durchzugehen, können Sie sich darauf verlassen, dass die relevantesten Dateien schnell und einfach zu
+                finden sind.
+            </p>
+        </section>
+
+        <section id="login-system">
+            <h2>Login System</h2>
+            <p>
+                Ein robustes Login-System wurde implementiert, um die Sicherheit und den Datenschutz der Benutzerdaten
+                zu gewährleisten. Dieses System
+                umfasst Funktionen wie Benutzerauthentifizierung, Passwortschutz und Sitzungsverwaltung. Eine
+                detaillierte Beschreibung des Login-Systems
+                finden Sie in der separaten HTML-Datei <a href="login.html">login.html</a>.
+            </p>
+        </section>
+
+        <section id="event-system">
+            <h2>Event System</h2>
+            <p>
+                Das Event-System ermöglicht die automatische Ausführung von Aufgaben zu bestimmten, dynamisch
+                veränderbaren Uhrzeiten. Dies bedeutet,
+                dass Sie Aufgaben wie das Scannen von Dateien, erstellen von Backups oder aktualisieren der Struktur so planen können,
+                dass sie automatisch zu den von Ihnen festgelegten Zeiten ausgeführt werden.
+            </p>
+            <p>
+                Die Uhrzeiten für die Ausführung der Aufgaben können dynamisch geändert werden, was bedeutet, dass Sie
+                den Zeitplan bei Bedarf anpassen
+                können. Dies ist besonders nützlich, wenn sich Ihre Anforderungen ändern oder wenn Sie Aufgaben zu
+                bestimmten Zeiten ausführen
+                möchten, die von Ihrem regulären Arbeitsablauf abweichen.
+            </p>
+            <div class="img-container">
+                <img src="../img/settings/system-settings/event-creation.png" alt="Event Erstellung"
+                    class="feature-image">
+                <p>Event Erstellung: Das Interface zur Erstellung neuer Events im System-Einstellungen Tab.</p>
+            </div>
+        </section>
+
+        <section id="einstellungen">
+            <h2>Einstellungen</h2>
+            <p>
+                Der Dateimanager verfügt über einen umfassenden Einstellungsbereich, in dem Sie verschiedene Aspekte der
+                Anwendung an Ihre Bedürfnisse
+                anpassen können. Die Einstellungen sind in verschiedene Kategorien unterteilt, um die Navigation zu
+                erleichtern. Einige der wichtigsten
+                Einstellungen sind:
+            </p>
+            <ul>
+                <li><strong>Allgemeine Einstellungen:</strong> Hier können Sie das Farbschema, die Schriftart und die
+                    Schriftgröße anpassen.</li>
+                <li><strong>Sucheinstellungen:</strong> Hier können Sie die maximale Anzahl der Suchergebnisse, die
+                    Anzeige von Relevanz-Scores
+                    und die Gewichtung von Suchtreffern anpassen.</li>
+                <li><strong>Scannereinstellungen:</strong> Hier können Sie die maximale Anzahl an Arbeitern für den
+                    Scanvorgang, die wählbaren
+                    Dateierweiterungen und die Verzögerung zwischen Dateioperationen festlegen.</li>
+                <li><strong>OCR Einstellungen:</strong> Hier können Sie die Standardeinstellungen für die
+                    OCR-Verarbeitung festlegen,
+                    einschließlich ausgeschlossener Ordner, Umwandlungsmethoden und des Umgangs mit bereits vorhandenen
+                    OCR-Dateien.</li>
+                <li><strong>Nutzereinstellungen:</strong> Hier können Sie Ihr Benutzerkonto verwalten, Ihr Passwort
+                    ändern und Ihr Konto löschen.
+                    Administratoren haben zusätzliche Optionen zur Benutzerverwaltung.</li>
+                <li><strong>Datenbank-Verwaltung:</strong> Hier können Sie sich jede Datenbank ansehen, ein Backup
+                    herunterladen, diese direkt
+                    verändern oder neu einscannen.</li>
+                <li><strong>Systemeinstellungen:</strong> Hier können Sie zeitgesteuerte Events erstellen und den
+                    Uvicorn Server herunterfahren.</li>
+            </ul>
+            <div class="img-container">
+                <img src="../img/tabs/settings.png" alt="Einstellungen Tab" class="feature-image">
+                <p>Einstellungen Tab: Eine Übersicht über die verschiedenen Einstellungsbereiche des Dateimanagers.</p>
+            </div>
+        </section>
+
+        <section id="deduping-system">
+            <h2>Deduping System (in Wartung)</h2>
+            <p>
+                Das Deduping-System, das doppelte Dateien automatisch erkennt und entfernt, wird momentan überarbeitet. Dies
+                liegt daran, dass die aktuelle
+                Implementierung noch nicht die erforderliche Geschwindigkeit erreicht, um eine optimale
+                Benutzererfahrung zu gewährleisten. Ich arbeite jedoch
+                jedoch an Geschwindigkeitsverbesserungen und plane, das Deduping-System in Zukunft wieder in den
+                Dateimanager zu integrieren.
+            </p>
+            <p>
+                In der Zwischenzeit können Sie sich auf meiner <a href="roadmap.html">Roadmap</a> über den aktuellen
+                Stand der Entwicklung und die
+                geplanten Verbesserungen informieren. Ich bin bestrebt, Ihnen ein effizientes und leistungsstarkes
+                Deduping-System zur Verfügung zu stellen.
+            </p>
+        </section>
+
+        <section id="dynamisches-dateisystem">
+            <h2>Dynamischeres System zum Auslesen von Dateien</h2>
+            <p>
+                Der Dateimanager verwendet nun ein dynamischeres System zum Auslesen von Dateien. Dieses System wird für
+                verschiedene Funktionen
+                verwendet, darunter die Datenbankverwaltung, die Dateiauswahl über den Ordner-Selektor und das Scannen
+                von Dateien. Das dynamische
+                System bietet eine Reihe von Vorteilen, wie z.B. eine verbesserte Leistung, eine größere Flexibilität
+                und eine einfachere Wartung.
+            </p>
+            <p>
+                Durch die Zentralisierung der Dateizugriffslogik kann sichergestellt werden, dass alle Teile des
+                Dateimanagers auf die gleiche, konsistente
+                Weise auf Dateien zugreifen. Dies reduziert das Risiko von Fehlern und Inkonsistenzen und erleichtert
+                die Entwicklung neuer Funktionen.
+            </p>
+        </section>
+
+        <section id="tokensystem">
+            <h2>Tokensystem</h2>
+            <p>
+                Zur Erhöhung der Sicherheit der Kommunikation zwischen Client und Server verwendet der Dateimanager ein
+                Tokensystem. Anstatt
+                Benutzernamen und Passwörter bei jeder Anfrage zu senden, sendet der Client ein temporäres Token, das
+                seine Identität bestätigt.
+                Dieses Token wird bei der Anmeldung ausgestellt und ist nur für einen begrenzten Zeitraum gültig.
+            </p>
+            <p>
+                Das Tokensystem bietet eine Reihe von Vorteilen gegenüber der herkömmlichen Authentifizierung mit
+                Benutzernamen und Passwörtern.
+                Erstens reduziert es das Risiko, dass Anmeldeinformationen abgefangen werden, da das Token weniger
+                wertvoll ist als ein Passwort.
+                Zweitens ermöglicht es eine feinere Steuerung des Zugriffs auf Ressourcen, da das Token an bestimmte
+                Berechtigungen gebunden werden
+                kann. Eine detaillierte Beschreibung des Tokensystems finden Sie in der separaten HTML-Datei zum
+                Login-System.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Robin Schumacher</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

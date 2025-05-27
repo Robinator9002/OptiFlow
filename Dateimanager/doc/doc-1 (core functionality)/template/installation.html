@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dateimanager Dokumentation - Installation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Dateimanager Dokumentation</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Übersicht</a></li>
+                <li><a href="funktionen.html">Funktionen</a></li>
+                <li><a href="technik.html">Technik</a></li>
+                <li class="active"><a href="installation.html">Installation</a></li>
+                <li><a href="roadmap.html">Roadmap</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="installation">
+            <h2>Installation</h2>
+
+            <section id="herunterladen-und-starten">
+                <h3>Herunterladen und Starten</h3>
+                <p>
+                    Um den Dateimanager zu installieren, laden Sie das komplette Programm inklusive des <code>.venv/</code>-Ordners herunter.
+                    Dieser Ordner enthält alle notwendigen Dateien, einschließlich der <code>.json</code>-Konfigurationsdateien, des Backends (Python/FastAPI) und des Frontends (React).
+                </p>
+                <p>
+                    Nach dem Herunterladen führen Sie die <code>start.bat</code>-Datei aus. Diese Datei startet den Server mit Uvicorn und anschließend die Webanwendung.
+                    Alternativ können Sie auch die <code>start_server.bat</code>-Datei verwenden, um nur den Server zu starten,
+                    oder die <code>start_app.bat</code>-Datei, um nur die Webanwendung zu starten.
+                </p>
+                <ol>
+                    <li>Laden Sie das Programm herunter.</li>
+                    <li>Entpacken Sie die heruntergeladene Datei.</li>
+                    <li>Navigieren Sie zum entpackten Ordner.</li>
+                    <li>Führen Sie die <code>start.bat</code>-Datei aus.</li>
+                    <li>Warten Sie, bis sowohl der Server als auch die Webanwendung gestartet sind.</li>
+                </ol>
+            </section>
+
+            <section id="nutzung-der-anwendung">
+                <h3>Nutzung der Anwendung</h3>
+                <p>
+                    Nachdem der Server und die Webanwendung gestartet sind, können Sie die Anwendung in Ihrem Webbrowser nutzen.
+                    Die Anwendung kommuniziert automatisch mit dem Server über Axios, um Anfragen zu senden und Daten zu empfangen.
+                </p>
+                <p>
+                    Stellen Sie sicher, dass Ihr Webbrowser JavaScript aktiviert hat, da die Anwendung dies für die Kommunikation mit dem Server benötigt.
+                </p>
+            </section>
+
+            <section id="voraussetzungen">
+                <h3>Voraussetzungen</h3>
+                <p>
+                    Um den Dateimanager nutzen zu können, benötigen Sie:
+                </p>
+                <ul class="requirements-list">
+                    <li>Einen modernen Webbrowser (z.B. Chrome, Firefox, Edge).</li>
+                    <li>Ein Betriebssystem, das die Ausführung von <code>.bat</code>-Dateien unterstützt (z.B. Windows).</li>
+                    <li>Python 3.7 oder höher (falls Sie den Server manuell starten möchten).</li>
+                </ul>
+            </section>
+
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Robin Schumacher</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
