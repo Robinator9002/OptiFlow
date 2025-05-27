@@ -40,4 +40,3 @@ The Project is divided into an Frontend and Backend, one for each of the Parts. 
 * **Backend:** *(Python (FastAPI, Uvicorn, Pydantic))*
 * **Database:** *(JSON and Hashmaps for the File Manager, PostgreSQL will be added for the Form Manager)*
 * **Key Libraries/Frameworks:** *(Tesseract + Ghostscript for OCR-Reading, os for base-functionality like searching through files and this stuff)*
-* 
