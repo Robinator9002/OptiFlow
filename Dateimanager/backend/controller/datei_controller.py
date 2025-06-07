@@ -414,14 +414,13 @@ class DateiController:
     def change_admin_status(self, user, admin_user):
         self.account_manager.change_admin_status(user['username'], admin_user['username'], admin_user['password'], check_hash=False)
 
-    def remove_user(self, user, check_hash=False):
-        if check_hash:
-            self.account_manager.delete_user(user['username'], user['passwordHash'], check_hash=True)
-        else:
-            self.account_manager.delete_user(user['username'], user['password'], check_hash=False)
-    
-    def reset_password(self, username, admin_user):
-        self.account_manager.reset_password(username, admin_user.username, admin_user.password)
+    def remove_user(self, target_username: str, admin_username: str, admin_password: str) -> tuple[bool, str]:
+        """Leitet eine Löschanfrage sicher an den AccountManager weiter."""
+        return self.account_manager.delete_user(target_username, admin_username, admin_password)
+
+    def reset_password(self, target_username: str, admin_username: str, admin_password: str) -> bool:
+        """Leitet eine Passwort-Reset-Anfrage sicher an den AccountManager weiter."""
+        return self.account_manager.request_password_reset(target_username, admin_username, admin_password)
                 
     def backup_database(self, database_name: str):
         return self.read_json_file(self.get_database_path_by_name(database_name))
