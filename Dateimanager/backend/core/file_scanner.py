@@ -217,7 +217,7 @@ class FileScanner:
                  snippet_limit: int = 0, snippet_window: int = 40, proximity_window: int = 20, 
                  max_age_days: int = 1000, old_files_limit: int = 0, sort_by: str = 'age', sort_order: str = 'normal',
                  length_range_step: int = 10, min_category_length: int = 2, snippet_length: int = 5,      
-                 snippet_step: int = 2, signature_size: int = 100, dedupe_similarity_threshold: Optional[float] = None):
+                 snippet_step: int = 2, signature_size: int = 100):
         
         self.base_dirs = base_dirs
         self.extensions = set(ext.lower() for ext in extensions) if extensions else None
@@ -255,7 +255,6 @@ class FileScanner:
         self.snippet_length = max(1, snippet_length)
         self.snippet_step = max(1, snippet_step)
         self.signature_size = max(1, signature_size)
-        self.deduplication_threshold = dedupe_similarity_threshold if dedupe_similarity_threshold is not None else similarity_threshold
         
         self.index = defaultdict(dict)
         self.duplicate_groups: Dict[str, Any] = {}
@@ -264,7 +263,7 @@ class FileScanner:
         if self.signature_size > 0:
             _ensure_random_coefficients(self.signature_size, _PRIME_NUMBER)
 
-        logging.info(f"FileScanner init. num_processes: {self.num_processes}, Dedupe Thresh: {self.deduplication_threshold}, SigSize: {self.signature_size}")
+        logging.info(f"FileScanner init. num_processes: {self.num_processes}, Dedupe Thresh: {self.similarity_threshold}, SigSize: {self.signature_size}")
 
     def _highlight_text_content(self, text_content: str, queries: List[str]) -> str:
         if not text_content or not queries: return text_content
@@ -610,7 +609,7 @@ class FileScanner:
                 for j in range(i + 1, len(items)):
                     item_j = items[j]
                     if item_j["path"] in processed_paths: continue
-                    if compare_signatures(item_i["signature"], item_j["signature"]) >= self.deduplication_threshold:
+                    if compare_signatures(item_i["signature"], item_j["signature"]) >= self.similarity_threshold:
                         current_cluster_paths_list.append(item_j["path"])
                         processed_paths.add(item_j["path"])
                 

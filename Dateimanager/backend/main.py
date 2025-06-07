@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, status, Body
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, Body, Request
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import unquote, urlparse
 from contextlib import asynccontextmanager
@@ -22,6 +22,21 @@ from starlette.background import BackgroundTask
 from starlette.responses import JSONResponse
 import asyncio
 import platform, string
+
+# Shutdown Logic
+SHUTDOWN_FLAG_FILE = "data/_shutdown_request.flag"
+async def check_for_shutdown(interval_seconds: int = 1):
+    while True:
+        if os.path.exists(SHUTDOWN_FLAG_FILE):
+            print("Shutdown-Flag erkannt. Beende den Server...")
+            try:
+                os.remove(SHUTDOWN_FLAG_FILE)
+            except OSError as e:
+                print(f"Fehler beim Löschen des Shutdown-Flags: {e}")
+            await asyncio.sleep(0.5)
+            os.kill(os.getpid(), signal.SIGINT)
+            break
+        await asyncio.sleep(interval_seconds)
 
 def get_base_directories():
     """
@@ -68,7 +83,12 @@ SEARCH_LIMIT = 30
 STRUCTURE_FILE = "data/structure.json"
 USER_FILE = "data/user.json"
 AUTO_LOGIN_TIME = 24
-SECRET_KEY = "dörlichundpartner1992"  # Der superwichtige key
+
+# Secret Key
+SECRET_KEY = os.getenv("OPTIFLOW_SECRET_KEY", "ein-sehr-zufaelliger-und-sicherer-standard-key-fuer-die-entwicklung")
+if "entwicklung" in SECRET_KEY:
+    print("\nWARNUNG: Es wird der Standard-Entwicklungsschlüssel verwendet. Setzen Sie die Umgebungsvariable 'OPTIFLOW_SECRET_KEY' für den produktiven Einsatz.\n")
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 # --- DEDUPING SETTINGS (Hardcoded for now, will be loaded from settings later) ---
@@ -125,9 +145,14 @@ async def lifespan(app: FastAPI):
     controller.load_index()
     print("Serverstart: Starte Event Manager...")
     controller.start_event_monitoring()
+    os.makedirs("data", exist_ok=True)
+    shutdown_task = asyncio.create_task(check_for_shutdown())
+
     yield
+
     print("Serverende: Speichere Index...")
     controller.save_index()
+    shutdown_task.cancel()
 
 
 # --- Create App and Middleware ---
@@ -170,37 +195,44 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     except jwt.PyJWTError:
         raise credentials_exception
 
+async def enforce_password_change(request: Request, current_user: Dict = Depends(get_current_user)):
+    if current_user.get("passwordReset"):
+        allowed_paths = ["/change_password/", "/logout/"]
+        # Überprüfe, ob der Anfang des Pfades übereinstimmt
+        if not any(request.url.path.startswith(p) for p in allowed_paths):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Passwortänderung erforderlich. Bitte ändern Sie Ihr Passwort."
+            )
+
+# --- Der Router für die Password_Reset_Sicherheit ---
+router = APIRouter(
+    dependencies=[Depends(enforce_password_change)]
+)
+
 # --- Routen ---
 @app.get("/")
 async def read_root():
     return {"message": "Hallo, Welt!"}
 
-@app.post("/shutdown/")
-async def shutdown(
+@router.post("/shutdown/")
+async def shutdown_request(
     data: ShutdownRequest,
     current_user: dict = Depends(get_current_user)
 ):
-    print(data)
-    
     if not current_user or not current_user["isAdmin"]:
         raise HTTPException(status_code=403, detail="Nicht autorisiert!")
 
     if not controller.account_manager.verify_password(current_user["username"], data.password):
         raise HTTPException(status_code=401, detail="Ungültiges Passwort.")
 
-    # Background-Task definiert: SIGINT nach Response verschicken
-    async def _shutdown(): # Geändert zu async
-        await asyncio.sleep(0.1) # Kurz warten, damit die Response gesendet werden kann
-        os.kill(os.getpid(), signal.SIGINT)
+    with open(SHUTDOWN_FLAG_FILE, "w") as f:
+        f.write("shutdown")
+    return JSONResponse({"detail": "Shutdown-Anfrage erhalten. Server wird in Kürze beendet."})
 
-    return JSONResponse(
-        {"detail": "Shutdown eingeleitet."},
-        background=BackgroundTask(_shutdown)
-    )
-    
 # -- Events --
 # 1. Event hinzufügen
-@app.post("/events")
+@router.post("/events")
 async def add_event(event: EventIn):
     try:
         success = controller.add_event(event.frequency, event.times, event.event)
@@ -212,7 +244,7 @@ async def add_event(event: EventIn):
 
 
 # 2. Event aktualisieren
-@app.put("/events/{event_index}")
+@router.put("/events/{event_index}")
 async def update_event(event_index: int, event: EventIn):
     try:
         success = controller.update_event(event_index, event.frequency, event.times, event.event)
@@ -224,7 +256,7 @@ async def update_event(event_index: int, event: EventIn):
 
 
 # 3. Event löschen
-@app.delete("/events/{event_index}")
+@router.delete("/events/{event_index}")
 async def delete_event(event_index: int):
     try:
         success = controller.delete_event(event_index)
@@ -236,7 +268,7 @@ async def delete_event(event_index: int):
 
 
 # 4. Alle Events abrufen
-@app.get("/events", response_model=List[EventIn])
+@router.get("/events", response_model=List[EventIn])
 async def get_all_events():
     try:
         events = controller.get_all_events()
@@ -246,7 +278,7 @@ async def get_all_events():
 
 
 # 5. Event ausführen
-@app.post("/events/{event_index}/execute")
+@router.post("/events/{event_index}/execute")
 async def execute_event(event_index: int):
     try:
         success = controller.execute_event(event_index)
@@ -258,7 +290,7 @@ async def execute_event(event_index: int):
 
 
 # 6. Event nach Index finden
-@app.get("/events/{event_index}", response_model=EventIn)
+@router.get("/events/{event_index}", response_model=EventIn)
 async def find_event_by_index(event_index: int):
     try:
         event = controller.find_event_by_index(event_index)
@@ -270,7 +302,7 @@ async def find_event_by_index(event_index: int):
 
 
 # 7. Event-Überwachung starten
-@app.post("/events/start-monitoring")
+@router.post("/events/start-monitoring")
 async def start_event_monitoring():
     try:
         controller.start_event_monitoring()
@@ -280,7 +312,7 @@ async def start_event_monitoring():
 
 
 # 8. Events in die Datei speichern
-@app.post("/events/save")
+@router.post("/events/save")
 async def save_events_to_file():
     try:
         controller.save_events_to_file()
@@ -290,7 +322,7 @@ async def save_events_to_file():
 
 
 # 9. Events aus der Datei laden
-@app.post("/events/load")
+@router.post("/events/load")
 async def load_events_from_file():
     try:
         controller.load_events_from_file()
@@ -299,7 +331,7 @@ async def load_events_from_file():
         raise HTTPException(status_code=500, detail=str(e))
 
 # --- DEDUPING ENDPOINTS (NEU) ---
-@app.post("/find_duplicates/")
+@router.post("/find_duplicates/")
 async def find_duplicates():
     """Endpoint to trigger the duplicate finding process."""
     try:
@@ -309,7 +341,7 @@ async def find_duplicates():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/load_duplicates/")
+@router.post("/load_duplicates/")
 async def load_duplicates():
     """Endpoint to load duplicate groups from file."""
     try:
@@ -319,7 +351,7 @@ async def load_duplicates():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/save_duplicates/")
+@router.post("/save_duplicates/")
 async def save_duplicates():
     """Endpoint to save current duplicate groups to file."""
     try:
@@ -328,7 +360,7 @@ async def save_duplicates():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/search_duplicates/", response_model=DuplicateGroupsResponse)
+@router.post("/search_duplicates/", response_model=DuplicateGroupsResponse)
 async def search_duplicates(request: SearchDuplicatesRequest):
     """Endpoint to search and sort loaded duplicate groups."""
     try:
@@ -343,29 +375,29 @@ async def search_duplicates(request: SearchDuplicatesRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/load_index/", response_model=FileScanResponse)
+@router.post("/load_index/", response_model=FileScanResponse)
 async def load_index():
     controller.load_index()
     return {"message": "Index erfolgreich geladen."}
 
-@app.post("/delete_index/", response_model=FileScanResponse)
+@router.post("/delete_index/", response_model=FileScanResponse)
 async def delete_index():
     controller.file_scanner.delete_index()
     controller.save_index()
     controller.save_duplicates()
     return {"message": "Index gelöscht und neu geladen."}
 
-@app.post("/scan_files/", response_model=FileScanResponse)
+@router.post("/scan_files/", response_model=FileScanResponse)
 async def scan_files():
     result = controller.scan_files()
     return {"message": result["message"]}
 
-@app.post("/actualize_index/", response_model=FileScanResponse)
+@router.post("/actualize_index/", response_model=FileScanResponse)
 async def actualize_index():
     result = controller.actualize_index()
     return {"message": result["message"]}
 
-@app.post("/search/", response_model=SearchResult)
+@router.post("/search/", response_model=SearchResult)
 def unified_search(request: SearchRequest):
     try:
         if request.file_path:
@@ -400,12 +432,12 @@ def unified_search(request: SearchRequest):
         # Fange andere unerwartete Fehler ab und gib eine 500 Internal Server Error zurück
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/update/")
+@router.post("/update/")
 async def update_file(update: FileUpdate):
     response = controller.update_file(update.model_dump())
     return response
 
-@app.post("/open_file/{file_path:path}")
+@router.post("/open_file/{file_path:path}")
 async def open_file(file_path: str):
     try:
         result = controller.open(prepare_path(file_path))
@@ -413,18 +445,18 @@ async def open_file(file_path: str):
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@app.post("/explorer_open_file/{file_path:path}")
+@router.post("/explorer_open_file/{file_path:path}")
 async def explorer_open_file(file_path: str):
     msg = controller.open_explorer(prepare_path(file_path))
     return {"message": msg}
 
-@app.post("/write_file/", response_model=dict[str, str])
+@router.post("/write_file/", response_model=dict[str, str])
 async def write_file(request: FileWriteRequest):
     if not controller.write(request.file_path, request.content):
         raise HTTPException(status_code=500, detail="Fehler beim Schreiben der Datei.")
     return {"message": "Datei erfolgreich gespeichert", "path": request.file_path}
 
-@app.post("/update_scanner_config/", response_model=FileScanResponse)
+@router.post("/update_scanner_config/", response_model=FileScanResponse)
 async def update_scanner_config(config: ScannerConfig):
     scanner = controller.file_scanner
 
@@ -443,25 +475,25 @@ async def update_scanner_config(config: ScannerConfig):
 
     return {"message": "Scanner-Konfiguration aktualisiert.", "config": get_scanner_config()}
 
-@app.get("/file/", response_model=FileInfo)
+@router.get("/file/", response_model=FileInfo)
 async def get_file_info(file_path: str):
     file_info = controller.get_file_info(prepare_path(file_path))
     if not file_info:
         raise HTTPException(status_code=404, detail="Datei nicht gefunden")
     return FileInfo(**file_info)
 
-@app.get("/get_scanner_config/", response_model=FileScanResponse)
+@router.get("/get_scanner_config/", response_model=FileScanResponse)
 async def get_scanner_configurations():
     return {'message': 'Scanner-Konfigurationen erfolgreich geladen.', 'config': get_scanner_config()}
 
-@app.delete("/delete_file/")
+@router.delete("/delete_file/")
 async def delete_file(file_path: str):
     result = controller.delete_file(prepare_path(file_path))
     if "Fehler" in result["message"]:
         raise HTTPException(status_code=404, detail=result["message"])
     return result
 
-@app.get("/api/find_old_files", response_model=List[OldFileInfo])
+@router.get("/api/find_old_files", response_model=List[OldFileInfo])
 async def get_old_files(
     params: OldFilesQueryParams = Depends(),
 ):
@@ -484,7 +516,7 @@ async def get_old_files(
         print(f"Interner Serverfehler beim Suchen alter Dateien: {e}")
         raise HTTPException(status_code=500, detail="Interner Serverfehler bei der Dateisuche")
 
-@app.post("/process_pdf_directory/")
+@router.post("/process_pdf_directory/")
 async def process_pdf_directory(request: PDFProcessDirectoryRequest):
     ignored_dir_names = [ignored_dir.strip() for ignored_dir in request.ignored_dir_names.split(',') if ignored_dir] if request.ignored_dir_names else []
 
@@ -501,16 +533,16 @@ async def process_pdf_directory(request: PDFProcessDirectoryRequest):
         request.max_workers
     )
 
-@app.post("/process_pdf_file/")
+@router.post("/process_pdf_file/")
 async def process_pdf_file(request: PDFProcessFileRequest):
     return controller.process_pdf_file(prepare_path(request.input_file), prepare_path(request.output_file))
 
-@app.post("/process_index/")
+@router.post("/process_index/")
 async def process_index(overwrite: bool = False):
     result = controller.process_index(overwrite)
     return {"message": result["message"]}
 
-@app.post("/file_structure/")
+@router.post("/file_structure/")
 async def get_file_structure(path: str = None, force_rescan: bool = False):
     """
     Gibt eine JSON-Struktur der Datei-Struktur zurück.
@@ -525,7 +557,7 @@ async def get_file_structure(path: str = None, force_rescan: bool = False):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/rescan_file_structure/")
+@router.post("/rescan_file_structure/")
 async def rescan_file_structure(path: str = None):
     """
     Erzwingt einen Neuscan der Datei-Struktur und aktualisiert den Cache.
@@ -560,7 +592,7 @@ def login_user(user: User):
         return {"access_token": access_token, "token_type": "bearer"}
     raise HTTPException(status_code=401, detail="Ungültige Anmeldedaten")
 
-@app.post("/verify_password/")
+@router.post("/verify_password/")
 def verify_password(user: User):
     verified = controller.account_manager.verify_password(user.username, user.password)
     return {'message': f"Der Nutzer {user.username} wurde erfolgreich Verifiziert!" if verified else f"Der Nutzer {user.username} konnte nicht Verifiziert werden!", 'verified': verified}
@@ -570,38 +602,38 @@ def logout(request: LogoutRequest):
     controller.logout_user(request.username)
     return {"message": "Logout erfolgreich"}
 
-@app.get("/auto_login/{username}")
+@router.get("/auto_login/{username}")
 def auto_login(username: str):
     if controller.check_auto_login(username):
         return {"message": "Auto-Login erfolgreich"}
     else:
         raise HTTPException(status_code=401, detail="Auto-Login nicht möglich")
 
-@app.get("/users/{username}/admin/")
+@router.get("/users/{username}/admin/")
 def get_user_admin_status(username: str):
     return {"isAdmin": controller.get_user_admin_status(username)}
 
-@app.get("/users/{username}/reset_password/")
+@router.get("/users/{username}/reset_password/")
 def get_user_password_reset_status(username: str):
     return {"passwordReset": controller.get_user_password_reset_status(username)}
 
 # --- Benutzerverwaltung ---
-@app.get("/users/")
+@router.get("/users/")
 async def get_all_users(current_user: dict = Depends(get_current_user)):
     if not current_user["isAdmin"]:
         raise HTTPException(status_code=403, detail="Nur für Administratoren zugänglich.")
     users = controller.account_manager.load_users()
     return [{"username": user["username"], "isAdmin": user["isAdmin"], "lastLogin": user["lastLogin"]} for user in users]
 
-@app.post("/users/{username}/admin/")
+@router.post("/users/{username}/admin/")
 async def set_user_admin_status(username: str, admin_user: User = Body(...), current_user: dict = Depends(get_current_user)):
     """Ändert den Admin-Status eines Benutzers."""
     if not current_user["isAdmin"]:
         raise HTTPException(status_code=403, detail="Nur für Administratoren zugänglich.")
-    
+
     if not controller.account_manager.verify_password(admin_user.username, admin_user.password):
         raise HTTPException(status_code=403, detail="Ungültige Administrator Daten.")
-    
+
     target_user = controller.account_manager.get_user(username)
     if not target_user:
         raise HTTPException(status_code=404, detail=f"Benutzer '{username}' nicht gefunden.")
@@ -611,8 +643,8 @@ async def set_user_admin_status(username: str, admin_user: User = Body(...), cur
         return {"message": f"Admin-Status für Benutzer '{username}' erfolgreich geändert."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
-@app.post('/change_username/')
+
+@router.post('/change_username/')
 async def change_username(
     user: User = Body(...),
     new_username: str = Body(...)
@@ -638,21 +670,28 @@ async def change_password(
             raise HTTPException(status_code=500, detail=str(e))
     raise HTTPException(status_code=403, detail="Invalid Login Data")
 
-@app.post("/reset_password/{username}/")
+# Ersetze den alten `@router.post("/reset_password/{username}/")`-Endpoint
+@router.post("/reset_password/{username}/")
 async def reset_user_password(username: str, admin_user: User = Body(...), current_user: dict = Depends(get_current_user)):
-    """Setzt das Passwort eines Benutzers zurück."""
     if not current_user["isAdmin"]:
         raise HTTPException(status_code=403, detail="Nur für Administratoren zugänglich.")
+
     target_user = controller.account_manager.get_user(username)
     if not target_user:
         raise HTTPException(status_code=404, detail=f"Benutzer '{username}' nicht gefunden.")
-    try:
-        controller.reset_password(username, admin_user)
-        return {"message": f"Passwort für Benutzer '{username}' erfolgreich zurückgesetzt."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
-@app.delete("/delete_user/")
+    # Admin verifiziert sich mit eigenem Passwort, das im Body mitgeschickt wird
+    if not controller.account_manager.verify_password(current_user["username"], admin_user.password):
+        raise HTTPException(status_code=401, detail="Falsches Administrator-Passwort.")
+
+    # Die alte Controller-Methode wurde in `reset_password` im Controller angepasst.
+    # Hier müssen wir den Aufruf anpassen.
+    if controller.reset_password(username, admin_user):
+         return {"message": f"Passwort-Reset für Benutzer '{username}' erfolgreich eingeleitet."}
+    else:
+         raise HTTPException(status_code=500, detail="Fehler beim Einleiten des Passwort-Resets.")
+
+@router.delete("/delete_user/")
 async def delete_user(user: User = Body(...), current_user: dict = Depends(get_current_user)):
     """Löscht einen Benutzer."""
     print(user)
@@ -682,13 +721,13 @@ async def delete_user(user: User = Body(...), current_user: dict = Depends(get_c
         raise HTTPException(status_code=500, detail=f"Fehler beim Löschen: {str(e)}")
 
 # --- Einstellungen ---
-@app.get("/settings/{username}")
+@router.get("/settings/{username}")
 async def get_user_settings(username: str, current_user: dict = Depends(get_current_user)):
     """Ruft die Einstellungen eines Benutzers ab."""
     settings = controller.account_manager.load_settings(username)
     return {"settings": settings}
 
-@app.post("/settings/{username}")
+@router.post("/settings/{username}")
 async def save_user_settings(username: str, settings: Settings, current_user: dict = Depends(get_current_user)):
     """Speichert die Einstellungen eines Benutzers und wendet sie an."""
     if current_user["username"] != username:
@@ -700,7 +739,7 @@ async def save_user_settings(username: str, settings: Settings, current_user: di
     return {"message": "Einstellungen erfolgreich gespeichert und angewendet"}
 
 # --- Datenbank-Operationen ---
-@app.get("/database/{database_name}")
+@router.get("/database/{database_name}")
 async def read_database(database_name: str, current_user: dict = Depends(get_current_user)):
     """Liest den Inhalt einer Datenbankdatei (JSON)."""
     if not current_user["isAdmin"]:
@@ -714,7 +753,7 @@ async def read_database(database_name: str, current_user: dict = Depends(get_cur
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Fehler beim Lesen der Datenbank: {e}")
 
-@app.post("/database/{database_name}")
+@router.post("/database/{database_name}")
 # === GEÄNDERT: Erwarte ein DataWrapper Modell als Body Parameter ===
 # Der Body des Requests wird nun gegen dieses Modell validiert.
 async def write_database(database_name: str, body: DataWrapper, current_user: dict = Depends(get_current_user)):
@@ -741,7 +780,7 @@ async def write_database(database_name: str, body: DataWrapper, current_user: di
         # Gib einen generischen Fehler an den Client zurück
         raise HTTPException(status_code=500, detail=f"Fehler beim Schreiben der Datenbank: {e}")
 
-@app.post("/database/{database_name}/reload/")
+@router.post("/database/{database_name}/reload/")
 async def reload_database(database_name: str):
     """Reloadet die Datenbank."""
     controller.reload_database(database_name)
