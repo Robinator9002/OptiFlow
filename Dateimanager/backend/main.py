@@ -692,33 +692,25 @@ async def reset_user_password(username: str, admin_user: User = Body(...), curre
          raise HTTPException(status_code=500, detail="Fehler beim Einleiten des Passwort-Resets.")
 
 @router.delete("/delete_user/")
-async def delete_user(user: User = Body(...), current_user: dict = Depends(get_current_user)):
-    """Löscht einen Benutzer."""
-    print(user)
-    # 1. Eigenen Account löschen
-    if user.username == current_user["username"]:
-        controller.remove_user(user.model_dump())
-        return {"message": f"Dein Benutzerkonto '{user.username}' wurde erfolgreich gelöscht."}
+async def delete_user(user_to_delete: User = Body(...), current_user: dict = Depends(get_current_user)):
+    """Löscht einen Benutzer. Erfordert das Passwort des ausführenden Benutzers zur Bestätigung."""
 
-    # 2. Adminrechte prüfen
-    if not current_user["isAdmin"]:
-        raise HTTPException(status_code=403, detail="Nur für Administratoren zugänglich.")
+    # Der Benutzer, der die Aktion ausführt (und sein Passwort zur Bestätigung liefert)
+    acting_user_name = current_user["username"]
+    confirmation_password = user_to_delete.password # Das Passwort aus dem Request-Body ist IMMER das des Admins/ausführenden Nutzers
 
-    # 3. Existenz des Zielbenutzers prüfen
-    target_user = controller.account_manager.get_user(user.username)
-    if not target_user:
-        raise HTTPException(status_code=404, detail=f"Benutzer '{user.username}' nicht gefunden.")
+    # Der Benutzer, der gelöscht werden soll
+    target_username = user_to_delete.username
 
-    # 4. Passwortprüfung (Admin muss eigenes Passwort eingeben!)
-    if not controller.account_manager.verify_password(current_user["username"], user.password):
-        raise HTTPException(status_code=401, detail="Falsches Passwort.")
+    # Logik ist jetzt im Controller + Manager, wir rufen nur noch die sichere Methode auf.
+    # Der Controller erwartet (ziel, ausführender_admin, admin_passwort)
+    success, message = controller.remove_user(target_username, acting_user_name, confirmation_password)
 
-    # 5. Benutzer löschen
-    try:
-        controller.remove_user(target_user, check_hash=True)
-        return {"message": f"Benutzer '{user.username}' erfolgreich gelöscht."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Fehler beim Löschen: {str(e)}")
+    if not success:
+        # Der AccountManager gibt jetzt spezifische Fehlermeldungen zurück.
+        raise HTTPException(status_code=400, detail=message)
+
+    return {"message": message}
 
 # --- Einstellungen ---
 @router.get("/settings/{username}")
