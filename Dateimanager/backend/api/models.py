@@ -129,6 +129,15 @@ class AdminUser(BaseModel):
 class LogoutRequest(BaseModel):
     username: str
     
+# Werte anpassungen
+class ChangeUsernameRequest(BaseModel):
+    user: User
+    new_username: str
+
+class ChangePasswordRequest(BaseModel):
+    user: User
+    new_password: str
+
 class ShutdownRequest(BaseModel):
     password: str
     

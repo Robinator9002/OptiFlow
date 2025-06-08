@@ -149,8 +149,10 @@ export const ocrConvertFile = async (filePath, outputPath) => {
 
 // API-Aufruf zur Konvertierung des Indexes
 export const ocrConvertIndex = async (overwrite) => {
-    const response = await api.post(`/process_index/`, {
-        overwrite: overwrite
+    const response = await api.post(`/process_index/`, null, {
+        params: {
+            overwrite: overwrite
+        }
     });
     return response.data;
 };

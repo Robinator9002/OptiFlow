@@ -10,9 +10,10 @@ from backend.api.models import (
     FileInfo, FileUpdate, SearchRequest, SearchResult,
     FileScanResponse, ScannerConfig, FileWriteRequest,
     PDFProcessDirectoryRequest, PDFProcessFileRequest,
-    User, AdminUser, Settings, LogoutRequest, ShutdownRequest,
-    EventIn, OldFileInfo, OldFilesQueryParams, DataWrapper,
-    DuplicateGroupsResponse, SearchDuplicatesRequest,
+    User, AdminUser, Settings, LogoutRequest,
+    ChangeUsernameRequest, ChangePasswordRequest,
+    ShutdownRequest, EventIn, OldFileInfo, OldFilesQueryParams,
+    DataWrapper, DuplicateGroupsResponse, SearchDuplicatesRequest,
 )
 import datetime
 import jwt
@@ -645,27 +646,21 @@ async def set_user_admin_status(username: str, admin_user: User = Body(...), cur
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post('/change_username/')
-async def change_username(
-    user: User = Body(...),
-    new_username: str = Body(...)
-):
-    if controller.account_manager.verify_password(user.username, user.password):
+async def change_username(request_data: ChangeUsernameRequest): # Nur noch ein Argument
+    if controller.account_manager.verify_password(request_data.user.username, request_data.user.password):
         try:
-            controller.change_username(user, new_username)
-            return {"message": f"Benutzername für Benutzer '{user.username}' erfolgreich geändert."}
+            controller.change_username(request_data.user, request_data.new_username)
+            return {"message": f"Benutzername für Benutzer '{request_data.user.username}' erfolgreich geändert."}
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
     raise HTTPException(status_code=403, detail="Invalid Login Data")
 
 @app.post("/change_password/")
-async def change_password(
-    user: User = Body(...),
-    new_password: str = Body(...)
-):
-    if controller.account_manager.verify_password(user.username, user.password):
+async def change_password(request_data: ChangePasswordRequest):
+    if controller.account_manager.verify_password(request_data.user.username, request_data.user.password):
         try:
-            controller.change_password(user, new_password)
-            return {"message": f"Passwort für Benutzer '{user.username}' erfolgreich geändert."}
+            controller.change_password(request_data.user, request_data.new_password)
+            return {"message": f"Passwort für Benutzer '{request_data.user.username}' erfolgreich geändert."}
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
     raise HTTPException(status_code=403, detail="Invalid Login Data")
