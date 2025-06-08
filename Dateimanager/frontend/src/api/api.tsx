@@ -1,4 +1,91 @@
-import api from './axiosInstance.tsx';
+import api from './axiosInstance';
+
+// --- TypeScript Interfaces (abgeleitet von Pydantic-Modellen) ---
+
+// Interface für die Scanner-Konfiguration
+interface ScannerConfig {
+    base_dirs?: string[];
+    extensions?: string[];
+    index_content?: boolean;
+    convert_pdf?: boolean;
+    max_size_kb?: number;
+    max_content_size_let?: number;
+}
+
+// Interface für die Such-Match-Scores
+interface MatchScore {
+    filename_exact?: number;
+    filename_partial?: number;
+    content?: number;
+}
+
+// Interface für die Benutzereinstellungen
+interface Settings {
+    search_limit?: number;
+    snippet_limit?: number;
+    old_files_limit?: number;
+    show_relevance?: boolean;
+    match_score?: MatchScore;
+    scanner_cpu_cores?: number;
+    usable_extensions?: string[];
+    scan_delay?: number;
+    snippet_window?: number;
+    proximity_window?: number;
+    max_age_days?: number;
+    sort_by?: string;
+    sort_order?: string;
+    processor_excluded_folders?: string;
+    subfolder?: string;
+    prefix?: string;
+    overwrite?: boolean;
+    processing_cpu_cores?: number;
+    force_ocr?: boolean;
+    skip_text?: boolean;
+    redo_ocr?: boolean;
+    theme_name?: string;
+    font_type?: string;
+    font_size?: number;
+    database_length?: number;
+    check_interval?: number;
+    max_file_size?: number;
+    length_range_step?: number;
+    min_category_length?: number;
+    snippet_length?: number;
+    snippet_step?: number;
+    signature_size?: number;
+    similarity_threshold?: number;
+}
+
+// Interface für das Aktualisieren einer Datei
+interface FileUpdate {
+    path: string;
+    name?: string;
+    content?: string;
+}
+
+// Interface zum Schreiben einer Datei
+interface FileWriteRequest {
+    file_path: string;
+    content: string;
+}
+
+// Interface für die Duplikat-Suche
+interface SearchDuplicatesParams {
+    query?: string;
+    sort_by?: string;
+    sort_order?: string;
+    length_range_filter?: string;
+}
+
+// Interface für die Suche nach alten Dateien
+interface FindOldFilesParams {
+    max_files?: number;
+    max_age_days?: number;
+    sort_by?: string;
+    sort_order?: string;
+}
+
+// --- API-Aufrufe ---
 
 // API-Aufruf für das Laden des Index
 export const loadIndex = async () => {
@@ -25,46 +112,35 @@ export const actualizeIndex = async () => {
 }
 
 // --- DEDUPLICATION API Calls ---
-// API-Aufruf zum Starten der Duplikatsuche
 export const findDuplicates = async () => {
-    // Backend endpoint /find_duplicates/ is a POST request with no body
     const response = await api.post(`/find_duplicates/`);
-    // Backend returns {"message": ..., "result": {...}}
     return response.data;
 };
 
-// API-Aufruf zum Laden der gespeicherten Duplikate
 export const loadDuplicates = async () => {
-    // Backend endpoint /load_duplicates/ is a POST request with no body
     const response = await api.post(`/load_duplicates/`);
-     // Backend returns {"message": ..., "data": {...}} or {"message": ...}
     return response.data;
 };
 
-// API-Aufruf zum Speichern der aktuellen Duplikate
 export const saveDuplicates = async () => {
-    // Backend endpoint /save_duplicates/ is a POST request with no body
     const response = await api.post(`/save_duplicates/`);
-     // Backend returns {"message": ...}
     return response.data;
 };
 
-// API-Aufruf zum Suchen und Sortieren geladener Duplikate
-export const searchDuplicates = async (searchParams = {}) => {
-    // Default values are handled by the backend model, but good practice to pass them if available
+export const searchDuplicates = async (searchParams: SearchDuplicatesParams = {}) => {
     const response = await api.post(`/search_duplicates/`, searchParams);
-    // Backend returns DuplicateGroupsResponse model (__root__: Dict[str, DuplicateGroup])
-    return response.data; // This should be the dictionary of duplicate groups
+    return response.data;
 };
 
 // API-Aufrufe für die Datei-Suche
-export const searchFiles = async (query) => {
+export const searchFiles = async (query: string) => {
     const response = await api.post(`/search/`, {
         query_input: query
     });
     return response.data;
 };
-export const searchInFile = async (query, filePath) => {
+
+export const searchInFile = async (query: string, filePath: string) => {
     const response = await api.post(`/search/`, {
         query_input: query,
         file_path: filePath,
@@ -72,74 +148,64 @@ export const searchInFile = async (query, filePath) => {
     return response.data;
 };
 
-// Api-Aufruf zum finden alter Dateien
-export const findOldFiles = async (params = {}) => {
-    try {
-        console.log(params);
-        const response = await api.get('/api/find_old_files', {
-            params: params // Übergibt die Parameter als Query-Parameter
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Fehler beim Abrufen alter Dateien:', error);
-        throw error; // Wirf den Fehler weiter zur Behandlung in der Komponente
-    }
+// Api-Aufruf zum Finden alter Dateien
+export const findOldFiles = async (params: FindOldFilesParams = {}) => {
+    const response = await api.get('/api/find_old_files', { params });
+    return response.data;
 };
 
 // Überschreiben eines Index-Wertes
-export const updateFile = async (update) => {
+export const updateFile = async (update: FileUpdate) => {
     const response = await api.post(`/update/`, update);
-    console.log("Finished")
     return response.data;
 }
 
-// Öffnen einer Datei
-export const openFile = async (path) => {
-    const response = await api.post(`/open_file/${path}`);
+// Öffnen einer Datei oder eines Ordners
+export const openFile = async (path: string) => {
+    const response = await api.post(`/open_file/${encodeURIComponent(path)}`);
     return response.data;
 };
 
-// Öffnet eine Datei im Explorer
-export const openFileInExplorer = async (path) => {
-    const response = await api.post(`/explorer_open_file/${path}`);
+// Öffnet eine Datei im Explorer/Finder
+export const openFileInExplorer = async (path: string) => {
+    const response = await api.post(`/explorer_open_file/${encodeURIComponent(path)}`);
     return response.data;
 };
 
 // API-Aufruf für das Abrufen der Datei-Infos
-export const getFileInfo = async (filePath) => {
+export const getFileInfo = async (filePath: string) => {
     const response = await api.get(`/file/`, {
-        params: { file_path: filePath }    // Query Parameter
+        params: { file_path: filePath }
     });
-    console.log(response.data);
     return response.data;
 };
 
 // API-Aufruf zum Aktualisieren der Scanner-Konfiguration
-export const updateScannerConfig = async (config) => {
+export const updateScannerConfig = async (config: ScannerConfig) => {
     const response = await api.post(`/update_scanner_config/`, config);
     return response.data;
 };
 
-// Eine Datei schreiben (neu)
-export const writeFile = async (request) => {
+// Eine Datei schreiben
+export const writeFile = async (request: FileWriteRequest) => {
     const response = await api.post(`/write_file/`, request)
     return response.data;
 }
 
-// API-Aufruf zum laden der Scanner-Konfiguration
+// API-Aufruf zum Laden der Scanner-Konfiguration
 export const getScannerConfig = async () => {
     const response = await api.get(`/get_scanner_config/`);
     return response.data;
 };
 
 // API-Aufruf zum Löschen einer Datei
-export const deleteFile = async (filePath) => {
+export const deleteFile = async (filePath: string) => {
     const response = await api.delete(`/delete_file/`, { params: { file_path: filePath } });
     return response.data;
 };
 
-// API-Aufruf zum Konvertieren einer Datei (in OCR Format)
-export const ocrConvertFile = async (filePath, outputPath) => {
+// --- OCR PROCESSING ---
+export const ocrConvertFile = async (filePath: string, outputPath: string) => {
     const response = await api.post(`/process_pdf_file/`, {
         input_file: filePath,
         output_file: outputPath
@@ -147,9 +213,9 @@ export const ocrConvertFile = async (filePath, outputPath) => {
     return response.data;
 };
 
-// API-Aufruf zur Konvertierung des Indexes
-export const ocrConvertIndex = async (overwrite) => {
-    const response = await api.post(`/process_index/`, null, {
+// KORRIGIERT: Sendet 'overwrite' als Query-Parameter
+export const ocrConvertIndex = async (overwrite: boolean) => {
+    const response = await api.post(`/process_index/`, null, { // Body ist null
         params: {
             overwrite: overwrite
         }
@@ -157,8 +223,7 @@ export const ocrConvertIndex = async (overwrite) => {
     return response.data;
 };
 
-// API-Aufruf zum Konvertieren eines Ordners (in OCR Format)
-export const ocrConvertFolder = async (folderPath, outputSubdir, outputPrefix, overwrite, ignoredDirNames, maxWorkers) => {
+export const ocrConvertFolder = async (folderPath: string, outputSubdir: string, outputPrefix: string, overwrite: boolean, ignoredDirNames: string, maxWorkers: number) => {
     const response = await api.post(`/process_pdf_directory/`, {
         base_dir: folderPath,
         output_subdir: outputSubdir,
@@ -170,21 +235,19 @@ export const ocrConvertFolder = async (folderPath, outputSubdir, outputPrefix, o
     return response.data;
 };
 
-// API-Aufruf zum Abrufen der Datei-Struktur
-export const getFileStructure = async (path, forceRescan) => {
-    const response = await api.post(`/file_structure/`, { path, forceRescan });
+// --- FILE STRUCTURE ---
+export const getFileStructure = async (path: string, forceRescan: boolean) => {
+    const response = await api.post(`/file_structure/`, null, { params: { path, forceRescan } });
     return response.data;
 };
 
-// API-Aufruf zum erneuten Scannen der Datei-Struktur
-export const rescanFileStructure = async (path) => {
-    const response = await api.post(`/rescan_file_structure/`, { path });
+export const rescanFileStructure = async (path: string) => {
+    const response = await api.post(`/rescan_file_structure/`, null, { params: { path } });
     return response.data;
 };
 
-// --- Benutzerverwaltung ---
-// API-Aufruf zur Benutzerregistrierung
-export const registerUser = async (username, password, adminUsername, adminPassword, isAdmin) => {
+// --- USER MANAGEMENT ---
+export const registerUser = async (username: string, password: string, adminUsername: string, adminPassword: string, isAdmin: boolean) => {
     const response = await api.post(`/register/`, {
         username: username,
         password: password,
@@ -192,81 +255,63 @@ export const registerUser = async (username, password, adminUsername, adminPassw
         admin_password: adminPassword,
         is_admin: isAdmin,
     });
-
-    // Zugriffstoken speichern
     if (response.data.access_token) {
         localStorage.setItem("accessToken", response.data.access_token);
     }
-
     return response.data;
 };
 
-// API-Aufruf zur Benutzeranmeldung
-export const loginUser = async (username, password) => {
+export const loginUser = async (username: string, password: string) => {
     const response = await api.post(`/login/`, {
         username,
         password,
     });
-
-    // Zugriffstoken speichern
     if (response.data.access_token) {
         localStorage.setItem("accessToken", response.data.access_token);
     }
-
     return response.data;
 };
 
-// API-Aufruf zum Verifizieren des Nutzers
-export const verifyPassword = async (username, password) => {
+export const verifyPassword = async (username: string, password: string) => {
     const response = await api.post(`/verify_password/`, { username, password });
-    console.log(response);
     return response.data;
 };
 
-// API-Aufruf zur Benutzerabmeldung
-export const logoutUser = async (username) => {
-    const response = await api.post(`/logout/`, {
-        username: username,
-    });
+export const logoutUser = async (username: string) => {
+    const response = await api.post(`/logout/`, { username });
     localStorage.removeItem("accessToken");
     return response.data;
 };
 
-// API-Aufruf zur automatischen Anmeldung
-export const autoLogin = async (username) => {
+export const autoLogin = async (username: string) => {
     const response = await api.get(`/auto_login/${username}`);
     return response.data;
 };
 
-// API-Aufruf zum erhalten des Admin-Status des momentanen Nutzers
-export const getUserAdminStatus = async (username) => {
+export const getUserAdminStatus = async (username: string) => {
     const response = await api.get(`/users/${username}/admin/`);
     return response.data;
 };
 
-// API-Aufruf zum erhalten des Passwort-Reset-Status des momentanen Nutzers
-export const getResetPasswordStatus = async (username) => {
+export const getResetPasswordStatus = async (username: string) => {
     const response = await api.get(`/users/${username}/reset_password/`);
     return response.data;
 };
 
-// API-Aufruf zum Abrufen aller Benutzer (für Admin)
 export const getAllUsers = async () => {
     const response = await api.get(`/users/`);
     return response.data;
 };
 
-// API-Aufruf zum Ändern des Admin-Status eines Benutzers (für Admin)
-export const setUserAdminStatus = async (username, admin_username, admin_password) => {
+export const setUserAdminStatus = async (username: string, admin_username: string, admin_password: string) => {
     const response = await api.post(`/users/${username}/admin/`, {
-        username: admin_username,  // das ist der echte Admin
+        username: admin_username,
         password: admin_password
     });
     return response.data;
 };
 
-// API-Aufruf zum Zurücksetzen des Passworts eines Benutzers (für Admin)
-export const resetUserPassword = async (username, admin_username, admin_password) => {
+export const resetUserPassword = async (username: string, admin_username: string, admin_password: string) => {
     const response = await api.post(`/reset_password/${username}/`, {
         username: admin_username,
         password: admin_password
@@ -274,8 +319,7 @@ export const resetUserPassword = async (username, admin_username, admin_password
     return response.data;
 };
 
-// API-Aufruf zum Löschen eines Benutzers
-export const deleteUser = async (username, password) => {
+export const deleteUser = async (username: string, password: string) => {
     const response = await api.delete(`/delete_user/`, {
         data: {
             username: username,
@@ -285,67 +329,61 @@ export const deleteUser = async (username, password) => {
     return response.data;
 };
 
-// --- Einstellungen ---
-// API-Aufruf zum Abrufen der Benutzereinstellungen
-export const getUserSettings = async (username) => {
+// KORRIGIERT: Erwartet ein Request-Body-Objekt, das zum neuen Pydantic-Modell im Backend passt
+export const changeUsername = async (username: string, password: string, newUsername: string) => {
+    const requestBody = {
+        user: { username, password },
+        new_username: newUsername
+    };
+    const response = await api.post('/change_username/', requestBody);
+    return response.data;
+};
+
+// KORRIGIERT: Erwartet ein Request-Body-Objekt, das zum neuen Pydantic-Modell im Backend passt
+export const changePassword = async (username: string, oldPassword: string, newPassword: string) => {
+    const requestBody = {
+        user: { username, password: oldPassword },
+        new_password: newPassword
+    };
+    const response = await api.post('/change_password/', requestBody);
+    return response.data;
+};
+
+// --- SETTINGS & DATABASE ---
+export const getUserSettings = async (username: string) => {
     const response = await api.get(`/settings/${username}`);
     return response.data;
 };
 
-// API-Aufruf zum Speichern der Benutzereinstellungen
-export const saveUserSettings = async (username, settings) => {
-    console.log(username, settings)
+export const saveUserSettings = async (username: string, settings: Settings) => {
     const response = await api.post(`/settings/${username}`, settings);
     return response.data;
 };
 
-// --- Datenbankoperationen ---
-// API-Aufruf zum Lesen einer Datenbank
-export const readDatabase = async (databaseName) => {
+export const readDatabase = async (databaseName: string) => {
     const response = await api.get(`/database/${databaseName}`);
     return response.data;
 };
 
-// API-Aufruf zum Schreiben in eine Datenbank
-export const writeDatabase = async (databaseName, data) => {
+// data kann ein Objekt oder ein Array sein
+export const writeDatabase = async (databaseName: string, data: Record<string, any> | any[]) => {
     const response = await api.post(`/database/${databaseName}`, { data: data });
     return response.data;
 };
 
-// Api-Aufruf zum Neuauslesen der Datenbank
-export const reloadDatabase = async (databaseName) => {
+export const reloadDatabase = async (databaseName: string) => {
     const response = await api.post(`/database/${databaseName}/reload/`);
     return response.data;
 }
 
-// --- Nutzerveraltung ---
-// API-Aufruf zum Ändern des Nutzernamens
-export const changeUsername = async (username, password, newUsername) => {
-    const response = await api.post('/change_username/', {
-        user: { username, password },
-        new_username: newUsername
-    });
-    return response.data;
-};
-
-// API-Aufruf zum Ändern des Passworts
-export const changePassword = async (username, oldPassword, newPassword) => {
-    const response = await api.post('/change_password/', {
-        user: { username, password: oldPassword },
-        new_password: newPassword
-    });
-    return response.data;
-};
-
-// API-Aufruf zum Herunterfahren des Servers
-export const shutdown = async (password) => {
+// --- SYSTEM ---
+export const shutdown = async (password: string) => {
     const response = await api.post('/shutdown/', { password });
     return response.data;
 }
 
-// --- Events ---
-// API-Aufruf zum Hinzufügen eines Events
-export const addEvent = async (frequency, times, event) => {
+// --- EVENTS ---
+export const addEvent = async (frequency: string, times: string[], event: string) => {
     const response = await api.post("/events", {
         frequency,
         times,
@@ -354,8 +392,7 @@ export const addEvent = async (frequency, times, event) => {
     return response.data;
 };
 
-// API-Aufruf zum Aktualisieren eines Events
-export const updateEvent = async (eventIndex, frequency, times, event) => {
+export const updateEvent = async (eventIndex: number, frequency: string, times: string[], event: string) => {
     const response = await api.put(`/events/${eventIndex}`, {
         frequency,
         times,
@@ -364,43 +401,36 @@ export const updateEvent = async (eventIndex, frequency, times, event) => {
     return response.data;
 };
 
-// API-Aufruf zum Löschen eines Events
-export const deleteEvent = async (eventIndex) => {
+export const deleteEvent = async (eventIndex: number) => {
     const response = await api.delete(`/events/${eventIndex}`);
     return response.data;
 };
 
-// API-Aufruf zum Abrufen aller Events
 export const getAllEvents = async () => {
     const response = await api.get("/events");
     return response.data;
 };
 
-// API-Aufruf zum manuellen Ausführen eines Events
-export const executeEvent = async (eventIndex) => {
+export const executeEvent = async (eventIndex: number) => {
     const response = await api.post(`/events/${eventIndex}/execute`);
     return response.data;
 };
 
-// API-Aufruf zum Abrufen eines Events anhand des Index
-export const findEventByIndex = async (eventIndex) => {
+export const findEventByIndex = async (eventIndex: number) => {
     const response = await api.get(`/events/${eventIndex}`);
     return response.data;
 };
 
-// API-Aufruf zum Starten der Event-Überwachung
 export const startEventMonitoring = async () => {
     const response = await api.post("/events/start-monitoring");
     return response.data;
 };
 
-// API-Aufruf zum Speichern der Events in der Datei
 export const saveEventsToFile = async () => {
     const response = await api.post("/events/save");
     return response.data;
 };
 
-// API-Aufruf zum Laden der Events aus der Datei
 export const loadEventsFromFile = async () => {
     const response = await api.post("/events/load");
     return response.data;
