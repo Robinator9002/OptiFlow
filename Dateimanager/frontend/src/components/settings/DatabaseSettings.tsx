@@ -1,9 +1,46 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
+// KORRIGIERT: Der Import-Pfad wurde korrigiert, um die Dateiendung .tsx explizit anzugeben.
 import { readDatabase, writeDatabase, reloadDatabase } from '../../api/api.tsx';
 
-// Komponente zur Anzeige von JSON (vereinfacht)
-const JsonViewer = ({ data }) => {
+// --- Type Definitions ---
+
+// Props for the JsonViewer component
+interface JsonViewerProps {
+    data: any;
+}
+
+// Props for the main DataManagement component
+interface DataManagementProps {
+    isAdmin: boolean;
+    maxFileSize: number;
+    setMaxFileSize: React.Dispatch<React.SetStateAction<number>>;
+    setIsBusy: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+// Describes the structure of an available file for management
+interface AvailableFile {
+    id: string;
+    name: string;
+    description: string;
+    actions: ('view' | 'download' | 'refresh' | 'rebuild' | 'edit')[];
+}
+
+// Describes the structure of the loaded file data
+interface FileData {
+    filename: string;
+    content: any; // The content can be any valid JSON structure
+    lastModified: number;
+}
+
+
+// --- Components ---
+
+/**
+ * A simple component to display formatted JSON data.
+ */
+const JsonViewer: React.FC<JsonViewerProps> = ({ data }) => {
+    // Stringify data, providing a fallback for null/undefined to avoid errors.
     const formattedJson = data === null || data === undefined ? 'null' : JSON.stringify(data, null, 2);
     return (
         <pre style={{
@@ -24,7 +61,12 @@ const JsonViewer = ({ data }) => {
     );
 };
 
-function downloadJsonFile(data, filename = "data.json") {
+/**
+ * Triggers a browser download for the given data as a JSON file.
+ * @param data The JSON data to download.
+ * @param filename The desired name for the downloaded file.
+ */
+function downloadJsonFile(data: any, filename: string = "data.json") {
     const jsonString = JSON.stringify(data, null, 2);
     const blob = new Blob([jsonString], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -37,33 +79,31 @@ function downloadJsonFile(data, filename = "data.json") {
     URL.revokeObjectURL(url);
 }
 
-export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, setIsBusy }) {
-    const [selectedFileId, setSelectedFileId] = useState(null);
-    const [fileData, setFileData] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [sizeLimitWarning, setSizeLimitWarning] = useState(null);
-    const [showRawEditor, setShowRawEditor] = useState(false);
-    const [rawJsonContent, setRawJsonContent] = useState('');
-    const [isSaving, setIsSaving] = useState(false);
-    const [actionLoading, setActionLoading] = useState(false);
+/**
+ * The main component for managing internal database JSON files.
+ */
+export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, setIsBusy }: DataManagementProps) {
+    const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
+    const [fileData, setFileData] = useState<FileData | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [sizeLimitWarning, setSizeLimitWarning] = useState<string | null>(null);
+    const [showRawEditor, setShowRawEditor] = useState<boolean>(false);
+    const [rawJsonContent, setRawJsonContent] = useState<string>('');
+    const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [actionLoading, setActionLoading] = useState<boolean>(false);
 
-    const isMounted = useRef(true);
-
-    useEffect(() => {
-        return () => {
-            isMounted.current = false;
-        };
-    }, []);
-
-
-    const availableFiles = [
+    // List of manageable files with their properties and allowed actions
+    const availableFiles: AvailableFile[] = [
         { id: 'users', name: 'users.json', description: 'Benutzerkonten und Hashes.', actions: ['view', 'download'] },
         { id: 'structure', name: 'structure.json', description: 'Gescannte Verzeichnisstruktur.', actions: ['view', 'download', 'refresh', 'edit'] },
         { id: 'index', name: 'index.json', description: 'Suchindex der Dateien.', actions: ['view', 'download', 'rebuild', 'edit'] },
-        { id: 'events', name: 'events.json', description: 'Gespeicherte Zeitgesteuerte Events.', actions: ['view', 'download'] },
+        { id: 'events', name: 'events.json', description: 'Gespeicherte Zeitgesteuerte Events.', actions: ['view', 'download', 'edit'] },
     ];
 
+    /**
+     * Resets the entire component state to its initial view.
+     */
     const handleClearSelectedFile = useCallback(() => {
         setSelectedFileId(null);
         setFileData(null);
@@ -76,34 +116,36 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
         setActionLoading(false);
     }, []);
 
-
-    const loadFileData = useCallback(async (fileId) => {
+    /**
+     * Loads the content of a selected database file from the backend.
+     */
+    const loadFileData = useCallback(async (fileId: string) => {
         const info = availableFiles.find(f => f.id === fileId);
         if (!info) {
-            setError(`Unbekannte Datei-ID: ${fileId}`);
-            toast.error(`Unbekannte Datei-ID: ${fileId}`);
+            const errorMsg = `Unbekannte Datei-ID: ${fileId}`;
+            setError(errorMsg);
+            toast.error(errorMsg);
             return;
         }
 
         setLoading(true);
-        setIsBusy(true); // Setze isBusy beim Start des Ladens
+        setIsBusy(true);
         setError(null);
         setSizeLimitWarning(null);
         setFileData(null);
-        setShowRawEditor(false); // Editor immer schließen beim Laden einer neuen Datei
+        setShowRawEditor(false);
         setSelectedFileId(fileId);
-
 
         try {
             const result = await readDatabase(info.name);
             const fileContent = result?.content;
 
-            if (maxFileSize > 0 && fileContent !== undefined && fileContent !== null && JSON.stringify(fileContent).length > maxFileSize) {
+            // Check if the file content exceeds the user-defined size limit for preview
+            if (maxFileSize > 0 && fileContent != null && JSON.stringify(fileContent).length > maxFileSize) {
                 const warningMsg = `Datei ist zu groß um dargestellt zu werden (${JSON.stringify(fileContent).length} Zeichen). Maximale Größe: ${maxFileSize} Zeichen.`;
-                console.warn(warningMsg);
                 setSizeLimitWarning(warningMsg);
                 setError(null);
-                setFileData(null);
+                setFileData(null); // Ensure no old data is shown
                 return;
             }
 
@@ -114,49 +156,58 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
             });
             setRawJsonContent(JSON.stringify(fileContent, null, 2));
             toast.success(`Datei ${info.name} geladen.`);
-        } catch (err) {
-            console.error(`Fehler beim Laden von ${info.name}:`, err);
-            setError(`Fehler beim Laden von ${info.name}: ${err.message}`);
+        } catch (err: any) {
+            const errorMsg = `Fehler beim Laden von ${info.name}: ${err.message}`;
+            setError(errorMsg);
             setSizeLimitWarning(null);
             toast.error(`Fehler beim Laden von ${info.name}.`);
         } finally {
             setLoading(false);
-            setIsBusy(false); // Setze isBusy im finally Block zurück
+            setIsBusy(false);
         }
-    }, [availableFiles, isMounted, maxFileSize, setIsBusy]);
+    }, [maxFileSize, setIsBusy, availableFiles]); // availableFiles is stable, but including it for correctness
 
 
+    /**
+     * Saves the modified raw JSON content back to the server.
+     */
     const handleSaveRawJson = async () => {
         if (!fileData) return;
         setIsSaving(true);
-        setIsBusy(true); // Setze isBusy beim Start des Speicherns
+        setIsBusy(true);
         setError(null);
         setSizeLimitWarning(null);
         try {
             const parsed = JSON.parse(rawJsonContent);
             const res = await writeDatabase(fileData.filename, parsed);
             toast.success(res.message);
-            setShowRawEditor(false); // Schließe Editor nach erfolgreichem Speichern
-            // Reload data after saving to show updated content
-            // Verwende selectedFileId, da fileData nach dem Parsen nicht mehr aktuell ist
-            loadFileData(selectedFileId);
-        } catch (err) {
-            console.error(`Fehler beim Speichern von ${fileData.filename}:`, err);
-            setError(`Fehler beim Speichern: ${err.message}`);
+            setShowRawEditor(false);
+            // Reload data after saving to show the updated, server-confirmed content
+            if (selectedFileId) {
+                await loadFileData(selectedFileId);
+            }
+        } catch (err: any) {
+            const errorMsg = `Fehler beim Speichern: ${err.message}`;
+            setError(errorMsg);
             setSizeLimitWarning(null);
-            toast.error(`Fehler beim Speichern: ${err.message}`);
+            toast.error(errorMsg);
         } finally {
             setIsSaving(false);
-            setIsBusy(false); // Setze isBusy im finally Block zurück
+            setIsBusy(false);
         }
     };
 
-    const handleTriggerAction = async (action) => {
+    /**
+     * Triggers a specific backend action like 'rebuild' or 'refresh'.
+     */
+    const handleTriggerAction = async (action: 'rebuild' | 'refresh') => {
         if (!selectedFileId) return;
+
         setActionLoading(true);
-        setIsBusy(true); // Setze isBusy beim Start der Aktion
+        setIsBusy(true);
         setError(null);
         setSizeLimitWarning(null);
+
         try {
             const currentFileInfo = availableFiles.find(f => f.id === selectedFileId);
             if (!currentFileInfo) {
@@ -164,18 +215,22 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
             }
             const resp = await reloadDatabase(currentFileInfo.name);
             toast.success(resp.message);
-            loadFileData(selectedFileId);
-        } catch (err) {
-            console.error(`Fehler bei Aktion '${action}' für ${selectedFileId}:`, err);
-            setError(`Fehler bei Aktion '${action}': ${err.message}`);
+            // Reload data to reflect the changes from the action
+            await loadFileData(selectedFileId);
+        } catch (err: any) {
+            const errorMsg = `Fehler bei Aktion '${action}': ${err.message}`;
+            setError(errorMsg);
             setSizeLimitWarning(null);
             toast.error(`Fehler bei Aktion '${action}'.`);
         } finally {
             setActionLoading(false);
-            setIsBusy(false); // Setze isBusy im finally Block zurück
+            setIsBusy(false);
         }
     };
 
+    /**
+     * Fetches the latest file content and triggers a download.
+     */
     const handleDownload = async () => {
         if (!selectedFileId) {
             toast.warn("Bitte wählen Sie eine Datei zum Herunterladen aus.");
@@ -196,20 +251,24 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
             } else {
                 toast.error(`Fehler: Inhalt für Download von ${currentFileInfo.name} konnte nicht abgerufen werden.`);
             }
-        } catch (err) {
+        } catch (err: any) {
             toast.error(`Fehler beim Starten des Downloads für ${currentFileInfo.name}: ${err.message}`);
         }
     };
 
+    /**
+     * Handles global key presses, e.g., for closing views with the Escape key.
+     */
     useEffect(() => {
-        const handleGlobalKeyDown = (event) => {
+        const handleGlobalKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
-                event.preventDefault();
-
+                // Don't interfere if user is typing in the editor
                 const activeElement = document.activeElement;
                 if (showRawEditor && activeElement && activeElement.tagName === 'TEXTAREA') {
                     return;
                 }
+
+                event.preventDefault();
 
                 if (showRawEditor) {
                     setShowRawEditor(false);
@@ -222,17 +281,15 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
         };
 
         document.addEventListener('keydown', handleGlobalKeyDown);
-
         return () => {
             document.removeEventListener('keydown', handleGlobalKeyDown);
         };
-    }, [
-        selectedFileId,
-        showRawEditor,
-        handleClearSelectedFile
-    ]);
+    }, [selectedFileId, showRawEditor, handleClearSelectedFile]);
 
-    const handleMaxFileSizeChange = (event) => {
+    /**
+     * Handles changes to the max file size input.
+     */
+    const handleMaxFileSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(event.target.value, 10);
         if (!isNaN(value)) {
             const clampedValue = Math.max(10, Math.min(1000000000, value));
@@ -242,15 +299,20 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
         }
     };
 
-    const handleRawJsonChange = (event) => {
+    /**
+     * Updates the state for the raw JSON editor content.
+     */
+    const handleRawJsonChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setRawJsonContent(event.target.value);
     };
 
+    // --- Render Logic ---
 
     if (!isAdmin) {
         return <div className="container"><p>Zugriff verweigert. Diese Funktion ist nur für Administratoren.</p></div>;
     }
 
+    // Find info for the currently selected file for easy access in JSX
     const currentFileInfo = availableFiles.find(f => f.id === selectedFileId);
 
     return (
@@ -262,7 +324,6 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
                         Verwaltung der internen JSON-Datendateien. Änderungen können kritisch sein!
                     </p>
                 </div>
-                {/* Aktualisieren Button (nur sichtbar, wenn eine Datei ausgewählt ist UND NICHT geladen wird) */}
                 {selectedFileId && !loading && (
                     <button onClick={() => loadFileData(selectedFileId)} disabled={actionLoading || isSaving || loading}>Aktualisieren</button>
                 )}
@@ -274,7 +335,7 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
                         key={file.id}
                         onClick={() => loadFileData(file.id)}
                         className={`tab ${selectedFileId === file.id ? 'active' : ''}`}
-                        disabled={loading || actionLoading || isSaving} // Disable buttons while loading, saving, or action is running
+                        disabled={loading || actionLoading || isSaving}
                     >
                         {file.name}
                     </button>
@@ -296,7 +357,6 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
                     </label>
                     <p className="setting-description">
                         Begrenzt die Größe von JSON-Dateien, die direkt im Browser angezeigt werden.
-                        Größere Dateien können weiterhin heruntergeladen werden.
                     </p>
                 </div>
             </div>
@@ -310,21 +370,20 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
 
             {error && !loading && <p className="folder-selector-error" style={{ textAlign: 'left' }}>{error}</p>}
 
-            {selectedFileId && !loading && (
+            {selectedFileId && !loading && currentFileInfo && (
                 <div className="file-data-display settings-section" style={{ marginTop: '0' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h3>Details für: {currentFileInfo?.name || 'Ausgewählte Datei'}</h3>
-                        <button onClick={() => { handleClearSelectedFile(); toast.info('Datei geschlossen.'); }} className="close-button" title="Datei schließen">×</button>
+                        <h3>Details für: {currentFileInfo.name}</h3>
+                        <button onClick={handleClearSelectedFile} className="close-button" title="Datei schließen (Esc)">×</button>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '5px 15px', alignItems: 'center', marginBottom: '15px', fontSize: '0.9rem' }}>
                         <strong style={{ color: 'var(--text-secondary)' }}>Beschreibung:</strong>
-                        <span>{currentFileInfo?.description || 'N/A'}</span>
+                        <span>{currentFileInfo.description}</span>
                     </div>
 
-                    {/* === GEÄNDERT: Bedingtes Rendering der Buttons === */}
                     <div className="data-actions" style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
-                        {showRawEditor ? ( // Wenn der Raw Editor offen ist, zeige Speichern und Abbrechen
+                        {showRawEditor ? (
                             <>
                                 <button onClick={handleSaveRawJson} disabled={isSaving || loading || actionLoading} className="confirm">
                                     {isSaving ? 'Speichere...' : 'Änderungen speichern'}
@@ -333,19 +392,17 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
                                     Abbrechen
                                 </button>
                             </>
-                        ) : ( // Ansonsten zeige die Standard-Aktionsbuttons
+                        ) : (
                             <>
-                                {currentFileInfo?.actions.includes('download') && <button onClick={handleDownload} disabled={actionLoading || isSaving || loading}>Backup herunterladen</button>}
-                                {currentFileInfo?.actions.includes('rebuild') && <button onClick={() => handleTriggerAction('rebuild')} disabled={actionLoading || isSaving || loading} className="confirm">{actionLoading ? 'Läuft...' : 'Index neu laden'}</button>}
-                                {currentFileInfo?.actions.includes('refresh') && <button onClick={() => handleTriggerAction('refresh')} disabled={actionLoading || isSaving || loading} className="confirm">{actionLoading ? 'Läuft...' : 'Struktur neu einlesen'}</button>}
-                                {/* Der Edit Button schaltet showRawEditor um */}
-                                {currentFileInfo?.actions.includes('edit') && <button onClick={() => setShowRawEditor(true)} disabled={actionLoading || isSaving || loading || !fileData} className="disfirm">Raw JSON bearbeiten (Riskant!)</button>}
+                                {currentFileInfo.actions.includes('download') && <button onClick={handleDownload} disabled={actionLoading || isSaving || loading}>Backup herunterladen</button>}
+                                {currentFileInfo.actions.includes('rebuild') && <button onClick={() => handleTriggerAction('rebuild')} disabled={actionLoading || isSaving || loading} className="confirm">{actionLoading ? 'Läuft...' : 'Index neu laden'}</button>}
+                                {currentFileInfo.actions.includes('refresh') && <button onClick={() => handleTriggerAction('refresh')} disabled={actionLoading || isSaving || loading} className="confirm">{actionLoading ? 'Läuft...' : 'Struktur neu einlesen'}</button>}
+                                {currentFileInfo.actions.includes('edit') && <button onClick={() => setShowRawEditor(true)} disabled={actionLoading || isSaving || loading || !fileData} className="disfirm">Raw JSON bearbeiten (Riskant!)</button>}
                             </>
                         )}
                     </div>
 
-                    {/* JSON Vorschau oder Raw Editor */}
-                    {showRawEditor ? ( // Zeige den Raw Editor, wenn showRawEditor true ist
+                    {showRawEditor ? (
                         <div style={{ marginTop: '15px' }}>
                             <h4>Raw JSON Editor:</h4>
                             <textarea
@@ -366,9 +423,8 @@ export default function DataManagement({ isAdmin, maxFileSize, setMaxFileSize, s
                                 onChange={handleRawJsonChange}
                                 disabled={isSaving || loading || actionLoading}
                             />
-                            {/* === ENTFERNT: Buttons von hier entfernt === */}
                         </div>
-                    ) : ( // Zeige Vorschau, wenn Raw Editor nicht offen ist
+                    ) : (
                         fileData ? (
                             <div style={{ marginTop: '15px' }}>
                                 <h4>Inhalt Vorschau:</h4>

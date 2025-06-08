@@ -77,7 +77,7 @@ export const ChangePassword: FC<ChangePasswordProps> = ({ currentUser, password,
             setPasswordChangeLoading(false);
         }
     };
-    
+
     // Wrapper für das Form-Event
     const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
