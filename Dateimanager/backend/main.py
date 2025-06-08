@@ -772,3 +772,6 @@ async def reload_database(database_name: str):
     """Reloadet die Datenbank."""
     controller.reload_database(database_name)
     return {"message": f"Datenbank '{database_name}' erfolgreich neu geladen."}
+
+ # Füge den Router hinzu
+app.include_router(router)
