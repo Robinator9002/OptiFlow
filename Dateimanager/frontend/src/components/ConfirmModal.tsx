@@ -1,32 +1,53 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-export const ConfirmModal = ({ title, message, onConfirm, onCancel, isDanger }) => {
+// --- Type Definitions ---
+interface ConfirmModalProps {
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    onCancel: () => void;
+    isDanger?: boolean;
+}
+
+// --- Component ---
+export const ConfirmModal: React.FC<ConfirmModalProps> = ({
+    title,
+    message,
+    onConfirm,
+    onCancel,
+    isDanger,
+}) => {
     useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === 'Enter') {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Enter") {
                 e.preventDefault();
                 onConfirm();
             }
-            if (e.key === 'Escape') {
-                // Für Escape wollen wir immer abbrechen
+            if (e.key === "Escape") {
                 e.preventDefault();
                 onCancel();
             }
         };
 
-        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener("keydown", handleKeyDown);
         return () => {
-            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener("keydown", handleKeyDown);
         };
     }, [onConfirm, onCancel]);
 
     return (
         <div className="modal-overlay overlay">
-            <div className={`modal-content ${isDanger ? 'modal-danger' : ''}`}> {/* Optional: Klasse für rote Farbe */}
+            <div className={`modal-content ${isDanger ? "modal-danger" : ""}`}>
                 {title && <h3>{title}</h3>}
                 <p>{message}</p>
-                <button className="confirm" onClick={onConfirm}>Ja</button>
-                <button className="disfirm" onClick={onCancel}>Nein</button>
+                <div className="confirm-buttons">
+                    <button className="confirm" onClick={onConfirm}>
+                        Ja
+                    </button>
+                    <button className="disfirm" onClick={onCancel}>
+                        Nein
+                    </button>
+                </div>
             </div>
         </div>
     );

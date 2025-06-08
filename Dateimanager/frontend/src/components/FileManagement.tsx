@@ -1,24 +1,49 @@
-import FileSearch from './FileSearch.tsx'
-import FilePreview from './FilePreview.tsx'
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import FileSearch from "./FileSearch.tsx";
+import FilePreview from "./FilePreview.tsx";
 
-const FileManagement = ({ searchingFiles, setSearchingFiles, showRelevance, isAdmin, selectedFile, setSelectedFile }) => {
-    const [deletedFile, setDeletedFile] = useState(null);
-    // Neuer State für das Einklappen der Suche
-    const [isSearchCollapsed, setIsSearchCollapsed] = useState(false);
+// --- Type Definitions ---
+interface FileObject {
+    path: string;
+    name: string;
+    // Add other file properties if available
+}
 
-    const onFileDeleted = async (file_path) => {
-        setDeletedFile(file_path);
-    }
+interface FileManagementProps {
+    searchingFiles: boolean;
+    setSearchingFiles: React.Dispatch<React.SetStateAction<boolean>>;
+    showRelevance: boolean;
+    isAdmin: boolean;
+    selectedFile: FileObject | null;
+    setSelectedFile: React.Dispatch<React.SetStateAction<FileObject | null>>;
+}
 
-    // Funktion zum Umschalten des Zustands
+// --- Component ---
+const FileManagement: React.FC<FileManagementProps> = ({
+    searchingFiles,
+    setSearchingFiles,
+    showRelevance,
+    isAdmin,
+    selectedFile,
+    setSelectedFile,
+}) => {
+    const [deletedFile, setDeletedFile] = useState<string | null>(null);
+    const [isSearchCollapsed, setIsSearchCollapsed] = useState<boolean>(false);
+
+    const onFileDeleted = (filePath: string) => {
+        setDeletedFile(filePath);
+    };
+
     const toggleSearchCollapse = () => {
-        setIsSearchCollapsed(!isSearchCollapsed);
+        setIsSearchCollapsed((prevState) => !prevState);
     };
 
     return (
-        // Klasse für CSS hinzufügen, abhängig vom Zustand
-        <div className={`file-management-container ${isSearchCollapsed ? 'search-collapsed' : ''}`}>
+        <div
+            className={`file-management-container ${
+                isSearchCollapsed ? "search-collapsed" : ""
+            }`}
+        >
             <FileSearch
                 selectedFile={selectedFile}
                 setSelectedFile={setSelectedFile}
@@ -27,9 +52,7 @@ const FileManagement = ({ searchingFiles, setSearchingFiles, showRelevance, isAd
                 showRelevance={showRelevance}
                 deletedFile={deletedFile}
                 setDeletedFile={setDeletedFile}
-                // Prop für den Zustand übergeben
                 isSearchCollapsed={isSearchCollapsed}
-                // Prop für die Toggle-Funktion übergeben
                 onToggleCollapse={toggleSearchCollapse}
             />
             <FilePreview
@@ -37,11 +60,10 @@ const FileManagement = ({ searchingFiles, setSearchingFiles, showRelevance, isAd
                 setSelectedFile={setSelectedFile}
                 onFileDeleted={onFileDeleted}
                 isAdmin={isAdmin}
-                // Prop für den Zustand übergeben (optional, falls Preview reagieren soll)
                 setIsSearchCollapsed={setIsSearchCollapsed}
             />
         </div>
     );
-}
+};
 
 export default FileManagement;
