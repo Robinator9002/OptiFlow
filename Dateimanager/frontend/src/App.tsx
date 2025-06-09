@@ -7,7 +7,6 @@ import FileManagement from "./components/FileManagement.tsx";
 import DeDuping from "./components/DeDuping.tsx";
 import OldFiles from "./components/OldFiles.tsx";
 import IndexManagement from "./components/IndexManagement.tsx";
-import ScannerConfig from "./components/ScannerConfig.tsx";
 import PDFProcessor from "./components/OCRProcessor.tsx";
 import Login from "./components/Login.tsx";
 import Settings from "./components/Settings.tsx";
@@ -27,6 +26,7 @@ import {
 	SettingsProvider,
 } from "./context/SettingsContext.tsx";
 import { ConfirmModal } from "./components/ConfirmModal.tsx";
+import ScannerConfig from "./components/ScannerConfig.tsx";
 
 // Definieren der Tab-Reihenfolge für die Navigation
 const TAB_ORDER = ["search", "dedupe", "old-files", "scanner", "pdf-to-ocr"];

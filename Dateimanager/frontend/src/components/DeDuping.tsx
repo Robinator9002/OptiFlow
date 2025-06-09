@@ -274,9 +274,6 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
 
     const hasLoadedInitialDupes = useRef<boolean>(false);
     const initialDuplicateGroups = useRef<DuplicateGroupsState>({});
-    const [availableLengthRanges, setAvailableLengthRanges] = useState<
-        string[]
-    >([]);
 
     const extractAndSetLengthRanges = (groups: DuplicateGroupsState): void => {
         const ranges = new Set<string>();
@@ -288,16 +285,6 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
                 ranges.add(groups[groupId].length_range);
             }
         }
-        const sortedRanges = Array.from(ranges).sort((a, b) => {
-            try {
-                const aStart = parseInt(a.split("-")[0], 10);
-                const bStart = parseInt(b.split("-")[0], 10);
-                return aStart - bStart;
-            } catch (e) {
-                return a.localeCompare(b);
-            }
-        });
-        setAvailableLengthRanges(sortedRanges);
     };
 
     useEffect(() => {
@@ -345,7 +332,6 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
         setDuplicateGroups({});
         initialDuplicateGroups.current = {};
         setExpandedGroupId(null);
-        setAvailableLengthRanges([]);
 
         try {
             const result = await findDuplicates();

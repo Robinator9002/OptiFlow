@@ -9,8 +9,8 @@ const __dirname = path.dirname(__filename);       // Verzeichnis der aktuellen D
 function createWindow() {
 	// Erstelle das Browser-Fenster.
 	const mainWindow = new BrowserWindow({
-		width: 1024, // Etwas größer für eine typische App
-		height: 768,
+		width: 1920, // Etwas größer für eine typische App
+		height: 1080,
         icon: path.join(__dirname, 'public', 'icon.png'),
 		webPreferences: {
 			nodeIntegration: false, // Wichtig für Sicherheit! Standard ist false.

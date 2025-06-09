@@ -113,7 +113,6 @@ export default function UserSettings({
 
   const handleToggleAdmin = async (
     targetUsername: string,
-    currentIsAdmin: boolean
   ) => {
     try {
       const response = await setUserAdminStatus(
@@ -273,7 +272,7 @@ export default function UserSettings({
                               type="checkbox"
                               checked={user.isAdmin}
                               onChange={() =>
-                                handleToggleAdmin(user.username, user.isAdmin)
+                                handleToggleAdmin(user.username)
                               }
                               disabled={user.username === currentUser}
                               title={
