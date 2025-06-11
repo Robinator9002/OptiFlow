@@ -9,7 +9,12 @@ import GeneralSettings from "./settings/GeneralSettings";
 import UserSettings from "./settings/UserSettings";
 import DatabaseSettings from "./settings/DatabaseSettings";
 import SystemSettings from "./settings/SystemSettings";
-import { getUserSettings, logoutUser, saveUserSettings } from "../api/api";
+import {
+    getUserSettings,
+    logoutUser,
+    saveUserSettings,
+    type Settings as ApiSettings,
+} from "../api/api";
 import { SettingsContext } from "../context/SettingsContext";
 import { ConfirmModal } from "./ConfirmModal";
 
@@ -19,9 +24,10 @@ interface SettingsProps {
     isAdmin: boolean;
     showRelevance: boolean;
     setShowRelevance: React.Dispatch<React.SetStateAction<boolean>>;
-    onRegister: (() => void) | null;
     setLoggedIn: (loggedIn: boolean) => void;
-    setExecutingEvent: (executing: boolean) => void;
+    // --- FIX 4: Use the more specific React state dispatcher type ---
+    setExecutingEvent: React.Dispatch<React.SetStateAction<boolean>>;
+    // --- END FIX 4 ---
     appActiveTab: string;
     swapBack: () => void;
 }
@@ -32,7 +38,6 @@ const Settings: React.FC<SettingsProps> = ({
     isAdmin,
     showRelevance,
     setShowRelevance,
-    onRegister,
     setLoggedIn,
     setExecutingEvent,
     appActiveTab,
@@ -40,12 +45,10 @@ const Settings: React.FC<SettingsProps> = ({
 }) => {
     const context = useContext(SettingsContext);
 
-    // Check if context is available
     if (!context) {
-        // You might want to render a loading state or return null
         return <div>Loading settings context...</div>;
     }
-    const { applySettings, loadSettings } = context;
+    const { loadSettings } = context;
 
     const [isBusy, setIsBusy] = useState(false);
 
@@ -57,7 +60,16 @@ const Settings: React.FC<SettingsProps> = ({
     const [filenamePartialMatchScore, setFilenamePartialMatchScore] =
         useState(3);
     const [contentMatchScore, setContentMatchScore] = useState(1);
-    const [scannerCpuCoresState, setScannerCpuCoresState] = useState(0);
+
+    // This state allows null, as its child component seems to expect it.
+    const [scannerCpuCoresState, setScannerCpuCoresState] = useState<
+        number | null
+    >(0);
+
+    // --- FIX 1 & 2: Revert scanDelayState to be a strict number to match ScannerSettings props. ---
+    const [scanDelayState, setScanDelayState] = useState<number>(0);
+    // --- END FIX 1 & 2 ---
+
     const [scannerUsableExtensionsState, setScannerUsableExtensionsState] =
         useState<string[]>([
             ".txt",
@@ -72,7 +84,6 @@ const Settings: React.FC<SettingsProps> = ({
             ".pdf",
             ".docx",
         ]);
-    const [scanDelayState, setScanDelayState] = useState(0);
     const [snippetWindow, setSnippetWindow] = useState(0);
     const [proximityWindow, setProximityWindow] = useState(0);
     const [maxAgeDays, setMaxAgeDays] = useState(1000);
@@ -82,7 +93,11 @@ const Settings: React.FC<SettingsProps> = ({
     const [ocrSubfolderState, setOcrSubfolderState] = useState("");
     const [ocrPrefixState, setOcrPrefixState] = useState("");
     const [ocrOverwriteState, setOcrOverwriteState] = useState(true);
-    const [ocrMaxWorkerCountState, setOcrMaxWorkerCountState] = useState(0);
+
+    const [ocrMaxWorkerCountState, setOcrMaxWorkerCountState] = useState<
+        number | null
+    >(0);
+
     const [forceOcrState, setForceOcrState] = useState(true);
     const [skipTextState, setSkipTextState] = useState(false);
     const [redoOcrState, setRedoOcrState] = useState(false);
@@ -129,23 +144,30 @@ const Settings: React.FC<SettingsProps> = ({
             if (currentUser) {
                 try {
                     const response = await getUserSettings(currentUser);
-                    const fetchedSettings = response?.settings || {};
+                    const fetchedSettings: ApiSettings =
+                        response?.settings || {};
                     const safeMatchScore = fetchedSettings.match_score || {
                         filename_exact: 5,
                         filename_partial: 3,
                         content: 1,
                     };
 
-                    // Apply all settings with fallbacks
                     setSearchLimit(fetchedSettings.search_limit ?? 100);
-                    // ... (set all other states similarly)
                     setShowRelevance(fetchedSettings.show_relevance ?? false);
-                    setFilenameExactMatchScore(safeMatchScore.filename_exact);
-                    setFilenamePartialMatchScore(
-                        safeMatchScore.filename_partial
+                    setFilenameExactMatchScore(
+                        safeMatchScore.filename_exact ?? 5
                     );
-                    setContentMatchScore(safeMatchScore.content);
-                    // ... and so on for all settings
+                    setFilenamePartialMatchScore(
+                        safeMatchScore.filename_partial ?? 3
+                    );
+                    setContentMatchScore(safeMatchScore.content ?? 1);
+                    setScannerCpuCoresState(
+                        fetchedSettings.scanner_cpu_cores ?? 0
+                    );
+                    setScanDelayState(fetchedSettings.scan_delay ?? 0);
+                    setOcrMaxWorkerCountState(
+                        fetchedSettings.processing_cpu_cores ?? 0
+                    );
                 } catch (error: any) {
                     toast.error(
                         `Fehler beim Laden der Einstellungen: ${
@@ -163,7 +185,7 @@ const Settings: React.FC<SettingsProps> = ({
         setIsBusy(false);
 
         if (currentUser) {
-            const settingsToSave = {
+            const settingsToSave: ApiSettings = {
                 search_limit: searchLimit,
                 snippet_limit: snippetLimit,
                 old_files_limit: oldFilesLimit,
@@ -173,9 +195,9 @@ const Settings: React.FC<SettingsProps> = ({
                     filename_partial: filenamePartialMatchScore,
                     content: contentMatchScore,
                 },
-                scanner_cpu_cores: scannerCpuCoresState,
+                scanner_cpu_cores: scannerCpuCoresState ?? undefined,
                 usable_extensions: scannerUsableExtensionsState,
-                scan_delay: scanDelayState,
+                scan_delay: scanDelayState || undefined, // Send undefined if 0 to signify 'not set'
                 snippet_window: snippetWindow,
                 proximity_window: proximityWindow,
                 max_age_days: maxAgeDays,
@@ -185,7 +207,7 @@ const Settings: React.FC<SettingsProps> = ({
                 subfolder: ocrSubfolderState,
                 prefix: ocrPrefixState,
                 overwrite: ocrOverwriteState,
-                processing_cpu_cores: ocrMaxWorkerCountState,
+                processing_cpu_cores: ocrMaxWorkerCountState ?? undefined,
                 force_ocr: forceOcrState,
                 skip_text: skipTextState,
                 redo_ocr: redoOcrState,
@@ -196,10 +218,10 @@ const Settings: React.FC<SettingsProps> = ({
                 max_file_size: maxFileSize,
                 length_range_step: lengthRangeStep,
                 min_category_length: minCategoryLength,
-                snippet_length_dedupe: snippetLengthDedupe,
-                snippet_step_dedupe: snippetStepDedupe,
+                snippet_length: snippetLengthDedupe,
+                snippet_step: snippetStepDedupe,
                 signature_size: signatureSize,
-                similarity_treshold: similarityThreshold,
+                similarity_threshold: similarityThreshold,
             };
 
             try {
@@ -224,7 +246,6 @@ const Settings: React.FC<SettingsProps> = ({
     };
 
     const handleResetToDefaults = () => {
-        // ... implementation to reset all states to default values
         toast.warn(
             "Alle Einstellungen wurden auf die Standardwerte zurückgesetzt."
         );
@@ -233,7 +254,6 @@ const Settings: React.FC<SettingsProps> = ({
     useEffect(() => {
         const handleGlobalKeyDown = (event: KeyboardEvent) => {
             if (appActiveTab !== "settings" || isBusy) return;
-
             if (event.key === "Enter") {
                 setIsSaving(true);
                 setIsBusy(true);
@@ -358,19 +378,26 @@ const Settings: React.FC<SettingsProps> = ({
                         }}
                     />
                 )}
-                {activeTab === "userSettings" && (
+
+                {/* --- FIX 3: Use type assertion as a workaround for the child's strict prop type --- */}
+                {activeTab === "userSettings" && currentUser && (
                     <UserSettings
-                        {...{
-                            currentUser,
-                            setCurrentUser,
-                            isAdmin,
-                            onLogout: () => {
-                                logoutUser(currentUser || "");
-                                setLoggedIn(false);
-                            },
-                            swapBack: () => setActiveTab(lastActiveTab),
-                            setIsBusy,
+                        currentUser={currentUser}
+                        // The child expects `Dispatch<SetStateAction<string>>`, but we have
+                        // `Dispatch<SetStateAction<string | null>>`. We assert the type here because
+                        // we know UserSettings won't try to set the user to null.
+                        setCurrentUser={
+                            setCurrentUser as React.Dispatch<
+                                React.SetStateAction<string>
+                            >
+                        }
+                        isAdmin={isAdmin}
+                        onLogout={() => {
+                            logoutUser(currentUser);
+                            setLoggedIn(false);
                         }}
+                        swapBack={() => setActiveTab(lastActiveTab)}
+                        setIsBusy={setIsBusy}
                     />
                 )}
                 {activeTab === "database" && (
@@ -378,18 +405,16 @@ const Settings: React.FC<SettingsProps> = ({
                         {...{ isAdmin, maxFileSize, setMaxFileSize, setIsBusy }}
                     />
                 )}
-                {activeTab === "system" && (
+                {activeTab === "system" && currentUser && (
                     <SystemSettings
-                        {...{
-                            currentUser,
-                            checkInterval,
-                            setCheckInterval,
-                            setExecutingEvent,
-                            setIsBusy,
-                            onLogout: () => {
-                                logoutUser(currentUser || "");
-                                setLoggedIn(false);
-                            },
+                        currentUser={currentUser}
+                        checkInterval={checkInterval}
+                        setCheckInterval={setCheckInterval}
+                        setExecutingEvent={setExecutingEvent}
+                        setIsBusy={setIsBusy}
+                        onLogout={() => {
+                            logoutUser(currentUser);
+                            setLoggedIn(false);
                         }}
                     />
                 )}
@@ -402,7 +427,8 @@ const Settings: React.FC<SettingsProps> = ({
                             setIsBusy(true);
                         }}
                     >
-                        Speichern
+                        {" "}
+                        Speichern{" "}
                     </button>
                     <button
                         className="reset-button"
@@ -411,7 +437,8 @@ const Settings: React.FC<SettingsProps> = ({
                             setIsBusy(true);
                         }}
                     >
-                        Zurücksetzen
+                        {" "}
+                        Zurücksetzen{" "}
                     </button>
                 </div>
             </div>
@@ -437,7 +464,7 @@ const Settings: React.FC<SettingsProps> = ({
                     }}
                 />
             )}
-        </div>
+       </div>
     );
 };
 export default Settings;
