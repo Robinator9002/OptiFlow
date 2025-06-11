@@ -214,15 +214,18 @@ class PDFOCRProcessor:
             ocrmypdf.ocr(
                 input_file,
                 output_file,
-                language='deu',  # Sprache explizit setzen
-                deskew=True,  # Automatische Geraderichtung
-                rotate_pages=True,  # Automatische Seitenausrichtung
-                optimize=0,  # Keine Optimierung (schneller)
-                image_dpi=150,  # Geringere DPI (schneller, evtl. ungenauer)
-                force_ocr=self.force_ocr,  # OCR auch erzwingen, wenn Text vermutet wird
-                skip_text=self.skip_text,  # Seiten mit Text nicht überspringen
-                redo_ocr=self.redo_ocr,  # Keine erneute OCR, wenn schon vorhanden
-                progress_bar=False  # Interne Progressbar deaktivieren (wir nutzen tqdm)
+                language='deu',
+                deskew=True,
+                rotate_pages=True,
+                # --- Recommended Changes Below ---
+                optimize=1,        # Changed: Default optimization (often good balance)
+                image_dpi=300,     # Changed: Standard professional OCR DPI for better accuracy
+                force_ocr=True,
+                skip_text=False,
+                redo_ocr=False,    # Keep False initially, unless specifically re-OCR'ing existing documents
+                progress_bar=False,
+                # New: Tesseract configuration for modern engine and default page segmentation
+                tesseract_config='--oem 1 --psm 3' # Add this line
             )
             # Erfolgsfall wird implizit durch tqdm geloggt, hier nur Rückgabe
             return input_file, "Success"
