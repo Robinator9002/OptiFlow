@@ -44,9 +44,9 @@ export default function OldFilesSettings({
 
   return (
     <div className="settings-section">
-      <h3>Vergessene Dateien Einstellungen</h3>
+      <h3>Alte Dateien Einstellungen</h3>
       <p className="setting-description">
-        Konfigurieren Sie die Suche nach alten und vergessenen Dateien im Index.
+        Konfigurieren Sie die Suche nach alten und alten Dateien im Index.
       </p>
 
       <div className="setting-item">

@@ -163,7 +163,7 @@ const Settings: React.FC<SettingsProps> = ({
         { id: "search", label: "Suche" },
         { id: "scanner", label: "Scanner" },
         { id: "ocr", label: "OCR" },
-        { id: "oldFiles", label: "Vergessene Dateien" },
+        { id: "oldFiles", label: "Alte Dateien" },
         { id: "deduping", label: "Entdublizierung" },
         { id: "userSettings", label: "Benutzer" },
         { id: "database", label: "Datenbank" },

@@ -195,8 +195,8 @@ export default function OldFiles({
             return files.length;
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : String(err);
-            setError(`Fehler beim Laden der vergessenen Dateien: ${message}`);
-            toast.error(`❌ Fehler beim Laden der vergessenen Dateien.`);
+            setError(`Fehler beim Laden der alten Dateien: ${message}`);
+            toast.error(`❌ Fehler beim Laden der alten Dateien.`);
             throw err;
         } finally {
             setLoading(false);
@@ -207,7 +207,7 @@ export default function OldFiles({
     const handleManualSearch = async () => {
         try {
             const fileCount = await fetchOldFiles();
-            toast.success(`🎉 ${fileCount} vergessene Datei(en) gefunden!`);
+            toast.success(`🎉 ${fileCount} alte Datei(en) gefunden!`);
         } catch {
             /* error toast is already handled in fetchOldFiles */
         }
@@ -255,13 +255,13 @@ export default function OldFiles({
 
     return (
         <div className="settings-section old-files-container">
-            <h2>Vergessene Dateien</h2>
+            <h2>Alte Dateien</h2>
             <div className="action-controls">
                 <button
                     onClick={handleManualSearch}
                     disabled={loading || deletingFile}
                 >
-                    {loading ? "Suche läuft..." : "Vergessene Dateien suchen"}
+                    {loading ? "Suche läuft..." : "Alte Dateien suchen"}
                 </button>
                 <label htmlFor="maxAgeDays" className="input-label">
                     Mindestalter in Tagen:
