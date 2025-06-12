@@ -50,7 +50,7 @@ class DateiController:
 
         self.event_manager = EventManager(on_event_triggered=self.on_event_triggered)  # Wenn kein EventManager übergeben wird, wird ein neuer erstellt
         self.datei_manager = DateiManager(structure_file=structure_file)
-        self.pdf_ocr_processor = PDFOCRProcessor(tools_dir="../tools")
+        self.pdf_ocr_processor = PDFOCRProcessor(tools_dir="../tools", ocr_settings={})
         self.account_manager = AccountManager(data_file=data_file, auto_login_time=auto_login_time)
         self.data_file, self.index_file, self.structure_file, self.events_file, self.dupe_file = data_file, index_file, structure_file, events_file, dupe_file
         
@@ -373,17 +373,28 @@ class DateiController:
 
 
         # Apply PDF/OCR Processor settings
-        if settings.processor_excluded_folders is not None:
-            # Split the string by comma, strip whitespace, filter empty strings, convert to lowercase
-            excluded_dirs = [exclude_dir.strip().lower() for exclude_dir in settings.processor_excluded_folders.split(',') if exclude_dir]
-            self.pdf_ocr_processor.exclude_dirs = excluded_dirs
-        if settings.force_ocr is not None:
-            self.pdf_ocr_processor.force_ocr = settings.force_ocr
-        if settings.skip_text is not None:
-            self.pdf_ocr_processor.skip_text = settings.skip_text
-        if settings.redo_ocr is not None:
-            self.pdf_ocr_processor.redo_ocr = settings.redo_ocr
-        # Note: processing_cpu_cores might need similar handling as scanner_cpu_cores
+        if settings.ocr_processing is not None:
+            ocr_proc_settings = settings.ocr_processing # Get the OCRSettings sub-model
+
+            # Update each attribute on the pdf_ocr_processor instance if it's provided in the settings.
+            # Use hasattr and getattr to check if the setting is present in the Pydantic model
+            # as Optional fields might be None if not sent by the client.
+            if ocr_proc_settings.ocr_force is not None:
+                self.pdf_ocr_processor.force_ocr = ocr_proc_settings.ocr_force
+            if ocr_proc_settings.ocr_skip_text_layer is not None:
+                self.pdf_ocr_processor.skip_text = ocr_proc_settings.ocr_skip_text_layer
+            if ocr_proc_settings.ocr_redo_text_layer is not None:
+                self.pdf_ocr_processor.redo_ocr = ocr_proc_settings.ocr_redo_text_layer
+            if ocr_proc_settings.ocr_image_dpi is not None:
+                self.pdf_ocr_processor.ocr_image_dpi = ocr_proc_settings.ocr_image_dpi
+            if ocr_proc_settings.ocr_optimize_level is not None:
+                self.pdf_ocr_processor.ocr_optimize_level = ocr_proc_settings.ocr_optimize_level
+            if ocr_proc_settings.ocr_tesseract_config is not None:
+                self.pdf_ocr_processor.ocr_tesseract_config = ocr_proc_settings.ocr_tesseract_config
+            if ocr_proc_settings.ocr_clean_images is not None:
+                self.pdf_ocr_processor.ocr_clean_images = ocr_proc_settings.ocr_clean_images
+            if ocr_proc_settings.ocr_language is not None:
+                self.pdf_ocr_processor.ocr_language = ocr_proc_settings.ocr_language
 
         # Apply EventManager settings
         if settings.check_interval is not None:

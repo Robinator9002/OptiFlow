@@ -5,7 +5,7 @@ import logging
 import time
 import inspect
 from concurrent.futures import ProcessPoolExecutor
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from tqdm import tqdm
 import ocrmypdf  # Importiere hier, damit es global bekannt ist
 
@@ -30,7 +30,7 @@ class PDFOCRProcessor:
     (Tesseract, Ghostscript, pngquant) und nutzt Multiprocessing.
     """
 
-    def __init__(self, tools_dir='data.tools/', exclude_dirs: Optional[str] = None):
+    def __init__(self, tools_dir: str = 'data.tools/', exclude_dirs: Optional[str] = None, ocr_settings: Optional[Dict[str, Any]] = None):
         """
         Initialisiert den PDFOCRProcessor und richtet Pfade sowie Logging ein.
 
@@ -40,6 +40,8 @@ class PDFOCRProcessor:
                             Standard: '.tools/' relativ zum Skript/Executable.
             exclude_dirs (Optional[List[str]]): Liste von Verzeichnissen, die von der Verarbeitung ausgeschlossen werden sollen.
                                                 Standard: None.
+            ocr_settings (Optional[Dict[str, Any]]): Dictionary mit OCR-spezifischen Einstellungen.
+                                                      Wird verwendet, um Standardwerte zu überschreiben.
         """
         self.base_path = self._get_base_path()
         self.tools_dir = os.path.abspath(os.path.join(self.base_path, tools_dir))
@@ -53,9 +55,18 @@ class PDFOCRProcessor:
 
         self.error_logger = None  # Wird in _setup_logging initialisiert
 
-        self.force_ocr = True
-        self.skip_text = False
-        self.redo_ocr = False
+        # Standardwerte für OCR-Parameter, die von externen Einstellungen überschrieben werden können
+        settings = ocr_settings if ocr_settings is not None else {}
+
+        # Aktualisierte OCR-Parameter, die von externen Einstellungen bezogen werden
+        self.force_ocr = settings.get('ocr_force', True)
+        self.skip_text = settings.get('ocr_skip_text_layer', False)
+        self.redo_ocr = settings.get('ocr_redo_text_layer', False)
+        self.ocr_image_dpi = settings.get('ocr_image_dpi', 300)
+        self.ocr_optimize_level = settings.get('ocr_optimize_level', 1)
+        self.ocr_tesseract_config = settings.get('ocr_tesseract_config', '--oem 1 --psm 3')
+        self.ocr_clean_images = settings.get('ocr_clean_images', True)
+        self.ocr_language = settings.get('ocr_language', 'deu')
 
         self._setup_logging()
         self._add_tools_to_path()
@@ -208,24 +219,21 @@ class PDFOCRProcessor:
         logging.info(f"Starte Verarbeitung: {input_basename} -> {output_basename}")
 
         try:
-            # OCR Parameter (angepasst nach User-Feedback)
-            # optimize=0: Keine Optimierung (schnellst)
-            # image_dpi=150: Geringere Auflösung für schnellere Verarbeitung
+            # OCR Parameter werden nun aus den Instanzattributen bezogen
             ocrmypdf.ocr(
                 input_file,
                 output_file,
-                language='deu',
-                deskew=True,
-                rotate_pages=True,
-                # --- Recommended Changes Below ---
-                optimize=1,        # Changed: Default optimization (often good balance)
-                image_dpi=300,     # Changed: Standard professional OCR DPI for better accuracy
-                force_ocr=True,
-                skip_text=False,
-                redo_ocr=False,    # Keep False initially, unless specifically re-OCR'ing existing documents
-                progress_bar=False,
-                # New: Tesseract configuration for modern engine and default page segmentation
-                tesseract_config='--oem 1 --psm 3' # Add this line
+                language=self.ocr_language,
+                deskew=True,  # Bleibt fest auf True
+                rotate_pages=True,  # Bleibt fest auf True
+                optimize=self.ocr_optimize_level,
+                image_dpi=self.ocr_image_dpi,
+                force_ocr=self.force_ocr,
+                skip_text=self.skip_text,
+                redo_ocr=self.redo_ocr,
+                clean=self.ocr_clean_images, # Neuer Parameter aus Einstellungen
+                tesseract_config=self.ocr_tesseract_config, # Neuer Parameter aus Einstellungen
+                progress_bar=False  # Interne Progressbar deaktivieren (wir nutzen tqdm)
             )
             # Erfolgsfall wird implizit durch tqdm geloggt, hier nur Rückgabe
             return input_file, "Success"

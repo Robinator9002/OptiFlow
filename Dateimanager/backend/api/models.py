@@ -157,6 +157,16 @@ class UserManagement(BaseModel):
 class DataWrapper(BaseModel):
     data: Union[Dict, List]
 
+class OCRSettings(BaseModel):
+    ocr_force: Optional[bool] = None
+    ocr_skip_text_layer: Optional[bool] = None
+    ocr_redo_text_layer: Optional[bool] = None
+    ocr_image_dpi: Optional[int] = None
+    ocr_optimize_level: Optional[int] = None
+    ocr_tesseract_config: Optional[str] = None
+    ocr_clean_images: Optional[bool] = None
+    ocr_language: Optional[str] = None
+
 class Settings(BaseModel):
     search_limit: Optional[int] = None
     snippet_limit: Optional[int] = None
@@ -175,10 +185,10 @@ class Settings(BaseModel):
     subfolder: Optional[str] = None
     prefix: Optional[str] = None
     overwrite: Optional[bool] = None
-    processing_cpu_cores: Optional[int] = None
-    force_ocr: Optional[bool] = None
-    skip_text: Optional[bool] = None
-    redo_ocr: Optional[bool] = None
+
+    # OCR Processing
+    ocr_processing: Optional[OCRSettings] = None
+
     theme_name: Optional[str] = None
     font_type: Optional[str] = None
     font_size: Optional[float] = None
