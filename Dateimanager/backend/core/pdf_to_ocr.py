@@ -5,7 +5,7 @@ import logging
 import time
 import inspect
 from concurrent.futures import ProcessPoolExecutor
-from typing import Optional, List, Dict, Any
+from typing import Optional, Dict, Any
 from tqdm import tqdm
 import ocrmypdf
 

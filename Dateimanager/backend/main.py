@@ -74,7 +74,8 @@ def get_base_directories():
         return []
 
 # --- Konfiguration ---
-TOOLS_DIR = f"tools/{platform.system().lower()}"
+SYSTEM_LOWER = platform.system().lower()
+TOOLS_DIR = f"tools/{SYSTEM_LOWER if SYSTEM_LOWER != 'darwin' else 'macos'}"
 BASE_DIRS = get_base_directories();
 EXTENSIONS = [".txt", ".md", ".csv", ".json", ".xml", ".py", ".html", ".css", ".js", ".pdf", ".docx"]
 INDEX_FILE = "data/index.json"
