@@ -74,7 +74,8 @@ def get_base_directories():
         return []
 
 # --- Konfiguration ---
-BASE_DIRS =  get_base_directories();
+TOOLS_DIR = f"tools/{platform.system().lower()}"
+BASE_DIRS = get_base_directories();
 EXTENSIONS = [".txt", ".md", ".csv", ".json", ".xml", ".py", ".html", ".css", ".js", ".pdf", ".docx"]
 INDEX_FILE = "data/index.json"
 INDEX_CONTENT = True
@@ -120,6 +121,7 @@ def get_scanner_config() -> dict:
 
 # --- Controller-Initialisierung ---
 controller = DateiController(
+    tools_dir=TOOLS_DIR,
     base_dirs=BASE_DIRS,
     extensions=EXTENSIONS,
     index_file=INDEX_FILE,
