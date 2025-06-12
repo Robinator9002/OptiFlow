@@ -281,53 +281,59 @@ export default function OldFiles({
 
             {!loading && !error && oldFiles.length > 0 && (
                 <div className="old-files-list">
-                    <label
-                        htmlFor="fileSearch"
-                        className="search-relevance-input"
-                    >
+                    <div className="old-files-list-header">
                         <h3>Gefundene Dateien ({filteredFiles.length}):</h3>
-                        <input
-                            ref={searchInputRef}
-                            type="text"
-                            id="fileSearch"
-                            name="fileSearch"
-                            value={searchQuery}
-                            onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>
-                            ) => setSearchQuery(e.target.value)}
-                            placeholder="Dateinamen, Pfad oder Inhalt durchsuchen..."
-                        />
-                    </label>
-                    <ul className="results-list">
-                        {filteredFiles.map((file) => (
-                            <li
-                                key={file.path}
-                                onClick={() => onFileSelected(file.path)}
-                            >
-                                <div className="file-info">
-                                    <div className="file-name">{file.name}</div>
-                                    <div className="file-path">{file.path}</div>
-                                    <div className="file-meta">
-                                        Größe: {formatBytes(file.size_bytes)} |
-                                        Alter: {formatAge(file.modified_at)}
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setConfirmDeleteFilePath(file.path);
-                                    }}
-                                    disabled={deletingFile}
-                                    className="disfirm"
+                        <div className="search-relevance-input">
+                            <input
+                                ref={searchInputRef}
+                                type="text"
+                                id="fileSearch"
+                                name="fileSearch"
+                                value={searchQuery}
+                                onChange={(
+                                    e: React.ChangeEvent<HTMLInputElement>
+                                ) => setSearchQuery(e.target.value)}
+                                placeholder="Dateinamen, Pfad oder Inhalt durchsuchen..."
+                            />
+                        </div>
+                    </div>
+                    <div className="old-files-list-container">
+                        <ul className="results-list">
+                            {filteredFiles.map((file) => (
+                                <li
+                                    key={file.path}
+                                    onClick={() => onFileSelected(file.path)}
                                 >
-                                    {deletingFile &&
-                                    confirmDeleteFilePath === file.path
-                                        ? "Lösche..."
-                                        : "Löschen"}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+                                    <div className="file-info">
+                                        <div className="file-name">
+                                            {file.name}
+                                        </div>
+                                        <div className="file-path">
+                                            {file.path}
+                                        </div>
+                                        <div className="file-meta">
+                                            Größe:{" "}
+                                            {formatBytes(file.size_bytes)} |
+                                            Alter: {formatAge(file.modified_at)}
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setConfirmDeleteFilePath(file.path);
+                                        }}
+                                        disabled={deletingFile}
+                                        className="disfirm"
+                                    >
+                                        {deletingFile &&
+                                        confirmDeleteFilePath === file.path
+                                            ? "Lösche..."
+                                            : "Löschen"}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             )}
 
