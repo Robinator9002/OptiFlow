@@ -7,11 +7,243 @@
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-primary);
     border-radius: 0.5rem;
+    a/* Spezifische Stile für die Einstellungsseite (nutzen Variablen und rem) */
+
+.settings-container {
+        display: flex;
+        color: var(--text-primary);
+        width: 100%;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-md);
+        margin-top: 1.25rem;
+        overflow: hidden;
+        min-height: 60vh;
+        transition: background-color 0.3s ease, border-color 0.3s ease,
+            box-shadow 0.3s ease;
+    }
+
+    .settings-tabs {
+        display: flex;
+        flex-direction: column;
+        width: 13.75rem;
+        background-color: var(--bg-secondary);
+        border-right: 1px solid var(--border-primary);
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        max-height: 27rem;
+        overflow-y: auto;
+        /* Hier wird das Scrollen bei Überlauf aktiviert */
+    }
+
+    .settings-tab {
+        padding: 0.75rem 1.125rem;
+        border: none;
+        border-bottom: 1px solid var(--border-tertiary);
+        background-color: transparent;
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+        transition: background-color var(--transition-base),
+            color var(--transition-base);
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .settings-tab:last-child {
+        border-bottom: none;
+    }
+
+    .settings-tab.active {
+        background-color: var(--bg-primary);
+        color: var(--accent-primary);
+    }
+
+    .settings-tab:hover:not(.active) {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+
+    .settings-tab:focus-visible {
+        position: relative;
+        z-index: 1;
+        border-color: transparent !important;
+    }
+
+    .settings-content {
+        flex-grow: 1;
+        padding: 1.5625rem;
+        background-color: var(--bg-primary);
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        padding-bottom: 5.3125rem;
+        max-height: 55vh;
+        overflow-y: auto;
+        position: relative;
+        transition: background-color 0.3s ease;
+    }
+
+    .settings-content input[type="text"],
+    .settings-content select,
+    .settings-content textarea,
+    .settings-content input[type="number"] {
+        margin-bottom: 0.625rem;
+        /* Erbt globale Stile */
+    }
+
+    .settings-section {
+        border-radius: 0.375rem;
+        margin-bottom: 1.5625rem;
+        border: 1px solid var(--border-tertiary);
+        padding: 1.25rem;
+        background-color: var(--bg-secondary);
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .settings-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .settings-section h3 {
+        color: var(--text-primary);
+        margin-top: 0;
+        margin-bottom: 0.9375rem;
+        border-bottom: 1px solid var(--border-primary);
+        padding-bottom: 0.625rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        transition: color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .form-group {
+        margin-bottom: 0.9375rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3125rem;
+    }
+
+    .form-group label {
+        color: var(--text-secondary);
+        font-weight: 500 !important;
+        font-size: 0.95rem;
+    }
+
+    .form-group label.checkbox-label {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        font-weight: normal !important;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .form-group label.checkbox-label input[type="checkbox"] {
+        margin: 0;
+        /* Nutzt globale Checkbox-Stile */
+    }
+
+    .setting-description {
+        color: var(--text-muted);
+        font-size: 0.85em;
+        line-height: 1.4;
+        margin: 0.25rem 0 0.25rem 0;
+        cursor: default;
+        max-width: 90%;
+    }
+
+    .settings-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.625rem;
+        padding: 0.9375rem 1.5625rem;
+        background-color: var(--bg-secondary);
+        border-top: 1px solid var(--border-primary);
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        box-sizing: border-box;
+        z-index: 100;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .settings-actions button {
+        padding: 0.625rem 1.125rem;
+        font-size: 0.95rem;
+    }
+
+    /* --- NEUE STILE FÜR OCR PRESETS --- */
+    .preset-group {
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--border-secondary);
+    }
+
+    .preset-buttons {
+        display: inline-flex;
+        background-color: var(--bg-primary);
+        border-radius: 0.5rem;
+        padding: 0.25rem;
+        border: 1px solid var(--border-secondary);
+        box-shadow: var(--shadow-inner);
+    }
+
+    .preset-button {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        background-color: transparent;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        border-radius: 0.375rem;
+        position: relative;
+    }
+
+    .preset-button:hover:not(.active) {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+
+    .preset-button.active {
+        background-color: var(--accent-primary);
+        color: var(--text-on-accent);
+        box-shadow: var(--shadow-sm);
+        transform: translateY(-1px);
+    }
+
+    .preset-button:focus-visible {
+        outline: 2px solid var(--accent-primary);
+        outline-offset: 2px;
+    }
+
+    /* --- ENDE NEUE STILE --- */
+
+    /* Spezielles Input Label */
+    .settings-input-group {
+        display: flex;
+        flex-direction: column;
+        margin: 0.5rem 0;
+    }
+
+    .ocr-settings-input-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
     box-shadow: var(--shadow-md);
     margin-top: 1.25rem;
     overflow: hidden;
     min-height: 60vh;
-    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 .settings-tabs {
@@ -34,7 +266,8 @@
     cursor: pointer;
     text-align: left;
     width: 100%;
-    transition: background-color var(--transition-base), color var(--transition-base);
+    transition: background-color var(--transition-base),
+        color var(--transition-base);
     font-size: 1rem;
     font-weight: 500;
     color: var(--text-secondary);
@@ -199,7 +432,8 @@
     box-shadow: var(--shadow-sm);
     margin-bottom: 1.25rem;
     border: 1px solid var(--border-tertiary);
-    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 .setting-group h3 {
@@ -377,7 +611,8 @@
     justify-content: space-between;
 }
 
-.search-relevance-input input, select {
+.search-relevance-input input,
+select {
     min-width: 10rem;
     max-width: 50rem;
     padding: 0.2rem 0.5rem !important;
@@ -451,7 +686,6 @@
     color: var(--text-secondary);
 }
 
-
 .user-management-table th,
 .user-management-table td {
     padding: 0.75rem;
@@ -466,7 +700,6 @@
 .user-management-table td:last-child {
     text-align: right;
 }
-
 
 .table-button {
     padding: 0.3rem 0.6rem;
@@ -592,7 +825,7 @@
 
 .remove-time-button:hover {
     background: none;
-    color: var(--accent-danger-hover)
+    color: var(--accent-danger-hover);
 }
 
 .event-form-overlay {
