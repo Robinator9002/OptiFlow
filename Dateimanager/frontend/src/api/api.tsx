@@ -19,6 +19,18 @@ export interface MatchScore {
     content?: number;
 }
 
+// NEW: Interface für die OCR-spezifischen Einstellungen
+export interface OCRSettings {
+    ocr_force?: boolean;
+    ocr_skip_text_layer?: boolean;
+    ocr_redo_text_layer?: boolean;
+    ocr_image_dpi?: number;
+    ocr_optimize_level?: number;
+    ocr_tesseract_config?: string;
+    ocr_clean_images?: boolean;
+    ocr_language?: string;
+}
+
 // Interface für die Benutzereinstellungen
 export interface Settings {
     search_limit?: number;
@@ -38,10 +50,10 @@ export interface Settings {
     subfolder?: string;
     prefix?: string;
     overwrite?: boolean;
-    processing_cpu_cores?: number;
-    force_ocr?: boolean;
-    skip_text?: boolean;
-    redo_ocr?: boolean;
+    // REMOVED these individual fields as they are now part of ocr_processing
+    // force_ocr?: boolean;
+    // skip_text?: boolean;
+    // redo_ocr?: boolean;
     theme_name?: string;
     font_type?: string;
     font_size?: number;
@@ -54,6 +66,9 @@ export interface Settings {
     snippet_step?: number;
     signature_size?: number;
     similarity_threshold?: number;
+
+    // NEW: Add the nested OCR settings interface
+    ocr_processing?: OCRSettings;
 }
 
 // Interface für das Aktualisieren einer Datei
