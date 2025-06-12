@@ -7,11 +7,9 @@ import inspect
 from concurrent.futures import ProcessPoolExecutor
 from typing import Optional, List, Dict, Any
 from tqdm import tqdm
-import ocrmypdf  # Importiere hier, damit es global bekannt ist
+import ocrmypdf
 
 # --- Debug Info (Beibehalten für Diagnosezwecke) ---
-# Gibt Informationen über die verwendete ocrmypdf-Version und Python-Umgebung aus.
-# Wichtig für die Fehlersuche, insbesondere bei Multiprocessing.
 print("--- ocrmypdf Debug Info ---", flush=True)
 try:
     print(f"Version: {ocrmypdf.__version__}", flush=True)
@@ -20,48 +18,56 @@ try:
 except Exception as e:
     print(f"Fehler beim Abrufen von ocrmypdf-Informationen: {e}", flush=True)
 print("--- Ende Debug Info ---", flush=True)
-# --- Ende Debug Info ---
-
 
 class PDFOCRProcessor:
     """
-    Verarbeitet rekursiv PDF-Dateien in einem Verzeichnis mit OCRmyPDF,
-    um eine durchsuchbare Textebene hinzuzufügen. Verwaltet externe Tools
-    (Tesseract, Ghostscript, pngquant) und nutzt Multiprocessing.
+    Verarbeitet rekursiv PDF-Dateien in einem Verzeichnis mit OCRmyPDF.
     """
 
-    def __init__(self, tools_dir: str = 'data.tools/', exclude_dirs: Optional[str] = None, ocr_settings: Optional[Dict[str, Any]] = None):
+    def __init__(self, tools_dir: str, exclude_dirs: Optional[str] = None, ocr_settings: Optional[Dict[str, Any]] = None):
         """
-        Initialisiert den PDFOCRProcessor und richtet Pfade sowie Logging ein.
+        Initialisiert den PDFOCRProcessor.
 
         Args:
-            tools_dir (str): Relativer Pfad zum Ordner, der die Unterordner für
-                            Tesseract, Ghostscript und pngquant enthält.
-                            Standard: '.tools/' relativ zum Skript/Executable.
-            exclude_dirs (Optional[List[str]]): Liste von Verzeichnissen, die von der Verarbeitung ausgeschlossen werden sollen.
-                                                Standard: None.
+            tools_dir (str): Der absolute Pfad zum Ordner, der die Unterordner für
+                             Tesseract, Ghostscript und pngquant enthält.
+            exclude_dirs (Optional[List[str]]): Liste von Verzeichnissen, die ausgeschlossen werden sollen.
             ocr_settings (Optional[Dict[str, Any]]): Dictionary mit OCR-spezifischen Einstellungen.
-                                                      Wird verwendet, um Standardwerte zu überschreiben.
         """
-        self.base_path = self._get_base_path()
-        self.tools_dir = os.path.abspath(os.path.join(self.base_path, tools_dir))
-        self.exclude_dirs = [exclude_dir.strip().lower() for exclude_dir in exclude_dirs.split(',')] if exclude_dirs else []
+        self.tools_dir = tools_dir
+        if not os.path.isdir(self.tools_dir):
+             raise FileNotFoundError(f"Das übergebene Tools-Verzeichnis existiert nicht: {self.tools_dir}")
 
-        # Pfade zu den erwarteten Tool-Verzeichnissen/Dateien
+        self.exclude_dirs = [exclude_dir.strip().lower() for exclude_dir in exclude_dirs.split(',')] if exclude_dirs else []
+        
         self.tesseract_dir = os.path.join(self.tools_dir, "tesseract")
         self.ghostscript_dir = os.path.join(self.tools_dir, "ghostscript", "bin")
-        # Korrigierter, plausiblerer Pfad für pngquant. Passe dies ggf. an deine Struktur an.
-        self.pngquant_path = os.path.join(self.tools_dir, "pngquant", "tools", "pngquant", "pngquant.exe")
 
-        self.error_logger = None  # Wird in _setup_logging initialisiert
+        # --- PNGQUANT FIX: Korrigiere den verschachtelten Pfad ---
+        pngquant_base_name = "pngquant.exe" if os.name == 'nt' else "pngquant"
+        self.pngquant_path = os.path.join(self.tools_dir, "pngquant", "tools", "pngquant", pngquant_base_name)
+        
+        self.error_logger = None
 
-        # Standardwerte für OCR-Parameter, die von externen Einstellungen überschrieben werden können
         settings = ocr_settings if ocr_settings is not None else {}
+        
+        # --- LOGIK-FIX: Eindeutige OCR-Modus-Auswahl erzwingen ---
+        user_wants_redo = settings.get('ocr_redo_text_layer', False)
+        user_wants_skip = settings.get('ocr_skip_text_layer', False)
 
-        # Aktualisierte OCR-Parameter, die von externen Einstellungen bezogen werden
-        self.force_ocr = settings.get('ocr_force', True)
-        self.skip_text = settings.get('ocr_skip_text_layer', False)
-        self.redo_ocr = settings.get('ocr_redo_text_layer', False)
+        if user_wants_redo:
+            self.redo_ocr = True
+            self.skip_text = False
+            self.force_ocr = False
+        elif user_wants_skip:
+            self.redo_ocr = False
+            self.skip_text = True
+            self.force_ocr = False
+        else:
+            self.redo_ocr = False
+            self.skip_text = False
+            self.force_ocr = settings.get('ocr_force', True)
+
         self.ocr_image_dpi = settings.get('ocr_image_dpi', 300)
         self.ocr_optimize_level = settings.get('ocr_optimize_level', 1)
         self.ocr_tesseract_config = settings.get('ocr_tesseract_config', '--oem 1 --psm 3')
@@ -72,52 +78,38 @@ class PDFOCRProcessor:
         self._add_tools_to_path()
         self._verify_tools_in_path()
 
-    def _get_base_path(self):
-        """Ermittelt den Basis-Pfad (Verzeichnis des Skripts oder der Exe)."""
-        if getattr(sys, 'frozen', False):
-            # Wenn als gepackte Exe ausgeführt (z.B. PyInstaller)
-            return os.path.dirname(sys.executable)
-        else:
-            # Wenn als normales Skript ausgeführt
-            # __file__ ist der Pfad zur aktuellen Datei
-            return os.path.dirname(os.path.abspath(__file__))
-
     def _setup_logging(self):
         """Konfiguriert das Logging für Konsole und Dateien."""
-        log_dir = os.path.join(self.base_path, '../.logs')
+        log_dir = os.path.join(self.tools_dir, '..', '.logs')
         os.makedirs(log_dir, exist_ok=True)
         log_file = os.path.join(log_dir, "ocr_process.log")
         error_log_file = os.path.join(log_dir, "error.log")
-
-        # Vorhandene Handler entfernen, um Duplikate zu vermeiden
-        # (Nützlich, falls die Klasse mehrfach instanziiert würde)
+        
         root_logger = logging.getLogger()
-        for handler in root_logger.handlers[:]:
-            root_logger.removeHandler(handler)
-        self.error_logger = logging.getLogger("error_logger")
-        for handler in self.error_logger.handlers[:]:
-            self.error_logger.removeHandler(handler)
+        if root_logger.hasHandlers():
+            root_logger.handlers.clear()
 
-        # Standard-Logging konfigurieren (INFO Level für Konsole & Haupt-Logdatei)
+        self.error_logger = logging.getLogger("error_logger")
+        if self.error_logger.hasHandlers():
+            self.error_logger.handlers.clear()
+            
         logging.basicConfig(
             level=logging.INFO,
             format="%(asctime)s - %(levelname)s - %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S",  # Datumsformat hinzugefügt
+            datefmt="%Y-%m-%d %H:%M:%S",
             handlers=[
-                logging.FileHandler(log_file, encoding="utf-8", mode='a'),  # Anhängen
-                logging.StreamHandler(sys.stdout)  # Explizit stdout
+                logging.FileHandler(log_file, encoding="utf-8", mode='a'),
+                logging.StreamHandler(sys.stdout)
             ]
         )
-
-        # Separaten Logger nur für FEHLER konfigurieren
+        
         if not self.error_logger.handlers:
             error_handler = logging.FileHandler(error_log_file, encoding="utf-8", mode='a')
-            # Einfacheres Format für die reine Fehlerdatei
             error_formatter = logging.Formatter('%(asctime)s - %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
             error_handler.setFormatter(error_formatter)
             self.error_logger.addHandler(error_handler)
-            self.error_logger.setLevel(logging.ERROR)  # Nur ERROR Level loggen
-            self.error_logger.propagate = False  # Verhindert, dass Fehler auch im Hauptlog landen
+            self.error_logger.setLevel(logging.ERROR)
+            self.error_logger.propagate = False
 
         logging.info("Logging wurde initialisiert.")
 
@@ -125,55 +117,33 @@ class PDFOCRProcessor:
         """Fügt die Verzeichnisse der externen Tools zum System-PATH hinzu."""
         logging.info(f"Füge Tool-Pfade hinzu: Tesseract='{self.tesseract_dir}', Ghostscript='{self.ghostscript_dir}'")
 
-        # Prüfe Existenz der notwendigen Verzeichnisse
         if not os.path.isdir(self.tesseract_dir):
             raise FileNotFoundError(f"Tesseract-Verzeichnis nicht gefunden: {self.tesseract_dir}")
         if not os.path.isdir(self.ghostscript_dir):
             raise FileNotFoundError(f"Ghostscript 'bin'-Verzeichnis nicht gefunden: {self.ghostscript_dir}")
 
-        # Füge Verzeichnisse *vorne* zum PATH hinzu, damit sie zuerst gefunden werden
         os.environ["PATH"] = self.tesseract_dir + os.pathsep + os.environ["PATH"]
         os.environ["PATH"] = self.ghostscript_dir + os.pathsep + os.environ["PATH"]
 
-        # Prüfe Existenz von pngquant (optional) und füge dessen Verzeichnis hinzu
         pngquant_dir = os.path.dirname(self.pngquant_path)
         if os.path.isfile(self.pngquant_path):
-            if os.path.isdir(pngquant_dir):
-                logging.info(f"Füge hinzu: pngquant='{pngquant_dir}'")
-                os.environ["PATH"] = pngquant_dir + os.pathsep + os.environ["PATH"]
-            else:
-                logging.warning(
-                    f"Verzeichnis für pngquant '{pngquant_dir}' ist ungültig, wird nicht zum PATH hinzugefügt.")
+            logging.info(f"Füge hinzu: pngquant='{pngquant_dir}'")
+            os.environ["PATH"] = pngquant_dir + os.pathsep + os.environ["PATH"]
         else:
-            # Versuche ohne .exe für Nicht-Windows-Systeme
-            non_exe_path = os.path.splitext(self.pngquant_path)[0]
-            if os.path.isfile(non_exe_path):
-                self.pngquant_path = non_exe_path  # Pfad aktualisieren
-                pngquant_dir = os.path.dirname(self.pngquant_path)
-                if os.path.isdir(pngquant_dir):
-                    logging.info(f"Füge hinzu: pngquant='{pngquant_dir}' (ohne .exe)")
-                    os.environ["PATH"] = pngquant_dir + os.pathsep + os.environ["PATH"]
-                else:
-                    logging.warning(
-                        f"Verzeichnis für pngquant '{pngquant_dir}' ist ungültig, wird nicht zum PATH hinzugefügt.")
-            else:
-                logging.warning(
-                    f"pngquant nicht gefunden unter '{self.pngquant_path}' oder '{non_exe_path}'. Optimierung mit pngquant evtl. nicht möglich.")
-
-        # logging.debug(f"Aktualisierter PATH: {os.environ['PATH']}") # Nur bei Bedarf ausgeben (sehr lang)
-
+            logging.warning(
+                f"pngquant nicht gefunden unter '{self.pngquant_path}'. Optimierung mit pngquant evtl. nicht möglich.")
+    
     def _verify_tools_in_path(self):
         """Überprüft mittels shutil.which, ob die Tools im PATH gefunden werden."""
         tesseract_exe = "tesseract.exe" if os.name == 'nt' else "tesseract"
-        # Ghostscript: gswin64c für 64bit Windows Console, gswin64 für GUI, gs für Linux/Mac
         ghostscript_exe = "gswin64c.exe" if os.name == 'nt' else "gs"
-        pngquant_exe = os.path.basename(self.pngquant_path)  # Name der Exe aus dem Pfad holen
+        pngquant_exe = os.path.basename(self.pngquant_path)
 
         tesseract_found = shutil.which(tesseract_exe)
         ghostscript_found = shutil.which(ghostscript_exe)
         pngquant_found = shutil.which(pngquant_exe)
 
-        logging.info(f"Tool-Verifizierung im PATH:")
+        logging.info("Tool-Verifizierung im PATH:")
         logging.info(
             f"  Tesseract ({tesseract_exe}): {'Gefunden -> ' + tesseract_found if tesseract_found else 'NICHT GEFUNDEN!'}")
         logging.info(
@@ -184,31 +154,16 @@ class PDFOCRProcessor:
         if not tesseract_found:
             logging.error(
                 f"Tesseract ('{tesseract_exe}') konnte im PATH nicht gefunden werden. OCR wird fehlschlagen.")
-            # Hier könnte man auch sys.exit() aufrufen, wenn Tesseract zwingend ist.
         if not ghostscript_found:
             logging.error(
                 f"Ghostscript ('{ghostscript_exe}') konnte im PATH nicht gefunden werden. OCR wird wahrscheinlich fehlschlagen.")
-        if not pngquant_found:
-            logging.warning(
-                f"pngquant ('{pngquant_exe}') nicht im PATH gefunden. Optimierungsstufen > 0 sind evtl. beeinträchtigt.")
 
     def _process_pdf(self, input_file, output_file=None):
         """
         Führt OCR für eine einzelne PDF-Datei mittels ocrmypdf.ocr aus.
-
-        Args:
-            input_file (str): Pfad zur Eingabe-PDF.
-            output_file (str, optional): Pfad zur Ausgabe-PDF. Wenn None,
-                                            wird keine Datei gespeichert. Standard: None.
-
-        Returns:
-            tuple: (input_file, status_message)
-                   status_message ist "Success", "Skipped (...)" oder "Error (...)".
         """
-        # Stelle sicher, dass die benötigten Module im Worker-Prozess verfügbar sind
-        # (Workaround für potenzielle Multiprocessing-Importprobleme)
         import ocrmypdf
-        from ocrmypdf import exceptions as ocr_exceptions  # Nutze Alias
+        from ocrmypdf import exceptions as ocr_exceptions
 
         if not output_file:
             logging.warning(f"Überspringe {os.path.basename(input_file)}: Keine Ausgabedatei angegeben.")
@@ -219,40 +174,31 @@ class PDFOCRProcessor:
         logging.info(f"Starte Verarbeitung: {input_basename} -> {output_basename}")
 
         try:
-            # OCR Parameter werden nun aus den Instanzattributen bezogen
             ocrmypdf.ocr(
                 input_file,
                 output_file,
                 language=self.ocr_language,
-                deskew=True,  # Bleibt fest auf True
-                rotate_pages=True,  # Bleibt fest auf True
+                deskew=True,
+                rotate_pages=True,
                 optimize=self.ocr_optimize_level,
                 image_dpi=self.ocr_image_dpi,
                 force_ocr=self.force_ocr,
                 skip_text=self.skip_text,
                 redo_ocr=self.redo_ocr,
-                clean=self.ocr_clean_images, # Neuer Parameter aus Einstellungen
-                tesseract_config=self.ocr_tesseract_config, # Neuer Parameter aus Einstellungen
-                progress_bar=False  # Interne Progressbar deaktivieren (wir nutzen tqdm)
+                clean=self.ocr_clean_images,
+                tesseract_config=self.ocr_tesseract_config,
+                progress_bar=False
             )
-            # Erfolgsfall wird implizit durch tqdm geloggt, hier nur Rückgabe
             return input_file, "Success"
-
-        # --- Spezifische Fehlerbehandlung ---
         except ocr_exceptions.PriorOcrFoundError:
             logging.warning(f"Übersprungen (vorhandene OCR): {input_basename}")
             return input_file, "Skipped (Prior OCR Found)"
-
         except ocr_exceptions.EncryptedPdfError:
             logging.error(f"Fehler (verschlüsselt): {input_basename}")
             self.error_logger.error(f"{input_file} - Encrypted PDF")
             return input_file, "Error (Encrypted PDF)"
-
-        # --- Allgemeine Fehlerbehandlung ---
         except Exception as e:
-            # Fängt alle anderen Fehler ab. logging.exception inkludiert den Traceback.
             logging.exception(f"Unerwarteter Fehler bei Verarbeitung von {input_basename}: {e}")
-            # Logge Typ und Nachricht in die separate Fehlerdatei
             self.error_logger.error(f"{input_file} - Unexpected Error: {e} (Type: {type(e).__name__})")
             return input_file, f"Error ({type(e).__name__})"
 
@@ -260,14 +206,6 @@ class PDFOCRProcessor:
                         ignored_dir_names=None, max_workers=None):
         """
         Verarbeitet rekursiv alle PDFs in `base_dir` mit verschiedenen Ausgabeoptionen.
-
-        Args:
-            base_dir (str): Das Startverzeichnis für die PDF-Suche.
-            output_subdir (str, optional): Name des Unterordners für die Ausgabe-PDFs.
-            output_prefix (str, optional): Präfix für die Ausgabe-Dateinamen im selben Verzeichnis.
-            overwrite (bool, optional): Originaldateien überschreiben, wenn True.
-            ignored_dir_names (list oder set, optional): Liste/Set von VerzeichnisNAMEN, die ignoriert werden sollen.
-            max_workers (int, optional): Maximale Anzahl paralleler Prozesse.
         """
         if sum(map(bool, [output_subdir, output_prefix, overwrite])) > 1:
             raise ValueError("Nur eine Ausgabeoption (output_subdir, output_prefix, overwrite) darf gesetzt sein.")
@@ -289,59 +227,52 @@ class PDFOCRProcessor:
 
         if max_workers is None or max_workers <= 0:
             try:
-                # os.cpu_count() kann None zurückgeben
                 cpu_cores = os.cpu_count()
                 if cpu_cores:
-                    max_workers = max(1, cpu_cores - 1)  # Mind. 1, sonst CPU-Anzahl - 1
+                    max_workers = max(1, cpu_cores - 1)
                 else:
-                    max_workers = 1  # Fallback, falls CPU-Anzahl nicht ermittelbar
+                    max_workers = 1
             except NotImplementedError:
-                max_workers = 1  # Fallback für Systeme ohne os.cpu_count()
+                max_workers = 1
             logging.info(f"Verwende automatisch max. {max_workers} Worker-Prozess(e).")
         else:
             logging.info(f"Verwende manuell max. {max_workers} Worker-Prozess(e).")
 
-        # Finde alle zu verarbeitenden PDF-Dateien
         pdf_tasks = self._get_pdf_tasks(base_dir, output_subdir, output_prefix, overwrite, ignored_dir_names)
 
         if not pdf_tasks:
-            logging.warning("Keine PDF-Dateien zur Verarbeitung gefunden (unter Berücksichtigung ignorierter Ordner).")
+            logging.warning("Keine PDF-Dateien zur Verarbeitung gefunden.")
             return
 
         logging.info(f"{len(pdf_tasks)} PDF-Dateien zur Verarbeitung gefunden.")
-
-        # Verarbeitung mit ProcessPoolExecutor und tqdm Fortschrittsanzeige
+        
         processed_count = 0
         success_count = 0
         skipped_count = 0
         error_count = 0
 
-        # Verwende try-finally, um sicherzustellen, dass die Zusammenfassung geloggt wird
         try:
             with ProcessPoolExecutor(max_workers=max_workers) as executor:
                 results = list(tqdm(executor.map(self._process_pdf_wrapper, pdf_tasks),
                                     total=len(pdf_tasks),
                                     desc="Verarbeite PDFs",
                                     unit="Datei"))
-
-            # Ergebnisse auswerten
             for _, status in results:
                 processed_count += 1
                 if status == "Success":
                     success_count += 1
                 elif "Skipped" in status:
                     skipped_count += 1
-                else:  # Annahme: Jeder andere Status ist ein Fehler
+                else:
                     error_count += 1
         finally:
-            # Logge die Zusammenfassung, auch wenn ein Fehler im Executor auftrat
             logging.info("--- OCR Prozess Zusammenfassung ---")
             logging.info(f"Gesamtzahl verarbeiteter Dateien: {processed_count}")
             logging.info(f"✅ Erfolgreich: {success_count}")
             logging.info(f"⚠️ Übersprungen: {skipped_count}")
             logging.info(f"❌ Fehler: {error_count}")
             if error_count > 0:
-                error_log_path = os.path.join(self.base_path, '.logs', "error.log")
+                error_log_path = os.path.join(self.tools_dir, '..', '.logs', "error.log")
                 logging.info(f"Details zu Fehlern siehe: '{error_log_path}'")
             logging.info("--- Ende Zusammenfassung ---")
 
@@ -355,33 +286,25 @@ class PDFOCRProcessor:
         logging.info(f"Suche nach PDF-Dateien in '{base_dir}', ignoriere Ordner: {ignored_dir_names}")
 
         for root, dirs, files in os.walk(base_dir, topdown=True, followlinks=False):
-            # Verhindere Endlosschleifen durch Symlinks, die auf bereits besuchte Orte zeigen
             try:
                 current_real_path = os.path.realpath(root)
                 if current_real_path in processed_physical_dirs:
                     logging.warning(f"Symlink-Schleife oder wiederholter Pfad entdeckt, überspringe: {root}")
-                    dirs[:] = []  # Nicht weiter in diesem Pfad absteigen
+                    dirs[:] = []
                     continue
                 processed_physical_dirs.add(current_real_path)
             except OSError as e:
                 logging.warning(f"Konnte realpath für {root} nicht auflösen, überspringe evtl.: {e}")
-                # Vorsichtshalber hier nicht weiter absteigen
                 dirs[:] = []
                 continue
 
-            # --- Verzeichnisse zum Ignorieren ausfiltern ---
-            # Modifiziere 'dirs' direkt, damit os.walk nicht hineingeht.
             original_dirs = list(dirs)
             dirs[:] = [d for d in dirs if d not in ignored_dir_names]
-
-            # Logge, welche Verzeichnisse übersprungen wurden
             skipped_local_dirs = [d for d in original_dirs if d in ignored_dir_names]
             if skipped_local_dirs:
                 for skipped in skipped_local_dirs:
                     logging.info(f"  -> Ignoriere Abstieg in '{skipped}' innerhalb von '{root}'")
-            # --- Ende Ignorier-Logik ---
 
-            # Finde PDFs im aktuellen Verzeichnis (ignoriere bereits verarbeitete)
             pdf_files_in_dir = [f for f in files if f.lower().endswith(".pdf")]
 
             if pdf_files_in_dir:
@@ -389,7 +312,7 @@ class PDFOCRProcessor:
                     input_path = os.path.join(root, filename)
 
                     if overwrite:
-                        output_path = input_path  # Überschreiben
+                        output_path = input_path
                     elif output_prefix:
                         output_filename = f"{output_prefix}{filename}"
                         output_path = os.path.join(root, output_filename)
@@ -415,31 +338,24 @@ class PDFOCRProcessor:
 
     def _process_pdf_wrapper(self, args):
         """
-        Hilfsfunktion für ProcessPoolExecutor.map, entpackt Argumente
-        und ruft _process_pdf auf. Fängt unerwartete Fehler im Wrapper.
+        Hilfsfunktion für ProcessPoolExecutor.map, entpackt Argumente.
         """
         input_file, output_file = args
         try:
-            # Hier könnten bei Bedarf Worker-spezifische Initialisierungen erfolgen
-            # (z.B. separates Logging, obwohl das komplex sein kann)
             return self._process_pdf(input_file, output_file)
         except Exception as e:
-            # Fängt Fehler, die *außerhalb* des try/except in _process_pdf auftreten
-            input_basename = os.path.basename(input_file)  # Sicherer Zugriff auf Dateiname
+            input_basename = os.path.basename(input_file)
             logging.error(f"Kritischer Fehler im Wrapper für {input_basename}: {e}")
-            # Versuche, in die separate Fehlerdatei zu loggen
             try:
-                error_log_path = os.path.join(self._get_base_path(), '.logs', "error.log")
+                error_log_path = os.path.join(self.tools_dir, '..', '.logs', "error.log")
                 with open(error_log_path, 'a', encoding='utf-8') as f:
                     timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
                     f.write(
                         f"{timestamp} - {input_file} - Wrapper Error: {e} (Type: {type(e).__name__})\n")
             except Exception as log_e:
                 print(f"FEHLER: Konnte nicht in error.log schreiben: {log_e}",
-                    file=sys.stderr)  # Ausgabe nach stderr
+                    file=sys.stderr)
             return input_file, f"Error (Wrapper Exception: {type(e).__name__})"
-
-    # --- Methoden für Einzeldateiverarbeitung (weniger relevant für Batch) ---
 
     def process_and_save_pdf(self, input_file, output_file):
         """
@@ -449,5 +365,4 @@ class PDFOCRProcessor:
             logging.error("Ausgabepfad muss für process_and_save_pdf angegeben werden.")
             return
         logging.info(f"Verarbeite Einzeldatei: {input_file} -> {output_file}")
-        # Ruft die Kernfunktion für eine Datei auf
         self._process_pdf(input_file, output_file)

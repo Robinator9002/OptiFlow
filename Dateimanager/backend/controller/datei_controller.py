@@ -7,13 +7,13 @@ from backend.core.event_manager import EventManager, Event
 import datetime
 
 class DateiController:
-    def __init__(self, base_dirs: str, extensions: Optional[List] = None, index_file: str = "file_index.json",
+    def __init__(self, tools_dir: str, base_dirs: str, extensions: Optional[List] = None, index_file: str = "file_index.json",
                 index_content: bool = True, convert_pdf: bool = False, max_size_kb: int = 0, max_content_size_let: Optional[int] = None, data_file: Optional[str] = 'data/user.json', auto_login_time: Optional[int] = 24, events_file: str = "data/events.json", structure_file: str = "data/structure.json",
-                search_limit: int = 100, snippet_limit: int = 0, snippet_window: int = 40, proximity_window: int = 20, # Added snippet/proximity window
-                max_age_days: int = 1000, old_files_limit: int = 0, sort_by: str = 'age', sort_order: str = 'normal', # Added old files params
-                dupe_file: str = "data/dupes.json", # Added dupe_file
-                length_range_step: int = 10, min_category_length: int = 2, snippet_length: int = 5, # Added dedupe settings
-                snippet_step: int = 2, signature_size: int = 100, similarity_threshold: float = 0.7 # Added more dedupe settings
+               max_age_days: int = 1000, old_files_limit: int = 0, sort_by: str = 'age', sort_order: str = 'normal',
+                  search_limit: int = 100, snippet_limit: int = 0, snippet_window: int = 40, proximity_window: int = 20,
+               dupe_file: str = "data/dupes.json",
+                length_range_step: int = 10, min_category_length: int = 2, snippet_length: int = 5,
+                snippet_step: int = 2, signature_size: int = 100, similarity_threshold: float = 0.7
                 ):
         """Die Initialisierungsfunktion für den DateiController. Dieser erhällt Funktionswrapper für alle wichtigen Klassen
 
@@ -50,30 +50,28 @@ class DateiController:
 
         self.event_manager = EventManager(on_event_triggered=self.on_event_triggered)  # Wenn kein EventManager übergeben wird, wird ein neuer erstellt
         self.datei_manager = DateiManager(structure_file=structure_file)
-        self.pdf_ocr_processor = PDFOCRProcessor(tools_dir="../tools", ocr_settings={})
+        self.pdf_ocr_processor = PDFOCRProcessor(tools_dir=tools_dir, ocr_settings={})
         self.account_manager = AccountManager(data_file=data_file, auto_login_time=auto_login_time)
         self.data_file, self.index_file, self.structure_file, self.events_file, self.dupe_file = data_file, index_file, structure_file, events_file, dupe_file
         
-                # Initialize FileScanner with all parameters, including new dedupe settings
         self.file_scanner = FileScanner(
             base_dirs=base_dirs,
             processor=self.pdf_ocr_processor,
             extensions=set(extensions) if extensions else None,
             index_file=index_file,
-            dupe_file=dupe_file, # Pass dupe_file
+            dupe_file=dupe_file,
             index_content=index_content,
             convert_pdf=convert_pdf,
             max_size_kb=max_size_kb,
             max_content_size_let=max_content_size_let,
             search_limit=search_limit,
             snippet_limit=snippet_limit,
-            snippet_window=snippet_window, # Pass snippet_window
-            proximity_window=proximity_window, # Pass proximity_window
-            max_age_days=max_age_days, # Pass old files params
+            snippet_window=snippet_window,
+            proximity_window=proximity_window,
+            max_age_days=max_age_days,
             old_files_limit=old_files_limit,
             sort_by=sort_by,
             sort_order=sort_order,
-            # Pass NEW dedupe settings
             length_range_step=length_range_step,
             min_category_length=min_category_length,
             snippet_length=snippet_length,
@@ -84,9 +82,8 @@ class DateiController:
         self.file_scanner.search_limit = search_limit
         self.file_scanner.snippet_limit = snippet_limit
         
-        # Load index and duplicates on initialization
         self.load_index()
-        self.load_duplicates() # Load duplicates on startup
+        self.load_duplicates()
 
     # -- Scanner --
     def load_index(self):
