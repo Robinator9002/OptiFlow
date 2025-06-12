@@ -30,8 +30,7 @@ interface OCRSettingsProps {
     setOcrTesseractConfig: React.Dispatch<React.SetStateAction<string>>;
 }
 
-// --- NEU: Definition der Qualitäts-Voreinstellungen ---
-// Hier kannst du die Werte für die Pakete einfach anpassen.
+// --- Definition der Qualitäts-Voreinstellungen ---
 const PRESET_PACKS = {
     fast: {
         ocrImageDpi: 150,
@@ -83,7 +82,7 @@ export default function OCRSettings({
 }: OCRSettingsProps) {
     const [activePreset, setActivePreset] = useState<PresetName>("custom");
 
-    // Dieser Effekt prüft beim Laden, ob die aktuellen Einstellungen einem Preset entsprechen.
+    // This effect checks on load/change if the current settings match a preset.
     useEffect(() => {
         for (const presetName in PRESET_PACKS) {
             const preset =
@@ -108,6 +107,7 @@ export default function OCRSettings({
         setActivePreset(presetName);
     };
 
+    // When a technical setting is changed manually, switch to "custom" preset.
     const handleManualChange = <T,>(
         setter: React.Dispatch<React.SetStateAction<T>>,
         value: T
@@ -116,6 +116,7 @@ export default function OCRSettings({
         setActivePreset("custom");
     };
 
+    // Helper handlers
     const handleTextChange = (
         setter: React.Dispatch<React.SetStateAction<string>>,
         e: React.ChangeEvent<HTMLInputElement>
@@ -135,6 +136,7 @@ export default function OCRSettings({
         setProcessingCpuCores(isNaN(value) ? null : value);
     };
 
+    // Logic for mutually exclusive output options
     const handleOutputSubdirChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -159,6 +161,7 @@ export default function OCRSettings({
         }
     };
 
+    // Logic for mutually exclusive OCR behavior options
     const handleForceOcrChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForceOcr(e.target.checked);
         if (e.target.checked) {
@@ -183,16 +186,18 @@ export default function OCRSettings({
         }
     };
 
+    const isCustomizing = activePreset === "custom";
+
     return (
         <div className="settings-section">
             <h2>OCR-Einstellungen</h2>
 
-            {/* --- NEUE SEKTION FÜR VOREINSTELLUNGEN --- */}
+            {/* --- PRESET SECTION --- */}
             <div className="settings-group preset-group">
                 <h3>Qualitäts-Voreinstellungen</h3>
                 <p className="setting-description">
-                    Wählen Sie eine Voreinstellung, um die technischen
-                    Einstellungen unten automatisch anzupassen.
+                    Wählen Sie eine Voreinstellung oder "Benutzerdefiniert", um
+                    die technischen Einstellungen manuell anzupassen.
                 </p>
                 <div className="preset-buttons">
                     <button
@@ -218,6 +223,14 @@ export default function OCRSettings({
                         onClick={() => handlePresetSelect("quality")}
                     >
                         Hohe Qualität
+                    </button>
+                    <button
+                        className={`preset-button ${
+                            activePreset === "custom" ? "active" : ""
+                        }`}
+                        onClick={() => setActivePreset("custom")}
+                    >
+                        Benutzerdefiniert
                     </button>
                 </div>
             </div>
@@ -297,7 +310,13 @@ export default function OCRSettings({
                         deu+eng).
                     </p>
                 </label>
-                <label className="settings-input-group">
+
+                {/* --- Conditionally Disabled Settings --- */}
+                <label
+                    className={`settings-input-group ${
+                        !isCustomizing ? "disabled-setting" : ""
+                    }`}
+                >
                     Bild-DPI für OCR:
                     <input
                         type="number"
@@ -309,9 +328,14 @@ export default function OCRSettings({
                             )
                         }
                         min="70"
+                        disabled={!isCustomizing}
                     />
                 </label>
-                <label className="settings-input-group">
+                <label
+                    className={`settings-input-group ${
+                        !isCustomizing ? "disabled-setting" : ""
+                    }`}
+                >
                     Optimierungslevel (0-3):
                     <input
                         type="number"
@@ -324,11 +348,31 @@ export default function OCRSettings({
                         }
                         min="0"
                         max="3"
+                        disabled={!isCustomizing}
                     />
                     <p className="setting-description">
                         0=Keine, 1=Gut, 2=Besser, 3=Beste (langsamer).
                     </p>
                 </label>
+                <label
+                    className={`ocr-settings-input-label ${
+                        !isCustomizing ? "disabled-setting" : ""
+                    }`}
+                >
+                    <input
+                        type="checkbox"
+                        checked={ocrCleanImages}
+                        onChange={(e) =>
+                            handleManualChange(
+                                setOcrCleanImages,
+                                e.target.checked
+                            )
+                        }
+                        disabled={!isCustomizing}
+                    />
+                    Bilder vor der OCR-Analyse bereinigen
+                </label>
+
                 <label className="settings-input-group">
                     Zusätzliche Tesseract-Konfiguration:
                     <input
@@ -339,19 +383,6 @@ export default function OCRSettings({
                         }
                         placeholder="z.B. --oem 1 --psm 3"
                     />
-                </label>
-                <label className="ocr-settings-input-label">
-                    <input
-                        type="checkbox"
-                        checked={ocrCleanImages}
-                        onChange={(e) =>
-                            handleManualChange(
-                                setOcrCleanImages,
-                                e.target.checked
-                            )
-                        }
-                    />
-                    Bilder vor der OCR-Analyse bereinigen
                 </label>
             </div>
 

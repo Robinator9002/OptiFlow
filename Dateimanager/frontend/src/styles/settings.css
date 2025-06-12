@@ -951,3 +951,27 @@ select {
 .data-management-container {
     max-width: 80vw;
 }
+
+/* --- Stile für deaktivierte technische Einstellungen --- */
+.disabled-setting {
+    color: var(--text-disabled, #888888);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.disabled-setting input {
+    background-color: var(--bg-tertiary, #f0f0f0) !important;
+    color: var(--text-disabled, #888888) !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+.disabled-setting .setting-description {
+    color: inherit;
+}
+
+/* Ensure the label text itself is also affected */
+.settings-input-group.disabled-setting,
+.ocr-settings-input-label.disabled-setting {
+    color: var(--text-disabled, #888888);
+}
