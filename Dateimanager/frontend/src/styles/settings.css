@@ -1,279 +1,51 @@
-/* Spezifische Stile für die Einstellungsseite (nutzen Variablen und rem) */
+/* ==========================================================================
+   EINSTELLUNGEN - GLOBALE STILE
+   ========================================================================== */
 
+/* Globale Container für die Einstellungsseite */
 .settings-container {
     display: flex;
-    color: var(--text-primary);
     width: 100%;
-    background-color: var(--bg-secondary);
+    min-height: 70vh;
+    margin-top: 1.25rem;
+    background-color: var(--bg-primary);
     border: 1px solid var(--border-primary);
     border-radius: 0.5rem;
-    a/* Spezifische Stile für die Einstellungsseite (nutzen Variablen und rem) */
-
-.settings-container {
-        display: flex;
-        color: var(--text-primary);
-        width: 100%;
-        background-color: var(--bg-secondary);
-        border: 1px solid var(--border-primary);
-        border-radius: 0.5rem;
-        box-shadow: var(--shadow-md);
-        margin-top: 1.25rem;
-        overflow: hidden;
-        min-height: 60vh;
-        transition: background-color 0.3s ease, border-color 0.3s ease,
-            box-shadow 0.3s ease;
-    }
-
-    .settings-tabs {
-        display: flex;
-        flex-direction: column;
-        width: 13.75rem;
-        background-color: var(--bg-secondary);
-        border-right: 1px solid var(--border-primary);
-        transition: background-color 0.3s ease, border-color 0.3s ease;
-        max-height: 27rem;
-        overflow-y: auto;
-        /* Hier wird das Scrollen bei Überlauf aktiviert */
-    }
-
-    .settings-tab {
-        padding: 0.75rem 1.125rem;
-        border: none;
-        border-bottom: 1px solid var(--border-tertiary);
-        background-color: transparent;
-        cursor: pointer;
-        text-align: left;
-        width: 100%;
-        transition: background-color var(--transition-base),
-            color var(--transition-base);
-        font-size: 1rem;
-        font-weight: 500;
-        color: var(--text-secondary);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .settings-tab:last-child {
-        border-bottom: none;
-    }
-
-    .settings-tab.active {
-        background-color: var(--bg-primary);
-        color: var(--accent-primary);
-    }
-
-    .settings-tab:hover:not(.active) {
-        background-color: var(--bg-tertiary);
-        color: var(--text-primary);
-    }
-
-    .settings-tab:focus-visible {
-        position: relative;
-        z-index: 1;
-        border-color: transparent !important;
-    }
-
-    .settings-content {
-        flex-grow: 1;
-        padding: 1.5625rem;
-        background-color: var(--bg-primary);
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-        padding-bottom: 5.3125rem;
-        max-height: 55vh;
-        overflow-y: auto;
-        position: relative;
-        transition: background-color 0.3s ease;
-    }
-
-    .settings-content input[type="text"],
-    .settings-content select,
-    .settings-content textarea,
-    .settings-content input[type="number"] {
-        margin-bottom: 0.625rem;
-        /* Erbt globale Stile */
-    }
-
-    .settings-section {
-        border-radius: 0.375rem;
-        margin-bottom: 1.5625rem;
-        border: 1px solid var(--border-tertiary);
-        padding: 1.25rem;
-        background-color: var(--bg-secondary);
-        transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-
-    .settings-section:last-child {
-        margin-bottom: 0;
-    }
-
-    .settings-section h3 {
-        color: var(--text-primary);
-        margin-top: 0;
-        margin-bottom: 0.9375rem;
-        border-bottom: 1px solid var(--border-primary);
-        padding-bottom: 0.625rem;
-        font-size: 1.2rem;
-        font-weight: 600;
-        transition: color 0.3s ease, border-color 0.3s ease;
-    }
-
-    .form-group {
-        margin-bottom: 0.9375rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.3125rem;
-    }
-
-    .form-group label {
-        color: var(--text-secondary);
-        font-weight: 500 !important;
-        font-size: 0.95rem;
-    }
-
-    .form-group label.checkbox-label {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        font-weight: normal !important;
-        gap: 0.5rem;
-        cursor: pointer;
-    }
-
-    .form-group label.checkbox-label input[type="checkbox"] {
-        margin: 0;
-        /* Nutzt globale Checkbox-Stile */
-    }
-
-    .setting-description {
-        color: var(--text-muted);
-        font-size: 0.85em;
-        line-height: 1.4;
-        margin: 0.25rem 0 0.25rem 0;
-        cursor: default;
-        max-width: 90%;
-    }
-
-    .settings-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 0.625rem;
-        padding: 0.9375rem 1.5625rem;
-        background-color: var(--bg-secondary);
-        border-top: 1px solid var(--border-primary);
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        box-sizing: border-box;
-        z-index: 100;
-        transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-
-    .settings-actions button {
-        padding: 0.625rem 1.125rem;
-        font-size: 0.95rem;
-    }
-
-    /* --- NEUE STILE FÜR OCR PRESETS --- */
-    .preset-group {
-        background-color: var(--bg-tertiary);
-        border: 1px solid var(--border-secondary);
-    }
-
-    .preset-buttons {
-        display: inline-flex;
-        background-color: var(--bg-primary);
-        border-radius: 0.5rem;
-        padding: 0.25rem;
-        border: 1px solid var(--border-secondary);
-        box-shadow: var(--shadow-inner);
-    }
-
-    .preset-button {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        background-color: transparent;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-        border-radius: 0.375rem;
-        position: relative;
-    }
-
-    .preset-button:hover:not(.active) {
-        background-color: var(--bg-secondary);
-        color: var(--text-primary);
-    }
-
-    .preset-button.active {
-        background-color: var(--accent-primary);
-        color: var(--text-on-accent);
-        box-shadow: var(--shadow-sm);
-        transform: translateY(-1px);
-    }
-
-    .preset-button:focus-visible {
-        outline: 2px solid var(--accent-primary);
-        outline-offset: 2px;
-    }
-
-    /* --- ENDE NEUE STILE --- */
-
-    /* Spezielles Input Label */
-    .settings-input-group {
-        display: flex;
-        flex-direction: column;
-        margin: 0.5rem 0;
-    }
-
-    .ocr-settings-input-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-
     box-shadow: var(--shadow-md);
-    margin-top: 1.25rem;
     overflow: hidden;
-    min-height: 60vh;
-    transition: background-color 0.3s ease, border-color 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: background-color var(--transition-base),
+        border-color var(--transition-base);
 }
 
 .settings-tabs {
     display: flex;
     flex-direction: column;
-    width: 13.75rem;
+    width: 14rem;
+    flex-shrink: 0;
     background-color: var(--bg-secondary);
     border-right: 1px solid var(--border-primary);
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    max-height: 27rem;
+    transition: background-color var(--transition-base),
+        border-color var(--transition-base);
     overflow-y: auto;
-    /* Hier wird das Scrollen bei Überlauf aktiviert */
 }
 
 .settings-tab {
-    padding: 0.75rem 1.125rem;
+    padding: 0.85rem 1.25rem;
     border: none;
     border-bottom: 1px solid var(--border-tertiary);
     background-color: transparent;
     cursor: pointer;
     text-align: left;
     width: 100%;
-    transition: background-color var(--transition-base),
-        color var(--transition-base);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 500;
     color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: background-color var(--transition-short),
+        color var(--transition-short), border-left var(--transition-short);
+    border-left: 3px solid transparent;
 }
 
 .settings-tab:last-child {
@@ -281,697 +53,502 @@
 }
 
 .settings-tab.active {
-    background-color: var(--bg-primary);
-    color: var(--accent-primary);
+    background-color: var(--bg-accent);
+    color: var(--text-link);
+    font-weight: 600;
+    border-left: 3px solid var(--accent-primary);
 }
 
 .settings-tab:hover:not(.active) {
     background-color: var(--bg-tertiary);
     color: var(--text-primary);
+    border-left: 3px solid var(--border-secondary);
 }
 
 .settings-tab:focus-visible {
-    position: relative;
+    outline: none;
+    background-color: var(--bg-accent);
+    box-shadow: var(--shadow-focus-ring);
     z-index: 1;
-    border-color: transparent !important;
 }
 
 .settings-content {
     flex-grow: 1;
-    padding: 1.5625rem;
+    padding: 1.75rem 2rem;
     background-color: var(--bg-primary);
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    padding-bottom: 5.3125rem;
-    max-height: 55vh;
     overflow-y: auto;
     position: relative;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-base);
 }
 
-.settings-content input[type="text"],
-.settings-content select,
-.settings-content textarea,
-.settings-content input[type="number"] {
-    margin-bottom: 0.625rem;
-    /* Erbt globale Stile */
-}
+/* ==========================================================================
+   ALLGEMEINE FORMULAR- & SEKTIONSSTILE
+   ========================================================================== */
 
 .settings-section {
-    border-radius: 0.375rem;
-    margin-bottom: 1.5625rem;
-    border: 1px solid var(--border-tertiary);
-    padding: 1.25rem;
     background-color: var(--bg-secondary);
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    border: 1px solid var(--border-tertiary);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.75rem;
+    transition: background-color var(--transition-base),
+        border-color var(--transition-base);
 }
 
 .settings-section:last-child {
     margin-bottom: 0;
 }
 
-.settings-section h3 {
-    color: var(--text-primary);
-    margin-top: 0;
-    margin-bottom: 0.9375rem;
+.settings-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border-primary);
-    padding-bottom: 0.625rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-    transition: color 0.3s ease, border-color 0.3s ease;
 }
 
-.form-group {
-    margin-bottom: 0.9375rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3125rem;
-}
-
-.form-group label {
-    color: var(--text-secondary);
-    font-weight: 500 !important;
-    font-size: 0.95rem;
-}
-
-.form-group label.checkbox-label {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-weight: normal !important;
-    gap: 0.5rem;
-    cursor: pointer;
-}
-
-.form-group label.checkbox-label input[type="checkbox"] {
+.settings-section-header h2,
+.settings-section-header h3 {
+    color: var(--text-primary);
     margin: 0;
-    /* Nutzt globale Checkbox-Stile */
+    font-size: 1.25rem;
+    font-weight: 600;
 }
 
-.setting-description {
-    color: var(--text-muted);
-    font-size: 0.85em;
-    line-height: 1.4;
-    margin: 0 0.25rem 0.25rem 0.5rem;
-    cursor: default;
-    text-wrap: wrap;
-}
-
-.settings-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.625rem;
-    padding: 0.9375rem 1.5625rem;
-    background-color: var(--bg-secondary);
-    border-top: 1px solid var(--border-primary);
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    box-sizing: border-box;
-    z-index: 100;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.settings-actions button {
-    padding: 0.625rem 1.125rem;
-    font-size: 0.95rem;
-}
-
-/* Scanner Settings */
-.scanner-settings-container .checkbox-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(9.375rem, 1fr));
-    gap: 0.5rem;
-    margin-top: 0.3125rem;
-    margin-bottom: 0.625rem;
-}
-
-.scanner-settings-container .checkbox-group label {
-    font-weight: normal;
-    display: flex;
-    align-items: center;
-}
-
-.scanner-settings-container .form-group label[for="numCores"],
-.scanner-settings-container .form-group label[for="processingDelay"] {
-    display: block;
-}
-
-.scanner-settings-container .form-group input[type="number"] {
-    width: auto;
-    max-width: 6.25rem;
-}
-
-/* General Settings */
 .setting-group {
-    background-color: var(--bg-primary);
-    padding: 0.9375rem;
-    border-radius: 0.375rem;
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 1.25rem;
-    border: 1px solid var(--border-tertiary);
-    transition: background-color 0.3s ease, border-color 0.3s ease,
-        box-shadow 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.setting-group:last-child {
+    margin-bottom: 0;
 }
 
 .setting-group h3 {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     margin-top: 0;
-    margin-bottom: 0.9375rem;
+    margin-bottom: 1rem;
     font-size: 1.1rem;
-    border-bottom: none;
-    padding-bottom: 0;
+    font-weight: 600;
 }
 
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 1rem;
+}
+
+.setting-item label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.95rem;
+    gap: 1rem;
+}
+
+.setting-item .setting-description {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0.25rem 0 0 0;
+    max-width: 95%;
+}
+
+/* Stile für Checkboxen und Radio-Buttons */
+.checkbox-label,
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.checkbox-label input[type="checkbox"],
+.radio-label input[type="radio"] {
+    margin: 0;
+}
+
+/* ==========================================================================
+   SPEZIFISCHE KOMPONENTENSTILE
+   ========================================================================== */
+
+/* --- GeneralSettings --- */
 .theme-selector,
-.font-selector {
+.font-size-selector {
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    border-radius: 0.375rem;
+    border: 1px solid var(--border-tertiary);
+}
+
+.theme-options,
+.font-size-controls {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.9375rem 1.875rem;
+    gap: 1rem 1.5rem;
     align-items: center;
-    margin-bottom: 0.625rem;
-}
-
-.theme-selector label,
-.font-selector label {
-    display: flex;
-    align-items: center;
-    font-weight: normal;
-    color: var(--text-primary);
-    cursor: pointer;
-    gap: 0.5rem;
-}
-
-.theme-selector input[type="radio"],
-.font-selector input[type="radio"] {
-    margin: 0;
-    cursor: pointer;
-    width: 1rem;
-    height: 1rem;
-    accent-color: var(--accent-primary);
-    box-shadow: none !important;
-}
-
-.theme-selector input[type="radio"]:focus-visible,
-.font-selector input[type="radio"]:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
-    box-shadow: none !important;
 }
 
 .theme-preview {
     width: 1.5rem;
     height: 1.5rem;
-    border-radius: 0.25rem;
-    border: 1px solid var(--border-secondary);
-    margin-left: 0.3125rem;
+    border-radius: 50%;
+    border: 2px solid var(--border-secondary);
+    margin-left: 0.5rem;
     display: inline-block;
     vertical-align: middle;
+    box-shadow: var(--shadow-sm);
 }
-
 .theme-preview.default {
-    background-color: #007bff;
-    border-color: #0056b3;
+    background: linear-gradient(45deg, #f3f6f9, #e9edf2);
 }
-
 .theme-preview.dark {
-    background-color: #343a40;
-    border-color: #6c757d;
+    background: linear-gradient(45deg, #18181b, #27272a);
 }
-
 .theme-preview.high-contrast {
-    background-color: #ffffff;
-    border: 1px solid #000000;
+    background: #fff;
+    border-color: #000;
 }
 
-.font-preview {
-    font-size: 1.1rem;
-    margin-left: 0.3125rem;
-    padding: 0 0.3125rem;
-    background-color: var(--bg-tertiary);
-    border-radius: 0.1875rem;
-    display: inline-block;
-    vertical-align: middle;
-    transition: background-color 0.3s ease;
-}
-
-.font-preview.serif {
-    font-family: Georgia, serif;
-}
-
-.font-preview.monospace {
-    font-family: var(--font-mono);
-}
-
-/* Spezielles Input Label */
-.settings-input-group {
-    display: flex;
-    flex-direction: column;
-    margin: 0.5rem 0;
-}
-
-/* Header für DataManagement */
-.data-management-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.9375rem;
-}
-
-/* Roter Button */
-.warning-button {
-    background-color: var(--accent-danger);
-    color: var(--text-white);
-    border: none;
-    padding: 0.625rem 1.125rem;
-    border-radius: 0.375rem;
-    font-size: 1.1rem;
+#fontSizeSlider {
+    flex-grow: 1;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
-
-.warning-button:hover {
-    background-color: var(--accent-danger-hover);
-}
-
-/* Anpassungen für Search Settings */
-.settings-section h3 {
-    color: var(--text-primary);
-    margin-top: 1rem;
-    margin-bottom: 0.9375rem;
-    border-bottom: 1px solid var(--border-primary);
-    padding-bottom: 0.625rem;
-    font-size: 1.2rem;
+.font-size-value {
+    min-width: 45px;
+    text-align: right;
+    font-family: var(--font-mono);
     font-weight: 600;
-    transition: color 0.3s ease, border-color 0.3s ease;
+    color: var(--text-link);
 }
 
-.form-group {
-    margin-bottom: 0.9375rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3125rem;
+/* --- SearchSettings, DeDupingSettings, OldFilesSettings --- */
+.setting-item input[type="number"],
+.setting-item select {
+    max-width: 10rem;
+    text-align: right;
 }
 
-.form-group label {
+/* --- OCRSettings --- */
+.preset-buttons {
+    display: inline-flex;
+    background-color: var(--bg-primary);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    border: 1px solid var(--border-secondary);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1rem;
+}
+
+.preset-button {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid transparent;
+    background-color: transparent;
     color: var(--text-secondary);
-    font-weight: 500 !important;
-    font-size: 0.95rem;
-}
-
-.form-group input[type="number"] {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--border-primary);
-    border-radius: 0.375rem;
-    font-size: 1rem;
-    transition: border-color 0.2s ease;
-}
-
-.form-group input[type="number"]:focus {
-    outline: none;
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 2px rgba(var(--accent-primary-rgb), 0.2);
-}
-
-.form-group input[type="checkbox"] {
-    margin-right: 0.5rem;
-}
-
-.form-group .setting-description {
-    margin-top: 0.25rem;
-}
-
-.search-relevance-input {
-    display: flex;
-    gap: 0.3125rem;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.search-relevance-input input,
-select {
-    min-width: 10rem;
-    max-width: 50rem;
-    padding: 0.2rem 0.5rem !important;
-}
-
-.ocr-settings-input-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.ocr-settings-input-label div {
-    display: flex;
-    align-items: center;
-    gap: 0.3125rem;
-}
-
-.change-username-div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.change-username-div input {
-    width: 72%;
-}
-
-.change-username-div button {
-    width: 25%;
-}
-
-.user-confirmation {
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-primary);
-    padding: 2rem;
-    border-radius: 1rem;
-}
-
-.user-confirmation .confirm-buttons {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-}
-
-.error-input {
-    border-color: var(--accent-danger) !important;
-}
-
-.error-message {
-    color: var(--accent-danger);
     font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    border-radius: 0.375rem;
 }
 
-.table-container {
-    width: 100%;
-    overflow-x: auto;
+.preset-button:hover:not(.active) {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.preset-button.active {
+    background-color: var(--accent-primary);
+    color: var(--text-on-accent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.disabled-setting {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.disabled-setting label,
+.disabled-setting .setting-description {
+    color: var(--text-muted) !important;
+}
+
+/* --- ScannerSettings --- */
+.extensions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border-radius: 0.375rem;
+    border: 1px solid var(--border-tertiary);
+}
+
+/* --- UserSettings --- */
+.user-confirmation-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(var(--shadow-color-rgb), 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+.user-confirmation-box {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    border: 1px solid var(--border-primary);
+    width: 90%;
+    max-width: 400px;
+}
+.user-confirmation-box h3 {
+    margin-top: 0;
+}
+.user-confirmation-box .button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 
 .user-management-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
+    background-color: var(--bg-primary);
     border: 1px solid var(--border-tertiary);
     border-radius: 0.5rem;
-    background-color: var(--bg-primary);
+    overflow: hidden;
 }
-
-.user-management-table thead tr {
-    background-color: var(--bg-tertiary);
-    color: var(--text-secondary);
-}
-
 .user-management-table th,
 .user-management-table td {
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     text-align: left;
     border-bottom: 1px solid var(--border-tertiary);
 }
-
-.user-management-table tbody tr:last-child td {
-    border-bottom: none;
+.user-management-table thead {
+    background-color: var(--bg-tertiary);
 }
-
-.user-management-table td:last-child {
+.user-management-table tbody tr:hover {
+    background-color: var(--bg-accent);
+}
+.user-management-table .actions-cell {
     text-align: right;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
 }
 
-.table-button {
-    padding: 0.3rem 0.6rem;
-    margin-left: 0.5rem;
-    border-radius: 0.375rem;
-    font-size: 0.85rem;
+/* --- DatabaseSettings --- */
+.file-selector-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+.file-tab {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--border-primary);
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all var(--transition-base);
+    border-radius: 0.375rem;
+}
+.file-tab:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-secondary);
+    color: var(--text-primary);
+}
+.file-tab.active {
     background-color: var(--accent-primary);
-    border: none;
+    color: var(--text-on-accent);
+    border-color: var(--accent-primary-border-hover);
+    box-shadow: var(--shadow-sm);
 }
 
-.table-button:hover {
-    background-color: var(--accent-primary-hover);
+.json-viewer,
+.json-editor {
+    background-color: var(--bg-code);
+    border: 1px solid var(--border-tertiary);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    max-height: 500px;
+    overflow: auto;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.json-editor {
+    width: 100%;
+    min-height: 400px;
+    resize: vertical;
 }
 
-.table-button.delete-button {
-    background-color: var(--accent-danger);
-}
-
-.table-button.delete-button:hover {
-    background-color: var(--accent-danger-hover);
-}
-
-.table-button.disabled {
-    background-color: var(--bg-disabled);
-    color: var(--text-disabled);
-    cursor: not-allowed;
-}
-
-/* === Event‑Verwaltung in SystemSettings === */
-
-.events-section {
-    margin-bottom: 2rem;
-}
-
+/* --- SystemSettings --- */
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1rem;
 }
-
 .event-card {
     background-color: var(--bg-primary);
     border: 1px solid var(--border-tertiary);
     border-radius: 0.5rem;
-    padding: 1rem;
+    padding: 1.25rem;
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
-    transition: box-shadow var(--transition-base);
+    transition: box-shadow var(--transition-base),
+        transform var(--transition-base);
 }
-
 .event-card:hover {
     box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
 }
-
-.event-card.add-event {
+.event-card.add-new {
     justify-content: center;
     align-items: center;
-    font-size: 2rem;
-    color: var(--accent-primary);
-    background-color: var(--bg-accent);
+    font-size: 2.5rem;
+    color: var(--text-muted);
+    background-color: transparent;
+    border-style: dashed;
     cursor: pointer;
 }
-
-.event-type {
+.event-card.add-new:hover {
+    background-color: var(--bg-accent);
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+.event-card-header {
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
-
-.event-freq,
-.event-times {
+.event-details {
     font-size: 0.9rem;
     color: var(--text-secondary);
-    margin-bottom: 0.25rem;
+    margin-bottom: 1rem;
+    flex-grow: 1;
 }
-
-.card-buttons {
+.event-card-actions {
     margin-top: auto;
     display: flex;
     gap: 0.5rem;
 }
 
-.card-buttons .btn {
-    flex: 1;
-    padding: 0.4rem 0.6rem;
-    font-size: 0.85rem;
-    border-radius: 0.375rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color var(--transition-base);
-}
-
-.btn.edit {
-    background-color: var(--bg-tertiary);
-    color: var(--text-primary);
-}
-
-.btn.delete {
-    background-color: var(--accent-danger);
-    color: var(--text-on-accent);
-}
-
-.btn.run {
-    background-color: var(--accent-success);
-    color: var(--text-on-accent);
-}
-
-.remove-time-button {
-    background: none;
-    color: var(--accent-danger);
-    border: none;
-    cursor: pointer;
-    margin-left: -0.4rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 1.8rem;
-    transition: background-color var(--transition-base);
-}
-
-.remove-time-button:hover {
-    background: none;
-    color: var(--accent-danger-hover);
-}
-
 .event-form-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(var(--shadow-color-rgb), 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1000;
 }
-
 .event-form-container {
-    background-color: var(--bg-primary);
+    background-color: var(--bg-secondary);
     border: 1px solid var(--border-primary);
     border-radius: 0.5rem;
     box-shadow: var(--shadow-lg);
-    padding: 1.5rem;
-    width: 100%;
-    max-width: 24rem;
+    padding: 1.5rem 2rem;
+    width: 90%;
+    max-width: 450px;
 }
-
-.event-form-container .form-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-}
-
-.event-form .form-group {
-    margin-bottom: 1rem;
+.time-input-group {
     display: flex;
-    flex-direction: column;
-}
-
-.event-form label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 0.25rem;
-}
-
-.event-form input,
-.event-form select {
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: 1px solid var(--border-primary);
-    border-radius: 0.375rem;
-    transition: border-color var(--transition-base);
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
-}
-
-.event-form input:focus,
-.event-form select:focus {
-    outline: none;
-    border-color: var(--accent-primary);
-    box-shadow: var(--shadow-focus-ring);
-}
-
-.event-form .time-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 0.5rem;
-}
-
-.event-form .time-item {
-    display: flex;
+    align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
 }
-
-.event-form .time-input {
-    flex: 1;
-}
-
-.event-form .add-time-button {
+.remove-time-btn {
     background: none;
     border: none;
-    color: var(--accent-primary);
+    color: var(--text-danger);
     cursor: pointer;
-    font-size: 1.2rem;
-    align-self: flex-start;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0 0.5rem;
+}
+.add-time-btn {
+    background: none;
+    border: 1px dashed var(--border-secondary);
+    color: var(--text-link);
+    cursor: pointer;
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    border-radius: 0.375rem;
+}
+.add-time-btn:hover {
+    background-color: var(--bg-accent);
+    border-color: var(--accent-primary);
 }
 
-.event-form .button-group {
+/* ==========================================================================
+   AKTIONEN-LEISTE (FOOTER)
+   ========================================================================== */
+
+.settings-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-primary);
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+    z-index: 100;
+    transition: background-color var(--transition-base),
+        border-color var(--transition-base);
 }
 
-.event-form .confirm-btn,
-.event-form .cancel-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    border-radius: 0.375rem;
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(var(--shadow-color-rgb), 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.button-icon {
+    background: none;
     border: none;
     cursor: pointer;
-    transition: background-color var(--transition-base);
+    font-size: 1.2rem;
+    padding: 0.25rem;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-short);
 }
 
-.event-form .confirm-btn {
-    background-color: var(--accent-primary);
-    color: var(--text-on-accent);
+.button-icon:hover {
+    background-color: var(--bg-tertiary);
 }
 
-.event-form .cancel-btn {
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-primary);
-    color: var(--text-primary);
-}
-
-.error-input {
-    border-color: var(--accent-danger) !important;
-}
-
-.error-message {
-    color: var(--accent-danger);
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-}
-
-/* Files Data Display */
-.data-management-container {
-    max-width: 80vw;
-}
-
-/* --- Stile für deaktivierte technische Einstellungen --- */
-.disabled-setting {
-    color: var(--text-disabled, #888888);
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.disabled-setting input {
-    background-color: var(--bg-tertiary, #f0f0f0) !important;
-    color: var(--text-disabled, #888888) !important;
-    cursor: not-allowed !important;
-    pointer-events: none;
-}
-
-.disabled-setting .setting-description {
-    color: inherit;
-}
-
-/* Ensure the label text itself is also affected */
-.settings-input-group.disabled-setting,
-.ocr-settings-input-label.disabled-setting {
-    color: var(--text-disabled, #888888);
+.button-icon.button-danger:hover {
+    background-color: var(--bg-danger-light);
+    color: var(--text-on-danger);
 }
