@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
-import { ConfirmModal } from "./ConfirmModal.tsx";
+import { ConfirmModal } from "./ConfirmModal.tsx"; // Assuming path is correct
 import FileContentView from "./FileContentView.tsx";
-// Assuming FileSearchPanel exists and has its own types. We'll use props based on usage here.
-// import FileSearchPanel from "./FileSearchPanel.tsx";
+// Import the new panel and the HighlightPosition type from it
+import FileSearchPanel, { type HighlightPosition } from "./FileSearchPanel.tsx";
 import {
     getFileInfo,
     openFile,
@@ -12,15 +12,9 @@ import {
     writeFile,
     deleteFile,
     ocrConvertFile,
-} from "../api/api.tsx";
+} from "../api/api.tsx"; // Assuming path is correct
 
 // --- Type Definitions ---
-
-// A simplified version of what FileSearchPanel might need.
-// Replace with the actual component if available.
-const FileSearchPanel: React.FC<any> = () => (
-    <div>Search Panel Placeholder</div>
-);
 
 interface SelectedFile {
     path: string;
@@ -37,20 +31,19 @@ interface FileInfo {
     type: "file" | "folder";
 }
 
-interface HighlightPosition {
-    start: number;
-    end: number;
-    snippetIndex: number;
-}
-
 interface FilePreviewContainerProps {
     selectedFile: SelectedFile | null;
     setSelectedFile: (file: SelectedFile | null) => void;
     onFileDeleted: (filePath: string) => void;
     isAdmin: boolean;
+    // This is still needed to collapse the main file list search panel
     setIsSearchCollapsed: (isCollapsed: boolean) => void;
 }
 
+/**
+ * Container for viewing and interacting with a single file. It displays content,
+ * allows editing, and integrates the in-file search panel.
+ */
 const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     selectedFile,
     setSelectedFile,
@@ -59,7 +52,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     setIsSearchCollapsed,
 }) => {
     // === State Definitions ===
-    const [content, setContent] = useState<string>("");
+    const [content, setContent] = useState<string | null>(null);
     const [originalContent, setOriginalContent] = useState<string>("");
     const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
     const [loadingContent, setLoadingContent] = useState<boolean>(false);
@@ -70,51 +63,32 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         useState<boolean>(false);
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] =
         useState<boolean>(false);
-    const [searchTermInFile, setSearchTermInFile] = useState<string>("");
+
+    // State for search results, controlled here and passed to children
     const [highlightPositions, setHighlightPositions] = useState<
         HighlightPosition[]
     >([]);
     const [activeSnippetIndex, setActiveSnippetIndex] = useState<number>(-1);
-    const [isSearchActive, setIsSearchActive] = useState<boolean>(false);
-    const [snippetCount, setSnippetCount] = useState<number>(0);
 
     // === Ref Definitions ===
-    const snippetListRef = useRef<HTMLDivElement>(null);
     const previewContentRef = useRef<HTMLPreElement>(null);
-    const searchInputRef = useRef<HTMLInputElement>(null);
-    const activeSnippetRef = useRef<HTMLLIElement>(null);
 
-    // --- Snippet Navigation ---
-    const navigateSnippet = useCallback(
-        (direction: "prev" | "next") => {
-            setActiveSnippetIndex((prev) => {
-                if (snippetCount === 0) return -1;
-                if (direction === "prev") {
-                    return Math.max(0, prev - 1);
-                } else {
-                    // 'next'
-                    return Math.min(snippetCount - 1, prev + 1);
-                }
-            });
-        },
-        [snippetCount]
-    );
+    // --- Helper Functions ---
+    const resetSearchState = useCallback(() => {
+        setHighlightPositions([]);
+        setActiveSnippetIndex(-1);
+    }, []);
 
-    // --- Close File ---
     const closeFile = useCallback(() => {
         setSelectedFile(null);
-        setContent("");
+        setContent(null);
         setOriginalContent("");
         setFileInfo(null);
         setEditingFile(false);
         setContentError(null);
-        setHighlightPositions([]);
-        setActiveSnippetIndex(-1);
-        setIsSearchActive(false);
-        setSnippetCount(0);
-        setSearchTermInFile("");
-        setIsSearchCollapsed(false);
-    }, [setSelectedFile, setIsSearchCollapsed]);
+        resetSearchState();
+        setIsSearchCollapsed(false); // Show the main file search again
+    }, [setSelectedFile, setIsSearchCollapsed, resetSearchState]);
 
     // === Effect for Loading File Data ===
     useEffect(() => {
@@ -127,20 +101,11 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
             setLoadingContent(true);
             setContentError(null);
             setEditingFile(false);
-            setHighlightPositions([]);
-            setActiveSnippetIndex(-1);
-            setIsSearchActive(false);
-            setSnippetCount(0);
-            setSearchTermInFile("");
+            resetSearchState();
 
             try {
                 const data: FileInfo = await getFileInfo(selectedFile.path);
-                const displayContent =
-                    data.content === null ||
-                    data.content === undefined ||
-                    data.content === ""
-                        ? "(Datei ist leer)"
-                        : data.content;
+                const displayContent = data.content ?? "(Datei ist leer)";
                 setContent(displayContent);
                 setOriginalContent(displayContent);
                 setFileInfo(data);
@@ -159,18 +124,15 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
             }
         };
         loadFileData();
-    }, [selectedFile?.path, closeFile]);
+    }, [selectedFile?.path, closeFile, resetSearchState]);
 
     // === Action Handlers ===
     const handleEdit = (): void => {
+        if (content === null) return;
         setOriginalContent(content);
         setEditingFile(true);
-        setIsSearchCollapsed(true);
-        setHighlightPositions([]);
-        setActiveSnippetIndex(-1);
-        setIsSearchActive(false);
-        setSnippetCount(0);
-        setSearchTermInFile("");
+        setIsSearchCollapsed(true); // Hide main search while editing
+        resetSearchState();
     };
 
     const handleContentChange = (
@@ -180,7 +142,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     };
 
     const handleConfirmSave = async (): Promise<void> => {
-        if (!selectedFile) return;
+        if (!selectedFile || content === null) return;
         setShowConfirmSaveModal(false);
         setSavingFile(true);
         try {
@@ -201,10 +163,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         setContent(originalContent);
         setEditingFile(false);
         toast.info("↩ Änderungen verworfen.");
-        setHighlightPositions([]);
-        setActiveSnippetIndex(-1);
-        setIsSearchActive(false);
-        setSnippetCount(0);
+        resetSearchState();
     };
 
     const handleDeleteFile = async (): Promise<void> => {
@@ -213,7 +172,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         try {
             await deleteFile(selectedFile.path);
             toast.success("🗑️ Gelöscht!");
-            if (onFileDeleted) onFileDeleted(selectedFile.path);
+            onFileDeleted(selectedFile.path);
             closeFile();
         } catch (error: unknown) {
             const message =
@@ -229,19 +188,11 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
             await ocrConvertFile(selectedFile.path, selectedFile.path);
             toast.success("✅ PDF konvertiert! Lade neu...");
             const data: FileInfo = await getFileInfo(selectedFile.path);
-            const displayContent =
-                data.content === null ||
-                data.content === undefined ||
-                data.content === ""
-                    ? "(Datei ist leer)"
-                    : data.content;
+            const displayContent = data.content ?? "(Datei ist leer)";
             setContent(displayContent);
             setOriginalContent(displayContent);
             setFileInfo(data);
-            setHighlightPositions([]);
-            setActiveSnippetIndex(-1);
-            setIsSearchActive(false);
-            setSnippetCount(0);
+            resetSearchState();
         } catch (error: unknown) {
             const message =
                 error instanceof Error ? error.message : String(error);
@@ -262,60 +213,45 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                 const indicesAttr = target.getAttribute("data-snippet-indices");
                 if (indicesAttr) {
                     const firstIndex = parseInt(indicesAttr.split(",")[0], 10);
-                    if (
-                        !isNaN(firstIndex) &&
-                        firstIndex >= 0 &&
-                        firstIndex < snippetCount
-                    ) {
+                    if (!isNaN(firstIndex) && firstIndex >= 0) {
                         setActiveSnippetIndex(firstIndex);
                     }
                 }
             }
         },
-        [snippetCount]
+        []
     );
 
-    // === Global Keybindings Effect ===
+    // === Global Keybindings Effect (Simplified) ===
     useEffect(() => {
         const handleGlobalKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
                 event.preventDefault();
-                if (editingFile) handleCancelEdit();
-                else if (isSearchActive || searchTermInFile.trim()) {
-                    setSearchTermInFile("");
-                    setHighlightPositions([]);
-                    setActiveSnippetIndex(-1);
-                    setIsSearchActive(false);
-                    setSnippetCount(0);
+                if (showConfirmSaveModal || showDeleteConfirmModal) {
+                    setShowConfirmSaveModal(false);
+                    setShowDeleteConfirmModal(false);
+                } else if (editingFile) {
+                    handleCancelEdit();
+                } else if (highlightPositions.length > 0) {
+                    resetSearchState();
                 } else if (selectedFile) {
                     closeFile();
-                }
-                return;
-            }
-
-            if (!editingFile && isSearchActive && snippetCount > 0) {
-                if (event.key === "ArrowDown") {
-                    event.preventDefault();
-                    navigateSnippet("next");
-                } else if (event.key === "ArrowUp") {
-                    event.preventDefault();
-                    navigateSnippet("prev");
                 }
             }
         };
 
         document.addEventListener("keydown", handleGlobalKeyDown);
-        return () => {
+        return () =>
             document.removeEventListener("keydown", handleGlobalKeyDown);
-        };
     }, [
-        isSearchActive,
-        snippetCount,
         editingFile,
         selectedFile,
-        searchTermInFile,
+        highlightPositions,
+        showConfirmSaveModal,
+        showDeleteConfirmModal,
         closeFile,
-        navigateSnippet,
+        resetSearchState,
+        handleCancelEdit,
     ]);
 
     if (!selectedFile) {
@@ -348,7 +284,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                     <p style={{ margin: "2px 0" }}>
                         <strong>Größe:</strong>{" "}
                         {(fileInfo.size_bytes / 1024)?.toFixed(2) ?? "N/A"} KB |
-                        <strong>Erstellt:</strong>{" "}
+                        <strong> Erstellt:</strong>{" "}
                         {fileInfo.created_at
                             ? new Date(fileInfo.created_at).toLocaleString(
                                   "de-DE"
@@ -360,8 +296,9 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                     <p className="error-message">{contentError}</p>
                 )}
             </div>
+
             <div
-                className={`file-content ${
+                className={`file-content-area ${
                     editingFile ? "editing" : "previewing"
                 }`}
             >
@@ -376,26 +313,13 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                     isLoading={loadingContent}
                 />
                 <div className="file-sidebar">
-                    {!editingFile && (
+                    {!editingFile && selectedFile.path && (
                         <FileSearchPanel
                             filePath={selectedFile.path}
                             fileContent={content}
-                            isEditing={editingFile}
-                            isLoading={loadingContent}
                             onHighlightPositionsChange={setHighlightPositions}
-                            onActiveSnippetIndexChange={setActiveSnippetIndex}
-                            onSearchActiveChange={setIsSearchActive}
-                            onSetIsSearchCollapsed={setIsSearchCollapsed}
-                            searchInputRef={searchInputRef}
-                            snippetListRef={snippetListRef}
-                            activeSnippetRef={activeSnippetRef}
-                            navigateSnippet={navigateSnippet}
-                            onSnippetCountChange={setSnippetCount}
                             activeSnippetIndex={activeSnippetIndex}
-                            snippetCount={snippetCount}
-                            isSearchActive={isSearchActive}
-                            searchTerm={searchTermInFile}
-                            onSearchTermChange={setSearchTermInFile}
+                            onActiveSnippetIndexChange={setActiveSnippetIndex}
                         />
                     )}
                     <div className={"file-actions"}>
@@ -484,6 +408,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                     </div>
                 </div>
             </div>
+
             {(showConfirmSaveModal || showDeleteConfirmModal) && (
                 <ConfirmModal
                     title={
