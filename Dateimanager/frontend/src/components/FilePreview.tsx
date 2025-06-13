@@ -68,6 +68,7 @@ export interface HighlightPosition {
     start: number;
     end: number;
     snippetIndex: number;
+    isFullSnippet: boolean;
 }
 interface FilePreviewContainerProps {
     selectedFile: SelectedFile | null;
@@ -83,7 +84,13 @@ const FileContentView: React.FC<{
     content: string | null;
     highlightPositions: HighlightPosition[];
     activeSnippetIndex: number;
-}> = ({ content, highlightPositions, activeSnippetIndex }) => {
+    onHighlightClick: (snippetIndex: number) => void;
+}> = ({
+    content,
+    highlightPositions,
+    activeSnippetIndex,
+    onHighlightClick,
+}) => {
     if (content === null) return null;
     if (highlightPositions.length === 0) return <>{content}</>;
 
@@ -94,15 +101,22 @@ const FileContentView: React.FC<{
         if (pos.start > lastIndex) {
             parts.push(content.substring(lastIndex, pos.start));
         }
-        const isActive = pos.snippetIndex === activeSnippetIndex;
+
+        const isSnippetActive = pos.snippetIndex === activeSnippetIndex;
+        let className = "highlighted-text";
+        if (pos.isFullSnippet) {
+            className = isSnippetActive
+                ? "full-snippet-highlight active"
+                : "full-snippet-highlight";
+        } else if (isSnippetActive) {
+            className = "highlighted-text active-highlight";
+        }
+
         parts.push(
             <mark
                 key={i}
-                className={
-                    isActive
-                        ? "highlighted-text active-highlight"
-                        : "highlighted-text"
-                }
+                className={className}
+                onClick={() => onHighlightClick(pos.snippetIndex)}
             >
                 {content.substring(pos.start, pos.end)}
             </mark>
@@ -158,7 +172,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] =
         useState<boolean>(false);
 
-    // In-file search state
     const [highlightPositions, setHighlightPositions] = useState<
         HighlightPosition[]
     >([]);
@@ -171,6 +184,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     const previewContentRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
     const activeSnippetRef = useRef<HTMLLIElement>(null);
+    const editorRef = useRef<HTMLTextAreaElement>(null);
 
     // --- HELPER FUNCTIONS & API CALLS ---
     const resetSearchState = useCallback(() => {
@@ -192,9 +206,11 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     }, [setSelectedFile, setIsSearchCollapsed, resetSearchState]);
 
     const executeSearch = useCallback(async () => {
-        if (!searchTerm.trim() || !content || !selectedFile) {
+        const contentSource = editingFile ? editorRef.current?.value : content;
+        if (!searchTerm.trim() || !contentSource || !selectedFile) {
             return;
         }
+
         setSearchLoading(true);
         setHighlightPositions([]);
         try {
@@ -208,45 +224,46 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
 
             if (foundSnippets.length > 0) {
                 const positions: HighlightPosition[] = [];
-                const lowerContent = content.toLowerCase();
-                const match = foundSnippets[0].text.match(/\*\*(.*?)\*\*/);
-                const termToFind = match
-                    ? match[1].toLowerCase()
-                    : searchTerm.toLowerCase().trim();
-                let lastIndex = -1;
-                let currentSnippetIndex = 0;
+                const lowerContent = contentSource.toLowerCase();
 
-                while (
-                    (lastIndex = lowerContent.indexOf(
-                        termToFind,
-                        lastIndex + 1
-                    )) !== -1
-                ) {
-                    positions.push({
-                        start: lastIndex,
-                        end: lastIndex + termToFind.length,
-                        snippetIndex: currentSnippetIndex,
-                    });
-                    currentSnippetIndex++;
-                }
+                foundSnippets.forEach((snippet, index) => {
+                    const plainSnippetText = snippet.text
+                        .replace(/\*\*/g, "")
+                        .toLowerCase();
+                    const snippetStart = lowerContent.indexOf(plainSnippetText);
+
+                    if (snippetStart !== -1) {
+                        positions.push({
+                            start: snippetStart,
+                            end: snippetStart + plainSnippetText.length,
+                            snippetIndex: index,
+                            isFullSnippet: true,
+                        });
+                    }
+                });
+
+                positions.sort((a, b) => a.start - b.start);
 
                 setHighlightPositions(positions);
                 setActiveSnippetIndex(0);
-                toast.success(`${currentSnippetIndex} Treffer gefunden.`);
+                toast.success(`${foundSnippets.length} Treffer gefunden.`);
             } else {
                 toast.info("Keine Treffer in dieser Datei gefunden.");
+                setHighlightPositions([]);
                 setActiveSnippetIndex(-1);
             }
         } catch (error) {
             toast.error(
                 `❌ Fehler bei der Suche: ${
-                    error instanceof Error ? error.message : String(error)
+                    error instanceof Error
+                        ? error.message
+                        : "Unbekannter Fehler"
                 }`
             );
         } finally {
             setSearchLoading(false);
         }
-    }, [searchTerm, content, selectedFile]);
+    }, [searchTerm, content, selectedFile, editingFile]);
 
     // --- ACTION HANDLERS ---
     const handleOpenFile = async () => {
@@ -287,12 +304,12 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         setOriginalContent(content);
         setEditingFile(true);
         setIsSearchCollapsed(true);
-        resetSearchState();
     };
 
     const handleCancelEdit = () => {
         setContent(originalContent);
         setEditingFile(false);
+        resetSearchState();
         toast.info("↩ Änderungen verworfen.");
     };
 
@@ -305,6 +322,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
             await writeFile({ file_path: selectedFile.path, content });
             setOriginalContent(content);
             setEditingFile(false);
+            resetSearchState();
             toast.success("✅ Datei erfolgreich gespeichert!");
         } catch (error) {
             toast.error(
@@ -339,6 +357,10 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         }
     };
 
+    const handleHighlightClick = (snippetIndex: number) => {
+        setActiveSnippetIndex(snippetIndex);
+    };
+
     // --- EFFECTS ---
     useEffect(() => {
         if (!selectedFile?.path) {
@@ -360,8 +382,8 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
             } catch (error) {
                 const message =
                     error instanceof Error ? error.message : String(error);
-                setContentError(`Fehler beim Laden der Datei: ${message}`);
-                toast.error(`Fehler beim Laden der Datei: ${message}`);
+                setContentError(`Fehler: ${message}`);
+                toast.error(`Fehler: ${message}`);
             } finally {
                 setLoadingContent(false);
             }
@@ -370,13 +392,38 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     }, [selectedFile?.path, closeFile, resetSearchState]);
 
     useEffect(() => {
-        if (activeSnippetIndex === -1 || !previewContentRef.current) return;
-        const activeMark =
-            previewContentRef.current.querySelector(".active-highlight");
-        if (activeMark) {
-            activeMark.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (
+            activeSnippetIndex === -1 ||
+            (!previewContentRef.current && !editorRef.current)
+        )
+            return;
+
+        const activeHighlight = highlightPositions.find(
+            (p) => p.snippetIndex === activeSnippetIndex && p.isFullSnippet
+        );
+        if (!activeHighlight) return;
+
+        if (editingFile && editorRef.current) {
+            const editor = editorRef.current;
+            editor.focus();
+            editor.setSelectionRange(
+                activeHighlight.start,
+                activeHighlight.end
+            );
+            const lineHeight = 20; // Approximate line height
+            const jump = (activeHighlight.start / 80) * lineHeight;
+            editor.scrollTop = jump - editor.clientHeight / 2;
+        } else if (!editingFile && previewContentRef.current) {
+            const activeMark =
+                previewContentRef.current.querySelector(".active");
+            if (activeMark) {
+                activeMark.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                });
+            }
         }
-    }, [activeSnippetIndex]);
+    }, [activeSnippetIndex, editingFile, highlightPositions]);
 
     useEffect(() => {
         activeSnippetRef.current?.scrollIntoView({
@@ -395,6 +442,14 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
 
     return (
         <div className="file-preview-container">
+            <style>{`
+                .full-snippet-highlight { background-color: rgba(0, 122, 204, 0.2); border-radius: 3px; cursor: pointer; }
+                .full-snippet-highlight.active { background-color: rgba(0, 122, 204, 0.5); border: 1px solid #007acc; }
+                .confirm-modal-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1050; }
+                .confirm-modal-content { background: var(--bg-secondary, #252526); color: var(--text-primary, #d4d4d4); padding: 2rem; border-radius: 8px; width: 90%; max-width: 500px; text-align: center; border: 1px solid var(--border-primary, #3c3c3c); }
+                .confirm-modal-content h3 { margin-top: 0; }
+                .confirm-modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+             `}</style>
             <div className="header">
                 <h2 title={selectedFile.name} className="file-preview-title">
                     Vorschau: {selectedFile.name}
@@ -409,15 +464,12 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
             </div>
 
             <div className="file-metadata">
-                <p title={selectedFile.path}>
-                    <strong>Pfad:</strong> {selectedFile.path}
-                </p>
                 {fileInfo && (
                     <p>
                         <strong>Größe:</strong>{" "}
-                        {(fileInfo.size_bytes / 1024).toFixed(2)} KB |
-                        <strong> Erstellt:</strong>{" "}
-                        {new Date(fileInfo.created_at).toLocaleString("de-DE")}
+                        {(fileInfo.size_bytes / 1024).toFixed(2)} KB |{" "}
+                        <strong>Erstellt:</strong>{" "}
+                        {new Date(fileInfo.created_at).toLocaleString("de-DE")}{" "}
                     </p>
                 )}
                 {contentError && (
@@ -434,111 +486,141 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                             <div className="spinner"></div>
                         </div>
                     ) : editingFile ? (
-                        <textarea
-                            value={content ?? ""}
-                            onChange={(e) => setContent(e.target.value)}
-                            className="file-editor"
-                        />
+                        <div
+                            className="file-editor-wrapper"
+                            style={{
+                                position: "relative",
+                                width: "100%",
+                                height: "100%",
+                            }}
+                        >
+                            <div
+                                className="file-preview-content"
+                                style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    margin: 0,
+                                    zIndex: 0,
+                                    pointerEvents: "none",
+                                    overflow: "hidden",
+                                }}
+                            >
+                                <FileContentView
+                                    content={content}
+                                    highlightPositions={highlightPositions}
+                                    activeSnippetIndex={activeSnippetIndex}
+                                    onHighlightClick={() => {}}
+                                />
+                            </div>
+                            <textarea
+                                ref={editorRef}
+                                value={content ?? ""}
+                                onChange={(e) => setContent(e.target.value)}
+                                className="file-editor"
+                                style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    zIndex: 1,
+                                    backgroundColor: "transparent",
+                                    color: "inherit",
+                                }}
+                            />
+                        </div>
                     ) : (
                         <pre className="file-preview-content">
                             <FileContentView
                                 content={content}
                                 highlightPositions={highlightPositions}
                                 activeSnippetIndex={activeSnippetIndex}
+                                onHighlightClick={handleHighlightClick}
                             />
                         </pre>
                     )}
                 </div>
 
                 <div className="file-sidebar">
-                    {!editingFile && (
-                        <div className="in-file-search-panel">
-                            <div className="in-file-search-bar">
-                                <input
-                                    ref={searchInputRef}
-                                    type="search"
-                                    placeholder="In Datei suchen..."
-                                    value={searchTerm}
-                                    onChange={(e) =>
-                                        setSearchTerm(e.target.value)
-                                    }
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") executeSearch();
-                                    }}
-                                />
-                                <button
-                                    onClick={executeSearch}
-                                    disabled={
-                                        searchLoading || !searchTerm.trim()
-                                    }
-                                >
-                                    {searchLoading ? (
-                                        <Loader2
-                                            size={18}
-                                            className="animate-spin"
-                                        />
-                                    ) : (
-                                        <SearchIcon size={18} />
-                                    )}
-                                </button>
-                            </div>
-                            {snippets.length > 0 && !searchLoading && (
-                                <div className="search-results-area">
-                                    <div className="snippet-navigation">
-                                        <span>
-                                            {activeSnippetIndex + 1} /{" "}
-                                            {snippets.length}
-                                        </span>
-                                        <button
-                                            onClick={() =>
-                                                setActiveSnippetIndex((i) =>
-                                                    Math.max(i - 1, 0)
-                                                )
-                                            }
-                                            disabled={activeSnippetIndex <= 0}
-                                        >
-                                            <ChevronUp size={18} />
-                                        </button>
-                                        <button
-                                            onClick={() =>
-                                                setActiveSnippetIndex((i) =>
-                                                    Math.min(
-                                                        i + 1,
-                                                        snippets.length - 1
-                                                    )
-                                                )
-                                            }
-                                            disabled={
-                                                activeSnippetIndex >=
-                                                snippets.length - 1
-                                            }
-                                        >
-                                            <ChevronDown size={18} />
-                                        </button>
-                                    </div>
-                                    <ul className="search-snippet-list">
-                                        {snippets.map((snippet, index) => (
-                                            <SnippetItem
-                                                key={index}
-                                                ref={
-                                                    index === activeSnippetIndex
-                                                        ? activeSnippetRef
-                                                        : null
-                                                }
-                                                snippet={snippet}
-                                                isActive={
-                                                    index === activeSnippetIndex
-                                                }
-                                                onClick={() =>
-                                                    setActiveSnippetIndex(index)
-                                                }
-                                            />
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
+                    <div className="in-file-search-panel">
+                        <div className="in-file-search-bar">
+                            <input
+                                ref={searchInputRef}
+                                type="search"
+                                placeholder="In Datei suchen..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") executeSearch();
+                                }}
+                            />
+                            <button
+                                onClick={executeSearch}
+                                disabled={searchLoading || !searchTerm.trim()}
+                            >
+                                {searchLoading ? (
+                                    <Loader2
+                                        size={18}
+                                        className="animate-spin"
+                                    />
+                                ) : (
+                                    <SearchIcon size={18} />
+                                )}
+                            </button>
                         </div>
-                    )}
+                        {snippets.length > 0 && !searchLoading && (
+                            <div className="search-results-area">
+                                <div className="snippet-navigation">
+                                    <span>
+                                        {activeSnippetIndex + 1} /{" "}
+                                        {snippets.length}
+                                    </span>
+                                    <button
+                                        onClick={() =>
+                                            setActiveSnippetIndex((i) =>
+                                                Math.max(i - 1, 0)
+                                            )
+                                        }
+                                        disabled={activeSnippetIndex <= 0}
+                                    >
+                                        <ChevronUp size={18} />
+                                    </button>
+                                    <button
+                                        onClick={() =>
+                                            setActiveSnippetIndex((i) =>
+                                                Math.min(
+                                                    i + 1,
+                                                    snippets.length - 1
+                                                )
+                                            )
+                                        }
+                                        disabled={
+                                            activeSnippetIndex >=
+                                            snippets.length - 1
+                                        }
+                                    >
+                                        <ChevronDown size={18} />
+                                    </button>
+                                </div>
+                                <ul className="search-snippet-list">
+                                    {snippets.map((snippet, index) => (
+                                        <SnippetItem
+                                            key={index}
+                                            ref={
+                                                index === activeSnippetIndex
+                                                    ? activeSnippetRef
+                                                    : null
+                                            }
+                                            snippet={snippet}
+                                            isActive={
+                                                index === activeSnippetIndex
+                                            }
+                                            onClick={() =>
+                                                setActiveSnippetIndex(index)
+                                            }
+                                        />
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
 
                     <div className="file-actions">
                         {!editingFile && isAdmin && (
