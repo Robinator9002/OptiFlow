@@ -13,40 +13,8 @@ import {
     Loader2,
     X,
 } from "lucide-react";
-
-// --- FIX: Mock API function ---
-// The import for `searchInFile` was causing a resolution error.
-// To make this component self-contained and fix the error, I've created a
-// mock function here. You should replace this with your actual API import,
-// for example: import { searchInFile } from "../api/api.tsx";
-
-const searchInFile = async (
-    term: string,
-    filePath: string
-): Promise<{ data: FileContentResult }> => {
-    console.log(`Searching for "${term}" in ${filePath}`);
-    // This is a mock response. Replace with your actual API call.
-    if (term.toLowerCase().includes("error")) {
-        return Promise.reject(new Error("Mock API error"));
-    }
-    if (!term.trim()) {
-        return Promise.resolve({
-            data: { file: { path: filePath }, match_count: 0, snippets: [] },
-        });
-    }
-    const mockSnippets = [
-        { text: `This is a first result for **${term}** found in the file.` },
-        { text: `Another exciting snippet containing **${term}**.` },
-        { text: `And a third and final mock result for **${term}**.` },
-    ];
-    return Promise.resolve({
-        data: {
-            file: { path: filePath },
-            match_count: mockSnippets.length,
-            snippets: mockSnippets,
-        },
-    });
-};
+// NOTE: The static API import has been removed to prevent build-time resolution errors.
+// It will be imported dynamically when the search function is called.
 
 // --- Type Definitions ---
 
@@ -55,10 +23,13 @@ interface Snippet {
     score?: number;
 }
 
-interface FileContentResult {
-    file: { path: string };
-    match_count: number;
-    snippets: Snippet[];
+// Assuming the API response has a 'data' object
+interface ApiSearchResponse {
+    data?: {
+        file: { path: string };
+        match_count: number;
+        snippets: Snippet[];
+    };
 }
 
 // Exporting this interface so the parent component can use the same type.
@@ -126,10 +97,6 @@ const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
     const activeSnippetRef = useRef<HTMLLIElement>(null);
 
     // --- Actions ---
-
-    /**
-     * Clears the search state and results.
-     */
     const clearSearch = useCallback(() => {
         setSearchTerm("");
         setSnippets([]);
@@ -138,9 +105,6 @@ const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
         searchInputRef.current?.focus();
     }, [onHighlightPositionsChange, onActiveSnippetIndexChange]);
 
-    /**
-     * Executes the search, calls the API, and processes the results.
-     */
     const executeSearch = useCallback(async () => {
         if (!searchTerm.trim() || !fileContent) {
             clearSearch();
@@ -151,22 +115,24 @@ const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
         onHighlightPositionsChange([]); // Clear previous highlights immediately
 
         try {
-            const result = await searchInFile(searchTerm, filePath);
+            // FIX: Use dynamic import to load the API module at runtime.
+            const { searchInFile } = await import("../api/api.tsx");
+            const result: ApiSearchResponse = await searchInFile(
+                searchTerm,
+                filePath
+            );
             const foundSnippets = result?.data?.snippets || [];
             setSnippets(foundSnippets);
 
             if (foundSnippets.length > 0) {
-                // Calculate highlight positions in the main content based on snippets
                 const positions: HighlightPosition[] = [];
                 const lowerContent = fileContent.toLowerCase();
 
                 foundSnippets.forEach((snippet, index) => {
-                    // Assumption: the backend marks the exact match in the snippet with **markdown**
                     const match = snippet.text.match(/\*\*(.*?)\*\*/);
                     if (match && match[1]) {
                         const plainText = match[1].toLowerCase();
                         let lastIndex = -1;
-                        // Find all occurrences of this matched text in the full content
                         while (
                             (lastIndex = lowerContent.indexOf(
                                 plainText,
@@ -183,14 +149,16 @@ const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
                 });
 
                 onHighlightPositionsChange(positions);
-                onActiveSnippetIndexChange(0); // Set first snippet as active
+                onActiveSnippetIndexChange(0);
                 toast.success(`${foundSnippets.length} Treffer gefunden.`);
             } else {
                 toast.info("Keine Treffer in dieser Datei gefunden.");
                 onActiveSnippetIndexChange(-1);
             }
-        } catch (error: any) {
-            toast.error(`❌ Fehler bei der Suche: ${error.message}`);
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error ? error.message : String(error);
+            toast.error(`❌ Fehler bei der Suche: ${message}`);
             clearSearch();
         } finally {
             setSearchLoading(false);
@@ -205,31 +173,19 @@ const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
     ]);
 
     // --- Navigation ---
-
-    /**
-     * Navigates to the previous or next snippet.
-     */
     const navigateSnippet = useCallback(
         (direction: "prev" | "next") => {
             if (snippets.length === 0) return;
-
-            let newIndex = activeSnippetIndex;
-            if (direction === "next") {
-                newIndex = Math.min(
-                    activeSnippetIndex + 1,
-                    snippets.length - 1
-                );
-            } else {
-                newIndex = Math.max(activeSnippetIndex - 1, 0);
-            }
+            const newIndex =
+                direction === "next"
+                    ? Math.min(activeSnippetIndex + 1, snippets.length - 1)
+                    : Math.max(activeSnippetIndex - 1, 0);
             onActiveSnippetIndexChange(newIndex);
         },
         [activeSnippetIndex, snippets.length, onActiveSnippetIndexChange]
     );
 
     // --- Effects ---
-
-    // Effect to scroll the active snippet in the list into view
     useEffect(() => {
         activeSnippetRef.current?.scrollIntoView({
             behavior: "smooth",
