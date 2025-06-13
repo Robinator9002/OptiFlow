@@ -191,6 +191,8 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    max-height: 60vh;
+    overflow-y: scroll;
 }
 
 .file-item {
@@ -267,6 +269,11 @@
     border: 1px solid var(--border-primary);
     border-radius: 0.5rem;
     box-shadow: var(--shadow-sm);
+}
+
+.file-preview-container pre {
+    max-height: 54.5vh;
+    overflow-y: auto;
 }
 
 .file-preview-container.empty-preview {
