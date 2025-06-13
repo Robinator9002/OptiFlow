@@ -1,128 +1,132 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 // --- Type Definitions ---
 interface ScannerSettingsProps {
-  scannerCpuCores: number | null;
-  setScannerCpuCores: React.Dispatch<React.SetStateAction<number | null>>;
-  usableExtensions: string[];
-  setUsableExtensions: React.Dispatch<React.SetStateAction<string[]>>;
-  scanDelay: number;
-  setScanDelay: React.Dispatch<React.SetStateAction<number>>;
+    scannerCpuCores: number | null;
+    setScannerCpuCores: React.Dispatch<React.SetStateAction<number | null>>;
+    usableExtensions: string[];
+    setUsableExtensions: React.Dispatch<React.SetStateAction<string[]>>;
+    scanDelay: number;
+    setScanDelay: React.Dispatch<React.SetStateAction<number>>;
 }
 
-// --- Constants ---
+// --- Konstanten ---
+// Eine Liste aller potenziell scannbaren Dateiendungen.
 const ALL_EXTENSIONS = [
-  ".txt",
-  ".md",
-  ".csv",
-  ".json",
-  ".xml",
-  ".html",
-  ".css",
-  ".js",
-  ".py",
-  ".pdf",
-  ".docx",
+    ".txt",
+    ".md",
+    ".csv",
+    ".json",
+    ".xml",
+    ".html",
+    ".css",
+    ".js",
+    ".py",
+    ".pdf",
+    ".docx",
 ];
 
 // --- Component ---
 export default function ScannerSettings({
-  scannerCpuCores,
-  setScannerCpuCores,
-  usableExtensions,
-  setUsableExtensions,
-  scanDelay,
-  setScanDelay,
+    scannerCpuCores,
+    setScannerCpuCores,
+    usableExtensions,
+    setUsableExtensions,
+    scanDelay,
+    setScanDelay,
 }: ScannerSettingsProps) {
-  const [localUsableExtensions, setLocalUsableExtensions] =
-    useState<string[]>(usableExtensions);
+    // Handler für die Änderung der CPU-Kern-Anzahl
+    const handleCpuCoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value, 10);
+        // Bei leerer Eingabe oder ungültiger Zahl wird `null` gesetzt (automatische Bestimmung)
+        setScannerCpuCores(isNaN(value) ? null : value);
+    };
 
-  useEffect(() => {
-    setLocalUsableExtensions(usableExtensions);
-  }, [usableExtensions]);
+    // Handler für Änderungen bei den Dateiendungen
+    const handleExtensionChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const { value, checked } = event.target;
+        // Fügt die Endung hinzu oder entfernt sie aus dem Array
+        const updatedExtensions = checked
+            ? [...usableExtensions, value]
+            : usableExtensions.filter((ext) => ext !== value);
+        setUsableExtensions(updatedExtensions);
+    };
 
-  const handleExtensionChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { value, checked } = event.target;
-    const updatedExtensions = checked
-      ? [...localUsableExtensions, value]
-      : localUsableExtensions.filter((ext) => ext !== value);
-    setLocalUsableExtensions(updatedExtensions);
-    setUsableExtensions(updatedExtensions);
-  };
+    // Handler für die Verarbeitungsverzögerung
+    const handleScanDelayChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const value = parseInt(event.target.value, 10);
+        // Nur positive Werte oder 0 sind erlaubt
+        setScanDelay(isNaN(value) || value < 0 ? 0 : value);
+    };
 
-  const handleProcessingDelayChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = parseInt(event.target.value, 10);
-    setScanDelay(isNaN(value) || value < 0 ? 0 : value);
-  };
+    return (
+        <div className="settings-section">
+            <div className="settings-section-header">
+                <h2>Scanner</h2>
+            </div>
 
-  const handleCpuCoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
-    setScannerCpuCores(isNaN(value) ? null : value);
-  };
+            <div className="setting-group">
+                <h3>Leistung</h3>
+                <div className="setting-item">
+                    <label htmlFor="scannerCpuCores">
+                        Maximale Anzahl an CPU-Kernen
+                        <input
+                            type="number"
+                            id="scannerCpuCores"
+                            value={scannerCpuCores ?? ""}
+                            onChange={handleCpuCoreChange}
+                            min="0"
+                            placeholder="Auto"
+                        />
+                    </label>
+                    <p className="setting-description">
+                        Anzahl der CPU-Kerne für den Scan und die
+                        Entduplizierung. 0 oder leer für automatische
+                        Bestimmung.
+                    </p>
+                </div>
+                <div className="setting-item">
+                    <label htmlFor="scanDelay">
+                        Verzögerung zwischen Dateien (ms)
+                        <input
+                            type="number"
+                            id="scanDelay"
+                            value={scanDelay}
+                            onChange={handleScanDelayChange}
+                            min="0"
+                        />
+                    </label>
+                    <p className="setting-description">
+                        Optionale Verzögerung, um die Systemlast auf langsameren
+                        Festplatten zu reduzieren.
+                    </p>
+                </div>
+            </div>
 
-  return (
-    <div className="settings-section">
-      <h3>Scannereinstellungen</h3>
-
-      <div className="form-group">
-        <label htmlFor="numCores" className="settings-input-group">
-          Maximale Anzahl an Arbeitern:
-          <input
-            type="number"
-            value={scannerCpuCores ?? ""}
-            onChange={handleCpuCoreChange}
-            min="0"
-          />
-          <p className="setting-description">
-            Anzahl der CPU-Kerne, die für den Scan verwendet werden sollen. Wird
-            ebenfalls für die Entduplizierung genutzt. 0 Bedeutet automatisch
-            bestimmt.
-          </p>
-        </label>
-      </div>
-
-      <div className="form-group">
-        <label>
-          Wählbare Erweiterungen (Standard):
-          <div className="checkbox-group">
-            {ALL_EXTENSIONS.map((ext) => (
-              <label key={ext} style={{ display: "block" }}>
-                <input
-                  type="checkbox"
-                  value={ext}
-                  checked={localUsableExtensions.includes(ext)}
-                  onChange={handleExtensionChange}
-                />
-                {ext}
-              </label>
-            ))}
-          </div>
-          <p className="setting-description">
-            Auswählbare Dateierweiterungen für den Scan.
-          </p>
-        </label>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="processingDelay" className="settings-input-group">
-          Verzögerung zwischen Dateioperationen (ms):
-          <input
-            type="number"
-            id="processingDelay"
-            value={scanDelay ?? 0}
-            onChange={handleProcessingDelayChange}
-            min="0"
-          />
-          <p className="setting-description">
-            Eine optionale Verzögerung in Millisekunden zwischen dem Verarbeiten
-            einzelner Dateien.
-          </p>
-        </label>
-      </div>
-    </div>
-  );
+            <div className="setting-group">
+                <h3>Dateitypen</h3>
+                <p className="setting-description" style={{ marginTop: 0 }}>
+                    Wählen Sie die Dateiendungen aus, die der Scanner
+                    standardmäßig berücksichtigen soll.
+                </p>
+                <div className="extensions-grid">
+                    {ALL_EXTENSIONS.map((ext) => (
+                        <label key={ext} className="checkbox-label">
+                            <input
+                                type="checkbox"
+                                value={ext}
+                                checked={usableExtensions.includes(ext)}
+                                onChange={handleExtensionChange}
+                            />
+                            {ext}
+                        </label>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 }
