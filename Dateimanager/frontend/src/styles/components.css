@@ -119,28 +119,23 @@
 .overlay p {
     color: var(--text-secondary);
     font-size: 1.125rem;
-    /* 18px -> Etwas größer */
     font-weight: 500;
-    margin-bottom: 1.25rem;
-    /* 20px */
+    margin-bottom: 1.25rem;    
 }
 
 .modal-buttons {
     display: flex;
     gap: 0.625rem;
-    /* 10px */
     justify-content: center;
     margin-top: 0.625rem;
-    /* 10px */
+    width: 100%;
 }
 
 .modal-content button {
-    width: auto;
+    width: 100%;
     min-width: 6.25rem;
-    /* 100px */
     height: auto;
     padding: 0.625rem 1.25rem;
-    /* 10px 20px */
     margin: 0;
     font-size: 1rem;
 }

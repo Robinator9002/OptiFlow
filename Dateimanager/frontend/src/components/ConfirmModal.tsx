@@ -40,7 +40,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <div className={`modal-content ${isDanger ? "modal-danger" : ""}`}>
                 {title && <h3>{title}</h3>}
                 <p>{message}</p>
-                <div className="confirm-buttons">
+                <div className="modal-buttons">
                     <button className="confirm" onClick={onConfirm}>
                         Ja
                     </button>

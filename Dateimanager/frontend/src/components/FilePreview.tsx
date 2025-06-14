@@ -6,36 +6,8 @@ import React, {
 } from "react";
 import { toast } from "react-toastify";
 import { X, Loader2 } from "lucide-react";
-import FileSearchPanel, { type HighlightPosition } from "./FileSearchPanel.tsx"; // Import the single source of truth
-
-// --- START: SELF-CONTAINED DEPENDENCIES ---
-// These helpers remain as they are specific to this component's modals and actions.
-
-const ConfirmModal: React.FC<{
-    title: string;
-    message: string;
-    onConfirm: () => void;
-    onCancel: () => void;
-    isDanger?: boolean;
-}> = ({ title, message, onConfirm, onCancel, isDanger }) => (
-    <div className="confirm-modal-overlay">
-        <div className="confirm-modal-content">
-            <h3>{title}</h3>
-            <p>{message}</p>
-            <div className="confirm-modal-actions">
-                <button onClick={onCancel} className="disfirm">
-                    Cancel
-                </button>
-                <button
-                    onClick={onConfirm}
-                    className={isDanger ? "remove-button" : "confirm"}
-                >
-                    Confirm
-                </button>
-            </div>
-        </div>
-    </div>
-);
+import FileSearchPanel, { type HighlightPosition } from "./FileSearchPanel.tsx";
+import { ConfirmModal } from "./ConfirmModal.tsx";
 
 // --- TYPE DEFINITIONS ---
 interface SelectedFile {
@@ -326,14 +298,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
 
     return (
         <div className="file-preview-container">
-            <style>{`
-                .full-snippet-highlight { background-color: rgba(0, 122, 204, 0.2); border-radius: 3px; cursor: pointer; }
-                .full-snippet-highlight.active { background-color: rgba(0, 122, 204, 0.5); border: 1px solid #007acc; }
-                .confirm-modal-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1050; }
-                .confirm-modal-content { background: var(--bg-secondary, #252526); color: var(--text-primary, #d4d4d4); padding: 2rem; border-radius: 8px; width: 90%; max-width: 500px; text-align: center; border: 1px solid var(--border-primary, #3c3c3c); }
-                .confirm-modal-content h3 { margin-top: 0; }
-                .confirm-modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
-             `}</style>
             <div className="header">
                 <h2 title={selectedFile.name} className="file-preview-title">
                     Vorschau: {selectedFile.name}
@@ -486,7 +450,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                             ? handleConfirmSave
                             : handleDeleteFile
                     }
-                    isDanger={!!showDeleteConfirmModal}
+                    isDanger={showDeleteConfirmModal}
                     onCancel={() => {
                         setShowConfirmSaveModal(false);
                         setShowDeleteConfirmModal(false);
