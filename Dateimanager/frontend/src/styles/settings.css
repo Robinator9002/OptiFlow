@@ -102,10 +102,6 @@
     flex-grow: 1;
     max-height: 50vh;
     overflow-y: auto; /* Scrollbar erscheint hier, wenn nötig */
-
-    /* Entferne fixe Höhen/Breiten */
-    /* max-height: 49vh; */ /* <- Entfernt */
-    /* width: 70vw; */      /* <- Entfernt */
 }
 
 .settings-section:last-child {

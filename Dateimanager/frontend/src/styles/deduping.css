@@ -16,7 +16,8 @@
     /* Nutze deine Schriftart */
     line-height: 1.6;
     /* Verbesserte Lesbarkeit */
-    height: 70vh;
+    height: 100%;
+    max-height: 100vh;
 }
 
 .dedupe-container h2 {
@@ -51,7 +52,6 @@
 
 /* Media Query für größere Bildschirme: Side-by-Side Layout */
 @media (min-width: 992px) {
-
     /* Du kannst diesen Breakpoint anpassen */
     .deduping-results-container .dedupe-groups-list-container {
         flex: 1;
@@ -70,7 +70,6 @@
            Sie sorgt nur für Abstand zum Element *nach* dem Container. */
     }
 }
-
 
 .action-button-group {
     /* Layout für Buttons wie Find/Load/Save */
@@ -137,7 +136,7 @@
     /* Leichter Schatten */
 }
 
-.filter-controls>div {
+.filter-controls > div {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -171,7 +170,8 @@
     /* Primäre Textfarbe */
     font-size: calc(1rem * var(--font-size-multiplier));
     /* Skaliere Schriftgröße */
-    transition: border-color var(--transition-short) ease, box-shadow var(--transition-short) ease;
+    transition: border-color var(--transition-short) ease,
+        box-shadow var(--transition-short) ease;
     /* Sanfte Übergänge */
     flex-grow: 1;
     /* Input/Select füllen den restlichen Platz in ihrem div aus */
@@ -186,7 +186,6 @@
     box-shadow: var(--shadow-focus-ring);
     /* Fokus-Ring Schatten */
 }
-
 
 .filter-controls input[type="text"]:disabled,
 .filter-controls select:disabled {
@@ -216,9 +215,8 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 40vh;
-    /* !important ist selten ideal, aber manchmal nötig */
     overflow-y: auto;
+    max-height: 50vh;
 }
 
 .dedupe-group-item {
@@ -232,7 +230,8 @@
     background-color: var(--bg-secondary);
     /* Sekundärer Hintergrund */
     cursor: pointer;
-    transition: background-color var(--transition-short) ease, box-shadow var(--transition-short) ease;
+    transition: background-color var(--transition-short) ease,
+        box-shadow var(--transition-short) ease;
     /* Sanfte Übergänge */
     display: flex;
     flex-direction: column;
@@ -257,7 +256,7 @@
     /* Cursor ändern, wenn aufgeklappt */
 }
 
-.dedupe-group-item>div:first-child {
+.dedupe-group-item > div:first-child {
     /* Styling für den Gruppen-Header (enthält Summary und Actions) */
     display: flex;
     justify-content: space-between;
@@ -290,14 +289,12 @@
     color: var(--text-muted);
 }
 
-
 .dedupe-group-item .group-actions {
     display: flex;
     align-items: center;
     gap: 8px;
     /* Abstand zwischen Buttons/Icons */
 }
-
 
 .dedupe-group-item .dedupe-group-files {
     list-style: none;
@@ -322,7 +319,8 @@
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    transition: background-color var(--transition-short) ease, box-shadow var(--transition-short) ease;
+    transition: background-color var(--transition-short) ease,
+        box-shadow var(--transition-short) ease;
     /* Sanfte Übergänge */
     box-shadow: var(--shadow-sm);
     /* Leichter Schatten */
@@ -391,7 +389,9 @@
     /* Danger Hintergrund */
     color: var(--text-on-accent);
     /* Textfarbe für Danger Hintergrund */
-    transition: background-color var(--transition-short) ease, border-color var(--transition-short) ease, box-shadow var(--transition-short) ease;
+    transition: background-color var(--transition-short) ease,
+        border-color var(--transition-short) ease,
+        box-shadow var(--transition-short) ease;
     /* Sanfte Übergänge */
     font-size: calc(0.85rem * var(--font-size-multiplier));
     /* Skaliere Schriftgröße */
@@ -412,9 +412,11 @@
     font-size: calc(0.8rem * var(--font-size-multiplier));
 }
 
-
 .dedupe-group-item button.disfirm:hover:not(:disabled),
-.dedupe-group-item .dedupe-group-files li button.disfirm-small:hover:not(:disabled) {
+.dedupe-group-item
+    .dedupe-group-files
+    li
+    button.disfirm-small:hover:not(:disabled) {
     background-color: var(--accent-danger-hover);
     /* Danger Hover-Hintergrund */
     border-color: var(--accent-danger-border-hover);
@@ -432,7 +434,6 @@
     border-color: var(--accent-danger-border-hover);
 }
 
-
 .dedupe-group-item button.disfirm:disabled,
 .dedupe-group-item .dedupe-group-files li button.disfirm-small:disabled {
     opacity: 0.6;
@@ -445,7 +446,6 @@
     /* Disabled Border */
     box-shadow: none;
 }
-
 
 /* Spinner container and spinner (assuming you have these styles globally) */
 .spinner-container {
@@ -505,7 +505,9 @@
     background-color: var(--bg-primary);
     /* Oder eine andere passende Farbe */
     color: var(--text-primary);
-    transition: background-color var(--transition-short) ease, border-color var(--transition-short) ease, box-shadow var(--transition-short) ease;
+    transition: background-color var(--transition-short) ease,
+        border-color var(--transition-short) ease,
+        box-shadow var(--transition-short) ease;
     font-size: calc(1rem * var(--font-size-multiplier));
     white-space: nowrap;
     box-shadow: var(--shadow-sm);
