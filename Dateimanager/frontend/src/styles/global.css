@@ -393,6 +393,17 @@ textarea:focus {
     opacity: 0.6;
 }
 
+/* Danger Button */
+.button-danger {
+	color: var(--text-color-light-on-dark-bg);
+	background-color: var(--accent-danger);
+    border: none;
+}
+.button-danger:not(:disabled):hover {
+	background-color: var(--accent-danger-hover);
+	color: var(--text-color-light-on-dark-bg);
+}
+
 button:disabled,
 button.disabled {
     background-color: var(--accent-disabled) !important;
