@@ -19,6 +19,8 @@ import {
 interface Snippet {
     text: string;
     score?: number;
+    start: number;
+    end: number;
 }
 
 interface ApiSearchResponse {
@@ -118,22 +120,15 @@ const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
 
             if (foundSnippets.length > 0) {
                 const positions: HighlightPosition[] = [];
-                const lowerContent = fileContent.toLowerCase();
 
                 foundSnippets.forEach((snippet, index) => {
-                    // Find the broader snippet context first
-                    const plainSnippetText = snippet.text
-                        .replace(/\*\*/g, "")
-                        .toLowerCase();
-                    const snippetStart = lowerContent.indexOf(plainSnippetText);
-                    if (snippetStart !== -1) {
-                        positions.push({
-                            start: snippetStart,
-                            end: snippetStart + plainSnippetText.length,
-                            snippetIndex: index,
-                            isFullSnippet: true, // Mark this as the main snippet area
-                        });
-                    }
+                    // No more indexOf! Just use the data from the API.
+                    positions.push({
+                        start: snippet.start, // <-- USE THE REAL START
+                        end: snippet.end, // <-- USE THE REAL END
+                        snippetIndex: index,
+                        isFullSnippet: true,
+                    });
                 });
 
                 // Sort positions by their start index to process the file linearly
