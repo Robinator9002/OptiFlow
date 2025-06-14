@@ -13,8 +13,6 @@ import {
     Loader2,
     X,
 } from "lucide-react";
-// NOTE: The static API import has been removed to prevent build-time resolution errors.
-// It will be imported dynamically when the search function is called.
 
 // --- Type Definitions ---
 
@@ -23,7 +21,6 @@ interface Snippet {
     score?: number;
 }
 
-// Assuming the API response has a 'data' object
 interface ApiSearchResponse {
     data?: {
         file: { path: string };
@@ -32,20 +29,17 @@ interface ApiSearchResponse {
     };
 }
 
-// Exporting this interface so the parent component can use the same type.
 export interface HighlightPosition {
     start: number;
     end: number;
     snippetIndex: number;
+    isFullSnippet?: boolean; // Keep track of the broader snippet area
 }
 
 interface FileSearchPanelProps {
-    // Data props from parent
     filePath: string;
-    fileContent: string | null; // Content to search within
-    activeSnippetIndex: number; // Controlled by parent
-
-    // Callbacks to parent
+    fileContent: string | null;
+    activeSnippetIndex: number;
     onHighlightPositionsChange: (positions: HighlightPosition[]) => void;
     onActiveSnippetIndexChange: (index: number) => void;
 }
@@ -58,9 +52,7 @@ const SnippetItem = forwardRef<
     HTMLLIElement,
     { snippet: Snippet; isActive: boolean; onClick: () => void }
 >(({ snippet, isActive, onClick }, ref) => {
-    // This function safely creates HTML from a string.
     const createMarkup = (htmlString: string) => {
-        // Replace markdown-style bold with <mark> tags for highlighting
         const markedHtml = htmlString.replace(
             /\*\*(.*?)\*\*/g,
             '<mark class="snippet-highlight">$1</mark>'
@@ -80,7 +72,7 @@ const SnippetItem = forwardRef<
 
 /**
  * A panel for searching within a file's content. It handles the search input,
- * API call, and displays the results (snippets).
+ * API call, and displays the results (snippets). This is the single source of truth for this feature.
  */
 const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
     filePath,
@@ -112,10 +104,10 @@ const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
         }
 
         setSearchLoading(true);
-        onHighlightPositionsChange([]); // Clear previous highlights immediately
+        onHighlightPositionsChange([]); // Clear previous highlights
 
         try {
-            // FIX: Use dynamic import to load the API module at runtime.
+            // Use dynamic import to load the API module at runtime.
             const { searchInFile } = await import("../api/api.tsx");
             const result: ApiSearchResponse = await searchInFile(
                 searchTerm,
@@ -129,24 +121,23 @@ const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
                 const lowerContent = fileContent.toLowerCase();
 
                 foundSnippets.forEach((snippet, index) => {
-                    const match = snippet.text.match(/\*\*(.*?)\*\*/);
-                    if (match && match[1]) {
-                        const plainText = match[1].toLowerCase();
-                        let lastIndex = -1;
-                        while (
-                            (lastIndex = lowerContent.indexOf(
-                                plainText,
-                                lastIndex + 1
-                            )) !== -1
-                        ) {
-                            positions.push({
-                                start: lastIndex,
-                                end: lastIndex + plainText.length,
-                                snippetIndex: index,
-                            });
-                        }
+                    // Find the broader snippet context first
+                    const plainSnippetText = snippet.text
+                        .replace(/\*\*/g, "")
+                        .toLowerCase();
+                    const snippetStart = lowerContent.indexOf(plainSnippetText);
+                    if (snippetStart !== -1) {
+                        positions.push({
+                            start: snippetStart,
+                            end: snippetStart + plainSnippetText.length,
+                            snippetIndex: index,
+                            isFullSnippet: true, // Mark this as the main snippet area
+                        });
                     }
                 });
+
+                // Sort positions by their start index to process the file linearly
+                positions.sort((a, b) => a.start - b.start);
 
                 onHighlightPositionsChange(positions);
                 onActiveSnippetIndexChange(0);
@@ -205,14 +196,6 @@ const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
                     onKeyDown={(e) => {
                         if (e.key === "Enter") executeSearch();
                         if (e.key === "Escape") clearSearch();
-                        if (e.key === "ArrowDown") {
-                            e.preventDefault();
-                            navigateSnippet("next");
-                        }
-                        if (e.key === "ArrowUp") {
-                            e.preventDefault();
-                            navigateSnippet("prev");
-                        }
                     }}
                     disabled={searchLoading}
                 />

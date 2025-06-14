@@ -3,19 +3,13 @@ import React, {
     useState,
     useCallback,
     useRef,
-    forwardRef,
 } from "react";
 import { toast } from "react-toastify";
-import {
-    X,
-    ChevronUp,
-    ChevronDown,
-    Search as SearchIcon,
-    Loader2,
-} from "lucide-react";
+import { X, Loader2 } from "lucide-react";
+import FileSearchPanel, { type HighlightPosition } from "./FileSearchPanel.tsx"; // Import the single source of truth
 
 // --- START: SELF-CONTAINED DEPENDENCIES ---
-// To prevent external file resolution errors, helper components are included here.
+// These helpers remain as they are specific to this component's modals and actions.
 
 const ConfirmModal: React.FC<{
     title: string;
@@ -57,19 +51,7 @@ interface FileInfo {
     modified_at: string;
     type: "file" | "folder";
 }
-interface Snippet {
-    text: string;
-    score?: number;
-}
-interface ApiSearchResponse {
-    data?: { file: { path: string }; match_count: number; snippets: Snippet[] };
-}
-export interface HighlightPosition {
-    start: number;
-    end: number;
-    snippetIndex: number;
-    isFullSnippet: boolean;
-}
+
 interface FilePreviewContainerProps {
     selectedFile: SelectedFile | null;
     setSelectedFile: (file: SelectedFile | null) => void;
@@ -79,7 +61,8 @@ interface FilePreviewContainerProps {
 }
 
 // --- RENDER-ONLY SUB-COMPONENTS ---
-
+// This internal FileContentView is kept as its simple, array-based rendering is
+// tightly coupled with the editor's overlay functionality.
 const FileContentView: React.FC<{
     content: string | null;
     highlightPositions: HighlightPosition[];
@@ -108,8 +91,6 @@ const FileContentView: React.FC<{
             className = isSnippetActive
                 ? "full-snippet-highlight active"
                 : "full-snippet-highlight";
-        } else if (isSnippetActive) {
-            className = "highlighted-text active-highlight";
         }
 
         parts.push(
@@ -130,26 +111,6 @@ const FileContentView: React.FC<{
     return <>{parts}</>;
 };
 
-const SnippetItem = forwardRef<
-    HTMLLIElement,
-    { snippet: Snippet; isActive: boolean; onClick: () => void }
->(({ snippet, isActive, onClick }, ref) => {
-    const createMarkup = (htmlString: string) => ({
-        __html: htmlString.replace(
-            /\*\*(.*?)\*\*/g,
-            '<mark class="snippet-highlight">$1</mark>'
-        ),
-    });
-    return (
-        <li
-            ref={ref}
-            onClick={onClick}
-            className={`snippet-item ${isActive ? "active" : ""}`}
-            dangerouslySetInnerHTML={createMarkup(snippet.text)}
-        />
-    );
-});
-
 // --- MAIN COMPONENT ---
 
 const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
@@ -160,6 +121,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     setIsSearchCollapsed,
 }) => {
     // --- STATE MANAGEMENT ---
+    // Note how search-related states are now gone from here.
     const [content, setContent] = useState<string | null>(null);
     const [originalContent, setOriginalContent] = useState<string>("");
     const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
@@ -172,26 +134,20 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] =
         useState<boolean>(false);
 
+    // State for highlights is now controlled by FileSearchPanel via callbacks.
     const [highlightPositions, setHighlightPositions] = useState<
         HighlightPosition[]
     >([]);
     const [activeSnippetIndex, setActiveSnippetIndex] = useState<number>(-1);
-    const [searchTerm, setSearchTerm] = useState<string>("");
-    const [searchLoading, setSearchLoading] = useState<boolean>(false);
-    const [snippets, setSnippets] = useState<Snippet[]>([]);
 
     // --- REFS ---
     const previewContentRef = useRef<HTMLDivElement>(null);
-    const searchInputRef = useRef<HTMLInputElement>(null);
-    const activeSnippetRef = useRef<HTMLLIElement>(null);
     const editorRef = useRef<HTMLTextAreaElement>(null);
 
     // --- HELPER FUNCTIONS & API CALLS ---
     const resetSearchState = useCallback(() => {
         setHighlightPositions([]);
         setActiveSnippetIndex(-1);
-        setSearchTerm("");
-        setSnippets([]);
     }, []);
 
     const closeFile = useCallback(() => {
@@ -204,66 +160,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         resetSearchState();
         setIsSearchCollapsed(false);
     }, [setSelectedFile, setIsSearchCollapsed, resetSearchState]);
-
-    const executeSearch = useCallback(async () => {
-        const contentSource = editingFile ? editorRef.current?.value : content;
-        if (!searchTerm.trim() || !contentSource || !selectedFile) {
-            return;
-        }
-
-        setSearchLoading(true);
-        setHighlightPositions([]);
-        try {
-            const { searchInFile } = await import("../api/api.tsx");
-            const result: ApiSearchResponse = await searchInFile(
-                searchTerm,
-                selectedFile.path
-            );
-            const foundSnippets = result?.data?.snippets || [];
-            setSnippets(foundSnippets);
-
-            if (foundSnippets.length > 0) {
-                const positions: HighlightPosition[] = [];
-                const lowerContent = contentSource.toLowerCase();
-
-                foundSnippets.forEach((snippet, index) => {
-                    const plainSnippetText = snippet.text
-                        .replace(/\*\*/g, "")
-                        .toLowerCase();
-                    const snippetStart = lowerContent.indexOf(plainSnippetText);
-
-                    if (snippetStart !== -1) {
-                        positions.push({
-                            start: snippetStart,
-                            end: snippetStart + plainSnippetText.length,
-                            snippetIndex: index,
-                            isFullSnippet: true,
-                        });
-                    }
-                });
-
-                positions.sort((a, b) => a.start - b.start);
-
-                setHighlightPositions(positions);
-                setActiveSnippetIndex(0);
-                toast.success(`${foundSnippets.length} Treffer gefunden.`);
-            } else {
-                toast.info("Keine Treffer in dieser Datei gefunden.");
-                setHighlightPositions([]);
-                setActiveSnippetIndex(-1);
-            }
-        } catch (error) {
-            toast.error(
-                `❌ Fehler bei der Suche: ${
-                    error instanceof Error
-                        ? error.message
-                        : "Unbekannter Fehler"
-                }`
-            );
-        } finally {
-            setSearchLoading(false);
-        }
-    }, [searchTerm, content, selectedFile, editingFile]);
 
     // --- ACTION HANDLERS ---
     const handleOpenFile = async () => {
@@ -303,13 +199,13 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         if (content === null) return;
         setOriginalContent(content);
         setEditingFile(true);
+        resetSearchState(); // Clear highlights when entering edit mode
         setIsSearchCollapsed(true);
     };
 
     const handleCancelEdit = () => {
         setContent(originalContent);
         setEditingFile(false);
-        resetSearchState();
         toast.info("↩ Änderungen verworfen.");
     };
 
@@ -322,7 +218,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
             await writeFile({ file_path: selectedFile.path, content });
             setOriginalContent(content);
             setEditingFile(false);
-            resetSearchState();
             toast.success("✅ Datei erfolgreich gespeichert!");
         } catch (error) {
             toast.error(
@@ -357,10 +252,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         }
     };
 
-    const handleHighlightClick = (snippetIndex: number) => {
-        setActiveSnippetIndex(snippetIndex);
-    };
-
     // --- EFFECTS ---
     useEffect(() => {
         if (!selectedFile?.path) {
@@ -392,16 +283,18 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     }, [selectedFile?.path, closeFile, resetSearchState]);
 
     useEffect(() => {
-        if (
-            activeSnippetIndex === -1 ||
-            (!previewContentRef.current && !editorRef.current)
-        )
-            return;
+        if (activeSnippetIndex === -1) return;
 
         const activeHighlight = highlightPositions.find(
             (p) => p.snippetIndex === activeSnippetIndex && p.isFullSnippet
         );
         if (!activeHighlight) return;
+
+        const targetElement = editingFile
+            ? editorRef.current
+            : previewContentRef.current?.querySelector(
+                  ".full-snippet-highlight.active"
+              );
 
         if (editingFile && editorRef.current) {
             const editor = editorRef.current;
@@ -410,27 +303,18 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                 activeHighlight.start,
                 activeHighlight.end
             );
-            const lineHeight = 20; // Approximate line height
-            const jump = (activeHighlight.start / 80) * lineHeight;
-            editor.scrollTop = jump - editor.clientHeight / 2;
-        } else if (!editingFile && previewContentRef.current) {
-            const activeMark =
-                previewContentRef.current.querySelector(".active");
-            if (activeMark) {
-                activeMark.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                });
-            }
+            // Simple scroll logic
+            const textBefore = editor.value.substring(0, activeHighlight.start);
+            const lines = textBefore.split("\n").length;
+            const approxScrollTop = lines * 1.5 * 16; // Approximation
+            editor.scrollTop = approxScrollTop - editor.clientHeight / 2;
+        } else if (!editingFile && targetElement) {
+            targetElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
         }
     }, [activeSnippetIndex, editingFile, highlightPositions]);
-
-    useEffect(() => {
-        activeSnippetRef.current?.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-        });
-    }, [activeSnippetIndex]);
 
     if (!selectedFile) {
         return (
@@ -468,8 +352,8 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                     <p>
                         <strong>Größe:</strong>{" "}
                         {(fileInfo.size_bytes / 1024).toFixed(2)} KB |{" "}
-                        <strong>Erstellt:</strong>{" "}
-                        {new Date(fileInfo.created_at).toLocaleString("de-DE")}{" "}
+                        <strong>Geändert:</strong>{" "}
+                        {new Date(fileInfo.modified_at).toLocaleString("de-DE")}{" "}
                     </p>
                 )}
                 {contentError && (
@@ -483,7 +367,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                 <div className="file-content" ref={previewContentRef}>
                     {loadingContent ? (
                         <div className="spinner-container">
-                            <div className="spinner"></div>
+                            <Loader2 className="animate-spin" size={48} />
                         </div>
                     ) : editingFile ? (
                         <div
@@ -494,32 +378,13 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                                 height: "100%",
                             }}
                         >
-                            <div
-                                className="file-preview-content"
-                                style={{
-                                    position: "absolute",
-                                    inset: 0,
-                                    margin: 0,
-                                    zIndex: 0,
-                                    pointerEvents: "none",
-                                    overflow: "hidden",
-                                }}
-                            >
-                                <FileContentView
-                                    content={content}
-                                    highlightPositions={highlightPositions}
-                                    activeSnippetIndex={activeSnippetIndex}
-                                    onHighlightClick={() => {}}
-                                />
-                            </div>
+                            {/* The visual layer with highlights is disabled during editing for simplicity and performance */}
                             <textarea
                                 ref={editorRef}
                                 value={content ?? ""}
                                 onChange={(e) => setContent(e.target.value)}
                                 className="file-editor"
                                 style={{
-                                    position: "absolute",
-                                    inset: 0,
                                     zIndex: 1,
                                     backgroundColor: "transparent",
                                     color: "inherit",
@@ -532,95 +397,21 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                                 content={content}
                                 highlightPositions={highlightPositions}
                                 activeSnippetIndex={activeSnippetIndex}
-                                onHighlightClick={handleHighlightClick}
+                                onHighlightClick={setActiveSnippetIndex}
                             />
                         </pre>
                     )}
                 </div>
 
                 <div className="file-sidebar">
-                    <div className="in-file-search-panel">
-                        <div className="in-file-search-bar">
-                            <input
-                                ref={searchInputRef}
-                                type="search"
-                                placeholder="In Datei suchen..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") executeSearch();
-                                }}
-                            />
-                            <button
-                                onClick={executeSearch}
-                                disabled={searchLoading || !searchTerm.trim()}
-                            >
-                                {searchLoading ? (
-                                    <Loader2
-                                        size={18}
-                                        className="animate-spin"
-                                    />
-                                ) : (
-                                    <SearchIcon size={18} />
-                                )}
-                            </button>
-                        </div>
-                        {snippets.length > 0 && !searchLoading && (
-                            <div className="search-results-area">
-                                <div className="snippet-navigation">
-                                    <span>
-                                        {activeSnippetIndex + 1} /{" "}
-                                        {snippets.length}
-                                    </span>
-                                    <button
-                                        onClick={() =>
-                                            setActiveSnippetIndex((i) =>
-                                                Math.max(i - 1, 0)
-                                            )
-                                        }
-                                        disabled={activeSnippetIndex <= 0}
-                                    >
-                                        <ChevronUp size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() =>
-                                            setActiveSnippetIndex((i) =>
-                                                Math.min(
-                                                    i + 1,
-                                                    snippets.length - 1
-                                                )
-                                            )
-                                        }
-                                        disabled={
-                                            activeSnippetIndex >=
-                                            snippets.length - 1
-                                        }
-                                    >
-                                        <ChevronDown size={18} />
-                                    </button>
-                                </div>
-                                <ul className="search-snippet-list">
-                                    {snippets.map((snippet, index) => (
-                                        <SnippetItem
-                                            key={index}
-                                            ref={
-                                                index === activeSnippetIndex
-                                                    ? activeSnippetRef
-                                                    : null
-                                            }
-                                            snippet={snippet}
-                                            isActive={
-                                                index === activeSnippetIndex
-                                            }
-                                            onClick={() =>
-                                                setActiveSnippetIndex(index)
-                                            }
-                                        />
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
+                    {/* THE BIG CHANGE: Delegate all search functionality to the dedicated panel */}
+                    <FileSearchPanel
+                        filePath={selectedFile.path}
+                        fileContent={content}
+                        activeSnippetIndex={activeSnippetIndex}
+                        onHighlightPositionsChange={setHighlightPositions}
+                        onActiveSnippetIndexChange={setActiveSnippetIndex}
+                    />
 
                     <div className="file-actions">
                         {!editingFile && isAdmin && (
@@ -628,13 +419,13 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                                 <div>
                                     <button
                                         onClick={handleOpenFile}
-                                        title="Datei öffnen"
+                                        title="Datei im Standardprogramm öffnen"
                                     >
                                         Öffnen
                                     </button>
                                     <button
                                         onClick={handleOpenInExplorer}
-                                        title="Ordner öffnen"
+                                        title="Datei im Explorer anzeigen"
                                     >
                                         In Explorer öffnen
                                     </button>
