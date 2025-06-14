@@ -254,7 +254,7 @@ export default function OldFiles({
     };
 
     return (
-        <div className="settings-section old-files-container">
+        <div className="old-files-container">
             <h2>Alte Dateien</h2>
             <div className="action-controls">
                 <button
