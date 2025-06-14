@@ -222,6 +222,42 @@ export default function SystemSettings({
         }
     }, [password, setIsBusy, onLogout]);
 
+    // Add Keybindings
+    useEffect(() => {
+        const handleKeyDown = (e: globalThis.KeyboardEvent) => {
+            // 2. Event-Typ hinzufügen
+            if (showShutdownConfirm) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    confirmShutdown();
+                }
+                if (e.key === "Escape") {
+                    e.preventDefault();
+                    try {
+                        setShowShutdownConfirm(false);
+                        setShutdownError(null);
+                        setPassword("");
+                    } finally {
+                        e.stopPropagation();
+                        setIsBusy(false);
+                    }
+                }
+            }
+            if (editingIndex) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleFormSubmit();
+                }
+                if (e.key === "Escape") {
+                    e.preventDefault();
+                    closeForm();
+                }
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [showShutdownConfirm, editingIndex, currentUser, password, shutdownError]); // Abhängigkeiten sind korrekt
+
     return (
         <div className="settings-section">
             <div className="settings-section-header">
@@ -471,23 +507,6 @@ export default function SystemSettings({
                             onChange={(e) => setPassword(e.target.value)}
                             className={shutdownError ? "input-error" : ""}
                             autoFocus
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    e.preventDefault();
-                                    confirmShutdown();
-                                }
-                                if (e.key === "Escape") {
-                                    e.preventDefault();
-                                    try {
-                                        setShowShutdownConfirm(false);
-                                        setShutdownError(null);
-                                        setPassword("");
-                                    } finally {
-                                        e.stopPropagation();
-                                        setIsBusy(false);
-                                    }
-                                }
-                            }}
                         />
                         <div className="modal-buttons">
                             <button
