@@ -210,6 +210,7 @@ const FileSearchPanel: React.FC<FileSearchPanelProps> = ({
                 )}
                 <button
                     onClick={executeSearch}
+                    className="search-button"
                     disabled={searchLoading || !searchTerm.trim()}
                 >
                     {searchLoading ? (
