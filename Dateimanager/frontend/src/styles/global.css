@@ -7,158 +7,163 @@
 /* ------------------------- */
 
 :root {
-    /* Standard (Light) Theme - Angelehnt an modernes Windows (10/11) */
-    --bg-primary: #f3f6f9; /* Sehr helles, leicht bläuliches Grau */
-    --bg-secondary: #e9edf2; /* Helles Grau */
-    --bg-tertiary: #dee3e9; /* Mittleres Grau */
-    --bg-accent: #d0e4ff; /* Sanftes, klares Blau */
-    --bg-accent-green: #d4edda; /* Sanftes Grün */
-    --bg-accent-red: #f8d7da; /* Sanftes Rot */
-    --bg-code: #eef1f4; /* Code Hintergrund, leicht abgesetzt */
+    /* Standard (Light) Theme */
+    --bg-primary: #f3f6f9;
+    --bg-secondary: #e9edf2;
+    --bg-tertiary: #dee3e9;
+    --bg-accent: #d0e4ff;
+    --bg-accent-green: #d4edda;
+    --bg-accent-red: #f8d7da;
+    --bg-code: #eef1f4;
+    --bg-overlay: rgba(var(--shadow-color-rgb), 0.6);
+    --bg-snippet-highlight: rgba(var(--accent-primary-rgb), 0.2);
+    --bg-snippet-highlight-active: rgba(var(--accent-primary-rgb), 0.4);
 
-    --text-primary: #1f2937; /* Dunkles Blau-Grau */
-    --text-secondary: #374151; /* Mittleres Dunkelgrau */
-    --text-muted: #6b7280; /* Gedämpftes Grau */
-    --text-on-accent: #1f2937; /* Dunkler Text auf hellen Akzenten */
-    --text-link: #0e7490; /* Türkis-Blau für Links */
-    --text-link-hover: #155e75; /* Dunkleres Türkis-Blau */
-    --text-danger: #b91c1c; /* Gedämpftes, klares Rot */
-    --text-success: #059669; /* Gedämpftes, klares Grün */
+    --text-primary: #1f2937;
+    --text-secondary: #374151;
+    --text-muted: #6b7280;
+    --text-on-accent: #1f2937;
+    --text-link: #0e7490;
+    --text-link-hover: #155e75;
+    --text-danger: #b91c1c;
+    --text-success: #059669;
 
-    --border-primary: #d1d5db; /* Mittlerer Border */
-    --border-secondary: #9ca3af; /* Dunklerer Border */
-    --border-tertiary: #e5e7eb; /* Heller Border */
-    --border-accent: #3b82f6; /* Akzent Border */
-    --border-accent-hover: #2563eb; /* Akzent Border Hover */
-    --border-danger: #dc2626; /* Danger Border */
-    --border-danger-focus: #b91c1c; /* Danger Border Focus */
+    --border-primary: #d1d5db;
+    --border-secondary: #9ca3af;
+    --border-tertiary: #e5e7eb;
+    --border-accent: #3b82f6;
+    --border-accent-hover: #2563eb;
+    --border-danger: #dc2626;
+    --border-danger-focus: #b91c1c;
 
-    --accent-primary: #3b82f6; /* Klares Akzentblau */
+    --accent-primary: #3b82f6;
     --accent-primary-rgb: 59, 130, 246;
-    --accent-primary-hover: #2563eb; /* Dunkleres Akzentblau */
+    --accent-primary-hover: #2563eb;
     --accent-primary-border-hover: #1e40af;
-    --accent-success: #10b981; /* Akzent Grün */
+    --accent-success: #10b981;
     --accent-success-hover: #059669;
     --accent-success-border-hover: #047857;
-    --accent-danger: #ef4444; /* Akzent Rot */
+    --accent-danger: #ef4444;
     --accent-danger-hover: #dc2626;
     --accent-danger-border-hover: #b91c1c;
-    --accent-disabled: #9ca3af; /* Gedämpftes Grau für Disabled */
-    --accent-disabled-text: #e5e7eb; /* Helles Grau für Text */
+    --accent-disabled: #9ca3af;
+    --accent-disabled-text: #e5e7eb;
 
     --shadow-color-rgb: 0, 0, 0;
     --shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color-rgb), 0.05);
     --shadow-md: 0 4px 6px -1px rgba(var(--shadow-color-rgb), 0.1), 0 2px 4px -2px rgba(var(--shadow-color-rgb), 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(var(--shadow-color-rgb), 0.1), 0 4px 6px -4px rgba(var(--shadow-color-rgb), 0.1);
-    --shadow-focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45); /* Akzent Fokus Ring */
-    --shadow-focus-ring-danger: 0 0 0 3px rgba(239, 68, 68, 0.45); /* Danger Fokus Ring */
+    --shadow-focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45);
+    --shadow-focus-ring-danger: 0 0 0 3px rgba(239, 68, 68, 0.45);
 
     --transition-short: 0.15s ease-in-out;
     --transition-base: 0.2s ease-in-out;
     --transition-long: 0.4s ease-in-out;
 }
 
-/* Dark Theme Overrides - Modern, harmonisch, augenfreundlich */
+/* Dark Theme Overrides */
 body[data-theme='dark'] {
-    --bg-primary: #18181b; /* Sehr dunkles Grau */
-    --bg-secondary: #27272a; /* Dunkles Grau */
-    --bg-tertiary: #3f3f46; /* Mittleres Grau */
-    --bg-accent: #334155; /* Gedämpftes Blau-Grau */
-    --bg-accent-green: #164e35; /* Dunkles, gedämpftes Grün */
-    --bg-accent-red: #7f1d1d; /* Dunkles, gedämpftes Rot */
-    --bg-code: #1f2937; /* Dunkler Code Hintergrund */
+    --bg-primary: #18181b;
+    --bg-secondary: #27272a;
+    --bg-tertiary: #3f3f46;
+    --bg-accent: #334155;
+    --bg-accent-green: #164e35;
+    --bg-accent-red: #7f1d1d;
+    --bg-code: #1f2937;
+    --bg-overlay: rgba(var(--shadow-color-rgb), 0.7);
+    --bg-snippet-highlight: rgba(var(--accent-primary-rgb), 0.25);
+    --bg-snippet-highlight-active: rgba(var(--accent-primary-rgb), 0.5);
 
-    --text-primary: #f4f4f5; /* Sehr helles Grau */
-    --text-secondary: #d4d4d8; /* Helles Grau */
-    --text-muted: #a1a1aa; /* Gedämpftes Grau */
-    --text-on-accent: #f4f4f5; /* Helles Text auf Akzenten */
-    --text-link: #60a5fa; /* Helles Blau */
-    --text-link-hover: #3b82f6; /* Mittleres Blau */
-    --text-danger: #f87171; /* Akzent Rot */
-    --text-success: #4ade80; /* Akzent Grün */
+    --text-primary: #f4f4f5;
+    --text-secondary: #d4d4d8;
+    --text-muted: #a1a1aa;
+    --text-on-accent: #f4f4f5;
+    --text-link: #60a5fa;
+    --text-link-hover: #3b82f6;
+    --text-danger: #f87171;
+    --text-success: #4ade80;
 
-    --border-primary: #52525b; /* Mittlerer Border */
-    --border-secondary: #71717a; /* Hellerer Border */
-    --border-tertiary: #3f3f46; /* Dunklerer Border */
-    --border-accent: #60a5fa; /* Akzent Border */
+    --border-primary: #52525b;
+    --border-secondary: #71717a;
+    --border-tertiary: #3f3f46;
+    --border-accent: #60a5fa;
     --border-accent-hover: #3b82f6;
-    --border-danger: #f87171; /* Danger Border */
+    --border-danger: #f87171;
     --border-danger-focus: #ef4444;
 
-    --accent-primary: #60a5fa; /* Akzent Blau */
+    --accent-primary: #60a5fa;
     --accent-primary-rgb: 96, 165, 250;
     --accent-primary-hover: #3b82f6;
     --accent-primary-border-hover: #2563eb;
-    --accent-success: #4ade80; /* Akzent Grün */
+    --accent-success: #4ade80;
     --accent-success-hover: #22c55e;
     --accent-success-border-hover: #16a363;
-    --accent-danger: #f87171; /* Akzent Rot */
+    --accent-danger: #f87171;
     --accent-danger-hover: #ef4444;
     --accent-danger-border-hover: #dc2626;
-    --accent-disabled: #71717a; /* Gedämpftes Grau für Disabled */
-    --accent-disabled-text: #d4d4d8; /* Helles Grau für Text */
+    --accent-disabled: #71717a;
+    --accent-disabled-text: #d4d4d8;
 
-    --shadow-color-rgb: 0, 0, 0; /* Schattenfarbe bleibt schwarz */
-    --shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color-rgb), 0.2); /* Etwas stärkere Schatten im Dunkeln */
+    --shadow-color-rgb: 0, 0, 0;
+    --shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color-rgb), 0.2);
     --shadow-md: 0 4px 6px -1px rgba(var(--shadow-color-rgb), 0.3), 0 2px 4px -2px rgba(var(--shadow-color-rgb), 0.3);
     --shadow-lg: 0 10px 15px -3px rgba(var(--shadow-color-rgb), 0.4), 0 4px 6px -4px rgba(var(--shadow-color-rgb), 0.4);
-    --shadow-focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.5); /* Akzent Fokus Ring */
-    --shadow-focus-ring-danger: 0 0 0 3px rgba(248, 113, 113, 0.5); /* Danger Fokus Ring */
-
-    --transition-short: 0.15s ease-in-out;
-    --transition-base: 0.2s ease-in-out;
-    --transition-long: 0.4s ease-in-out;
+    --shadow-focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.5);
+    --shadow-focus-ring-danger: 0 0 0 3px rgba(248, 113, 113, 0.5);
 }
 
-/* High Contrast (Light) Theme Overrides - Maximale Lesbarkeit */
+/* High Contrast (Light) Theme Overrides */
 body[data-theme='high-contrast'] {
-    --bg-primary: #ffffff; /* Weiß */
-    --bg-secondary: #ffffff; /* Weiß */
-    --bg-tertiary: #e0e0e0; /* Helles Grau */
-    --bg-accent: #ffffff; /* Weiß */
-    --bg-accent-green: #ffffff; /* Weiß */
-    --bg-accent-red: #ffffff; /* Weiß */
-    --bg-code: #ffffff; /* Weiß */
+    --bg-primary: #ffffff;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e0e0e0;
+    --bg-accent: #ffffff;
+    --bg-accent-green: #ffffff;
+    --bg-accent-red: #ffffff;
+    --bg-code: #ffffff;
+    --bg-overlay: rgba(0, 0, 0, 0.8);
+    --bg-snippet-highlight: #0000ff; /* Solid blue */
+    --bg-snippet-highlight-active: #00008b; /* Darker solid blue */
 
-    --text-primary: #000000; /* Schwarz */
-    --text-secondary: #000000; /* Schwarz */
-    --text-muted: #333333; /* Dunkles Grau */
-    --text-on-accent: #ffffff; /* Weiß */
-    --text-link: #0000ff; /* Blau */
-    --text-link-hover: #00008b; /* Dunkles Blau */
-    --text-danger: #ff0000; /* Rot */
-    --text-success: #008000; /* Grün */
+    --text-primary: #000000;
+    --text-secondary: #000000;
+    --text-muted: #333333;
+    --text-on-accent: #ffffff; /* White text on solid highlight */
+    --text-link: #0000ff;
+    --text-link-hover: #00008b;
+    --text-danger: #ff0000;
+    --text-success: #008000;
 
-    --border-primary: #000000; /* Schwarz */
-    --border-secondary: #000000; /* Schwarz */
-    --border-tertiary: #333333; /* Dunkles Grau */
-    --border-accent: #0000ff; /* Blau */
-    --border-accent-hover: #00008b; /* Dunkles Blau */
-    --border-danger: #ff0000; /* Rot */
-    --border-danger-focus: #cc0000; /* Dunkleres Rot */
+    --border-primary: #000000;
+    --border-secondary: #000000;
+    --border-tertiary: #333333;
+    --border-accent: #0000ff;
+    --border-accent-hover: #00008b;
+    --border-danger: #ff0000;
+    --border-danger-focus: #cc0000;
 
-    --accent-primary: #0000ff; /* Blau */
+    --accent-primary: #0000ff;
     --accent-primary-rgb: 0, 0, 255;
-    --accent-primary-hover: #00008b; /* Dunkles Blau */
+    --accent-primary-hover: #00008b;
     --accent-primary-border-hover: #00008b;
-    --accent-success: #008000; /* Grün */
-    --accent-success-hover: #006400; /* Dunkles Grün */
+    --accent-success: #008000;
+    --accent-success-hover: #006400;
     --accent-success-border-hover: #006400;
-    --accent-danger: #ff0000; /* Rot */
-    --accent-danger-hover: #cc0000; /* Dunkleres Rot */
+    --accent-danger: #ff0000;
+    --accent-danger-hover: #cc0000;
     --accent-danger-border-hover: #cc0000;
-    --accent-disabled: #666666; /* Mittleres Grau */
-    --accent-disabled-text: #ffffff; /* Weiß */
+    --accent-disabled: #666666;
+    --accent-disabled-text: #ffffff;
 
-    --shadow-sm: none; /* Keine Schatten */
-    --shadow-md: none; /* Keine Schatten */
-    --shadow-lg: none; /* Keine Schatten */
-    --shadow-focus-ring: 0 0 0 2px var(--accent-primary); /* Deutlicher Fokus Ring */
-    --shadow-focus-ring-danger: 0 0 0 2px var(--accent-danger); /* Deutlicher Danger Fokus Ring */
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-focus-ring: 0 0 0 2px var(--accent-primary);
+    --shadow-focus-ring-danger: 0 0 0 2px var(--accent-danger);
 
-    --transition-short: 0s; /* Keine Übergänge */
-    --transition-base: 0s; /* Keine Übergänge */
-    --transition-long: 0s; /* Keine Übergänge */
+    --transition-short: 0s;
+    --transition-base: 0s;
+    --transition-long: 0s;
 }
 
 /* ------------------------- */

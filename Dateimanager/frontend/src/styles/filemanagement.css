@@ -1,50 +1,3 @@
-:root {
-    --bg-primary: #1e1e1e;
-    --bg-secondary: #252526;
-    --bg-tertiary: #333333;
-    --bg-input: #3c3c3c;
-    --bg-accent: rgba(0, 122, 204, 0.3);
-    --bg-accent-red: rgba(204, 51, 51, 0.2);
-    --bg-code: #1e1e1e;
-    --border-primary: #3c3c3c;
-    --border-secondary: #505050;
-    --border-tertiary: #424242;
-    --border-accent: #007acc;
-    --text-primary: #d4d4d4;
-    --text-secondary: #a0a0a0;
-    --text-muted: #808080;
-    --text-on-accent: #ffffff;
-    --text-danger: #f48771;
-    --accent-primary: #007acc;
-    --accent-focus-ring: rgba(0, 122, 204, 0.4);
-    --accent-danger: #d13c3c;
-    --accent-danger-hover: #e54b4b;
-    --accent-danger-border-hover: #e54b4b;
-    --button-secondary-bg: #3a3d41;
-    --button-secondary-text: #ffffff;
-    --button-secondary-border: #3a3d41;
-    --button-secondary-hover-bg: #4a4d51;
-    --button-secondary-hover-border: #4a4d51;
-    --button-confirm-bg: #2c6e49;
-    --button-confirm-text: #ffffff;
-    --button-confirm-border: #2c6e49;
-    --button-confirm-hover-bg: #4c956c;
-    --button-confirm-hover-border: #4c956c;
-    --button-disfirm-bg: #5a5a5a;
-    --button-disfirm-text: #ffffff;
-    --button-disfirm-border: #5a5a5a;
-    --button-disfirm-hover-bg: #6a6a6a;
-    --button-disfirm-hover-border: #6a6a6a;
-    --highlight-bg: #ffec3d;
-    --highlight-text: #000000;
-    --active-highlight-bg: #ffaa00;
-    --active-highlight-text: #000000;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2),
-        0 2px 4px -1px rgba(0, 0, 0, 0.12);
-    --transition-base: 0.2s ease-in-out;
-}
-
 /* --- Main Layout --- */
 .file-management-container {
     display: flex;
@@ -375,6 +328,20 @@
     box-sizing: border-box;
 }
 
+.full-snippet-highlight {
+    background-color: var(--bg-snippet-highlight);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color var(--transition-short); /* Kleine Animation hinzugefügt */
+    color: var(--text-on-accent);
+}
+
+.full-snippet-highlight.active {
+    background-color: var(--bg-snippet-highlight-active);
+    border: 1px solid var(--border-accent);
+    color: var(--text-on-accent);
+}
+
 .file-editor {
     resize: none;
     outline: none;
@@ -385,10 +352,9 @@
     border-color: var(--accent-primary);
     box-shadow: 0 0 0 3px var(--accent-focus-ring);
 }
-
 .highlighted-text {
     background-color: var(--highlight-bg);
-    color: var(--highlight-text);
+    color: black !important;
     padding: 0 0.05em;
     border-radius: 3px;
     transition: background-color 0.2s ease;
@@ -560,6 +526,7 @@
 .action-button-group > div {
     display: flex;
     gap: 0.75rem;
+    width: 100%;
 }
 
 .action-button-group button {
@@ -574,6 +541,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    width: 100%;
 }
 
 .action-button-group button:hover:not(:disabled) {
