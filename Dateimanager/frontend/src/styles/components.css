@@ -579,6 +579,15 @@ body[data-theme="high-contrast"] .spinner {
 
 .old-files-container {
     width: 100%; /* Changed from 100vw to prevent overflow */
+    background-color: var(--bg-primary);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-primary);
+    border-radius: 0.5rem;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    box-sizing: border-box;
 }
 
 /* Container for the top action bar (Search Button + Age Input) */

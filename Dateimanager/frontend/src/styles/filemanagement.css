@@ -8,6 +8,8 @@
     padding: 1rem;
     background-color: var(--bg-primary);
     box-sizing: border-box;
+    border: 1px solid var(--border-primary);
+    border-radius: 0.5rem;
 }
 
 /* --- Left Column: File Search --- */
@@ -94,7 +96,7 @@
 
 .clear-search-button-inside {
     position: absolute;
-    right: 3.5rem;
+    right: 18%;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -112,9 +114,10 @@
 .clear-search-button-inside:hover {
     color: var(--text-danger);
     background-color: var(--bg-accent-red);
+    transform: translateY(-60%);
 }
 
-.file-search-bar .search-button {
+.search-button {
     flex-shrink: 0;
     background-color: var(--button-secondary-bg);
     color: var(--button-secondary-text);
@@ -125,11 +128,11 @@
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.file-search-bar .search-button:hover:not(:disabled) {
+.search-button:hover:not(:disabled) {
     background-color: var(--button-secondary-hover-bg);
 }
 
-.file-search-bar .search-button:disabled {
+.search-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -408,6 +411,18 @@
     color: var(--text-primary);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     outline: none;
+}
+
+/* DER GEISTERJÄGER:
+  Diese Regel zielt auf den nativen "Löschen"-Button, den Webkit-Browser
+  (Chrome, Safari, etc.) automatisch in input[type="search"] einfügen.
+  Indem wir das Standard-Aussehen entfernen, verschwindet der Button.
+*/
+.in-file-search-bar input[type="search"]::-webkit-search-cancel-button,
+.in-file-search-bar input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
 }
 
 .in-file-search-bar input[type="search"]:focus {
