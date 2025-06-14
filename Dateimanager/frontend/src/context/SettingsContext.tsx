@@ -75,6 +75,8 @@ interface SettingsContextType {
     setOcrCleanImages: React.Dispatch<React.SetStateAction<boolean>>;
     ocrTesseractConfig: string;
     setOcrTesseractConfig: React.Dispatch<React.SetStateAction<string>>;
+    minCategoryLength: number;
+    setMinCategoryLength: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(
@@ -133,6 +135,9 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
     const [ocrTesseractConfig, setOcrTesseractConfig] = useState(
         DEFAULT_SETTINGS.ocr_processing?.ocr_tesseract_config ??
             "--oem 1 --psm 3"
+    );
+    const [minCategoryLength, setMinCategoryLength] = useState(
+        settings.min_category_length ?? 2
     );
 
     const applySettings = useCallback((loadedSettings: ApiSettings) => {
@@ -206,6 +211,9 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
                 defaultOcr?.ocr_tesseract_config ??
                 "--oem 1 --psm 3"
         );
+        setMinCategoryLength(
+            loadedSettings.min_category_length ?? 2
+        );
 
         setSettings(loadedSettings);
     }, []);
@@ -257,7 +265,6 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
         setOcrMaxWorkerCount,
         maxAgeDays,
         setMaxAgeDays,
-        // NEU: Exportiere alle neuen OCR-States und Setter
         forceOcr,
         setForceOcr,
         skipText,
@@ -274,6 +281,8 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
         setOcrCleanImages,
         ocrTesseractConfig,
         setOcrTesseractConfig,
+        minCategoryLength,
+        setMinCategoryLength,
     };
 
     return (

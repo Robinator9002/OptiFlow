@@ -462,7 +462,7 @@ function AppContent() {
                 )}
 
                 {activeTab === "dedupe" && isAdmin && (
-                    <div className="tab-content dedupe-tab">
+                    <div className="tab-content">
                         <DeDuping onFileSelected={onFileSelected} />
                     </div>
                 )}

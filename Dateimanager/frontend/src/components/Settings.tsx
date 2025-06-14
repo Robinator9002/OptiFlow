@@ -79,6 +79,8 @@ const Settings: React.FC<SettingsProps> = ({
         setOcrCleanImages,
         ocrTesseractConfig,
         setOcrTesseractConfig,
+        minCategoryLength,
+        setMinCategoryLength,
     } = context;
 
     const [isBusy, setIsBusy] = useState(false);
@@ -129,9 +131,6 @@ const Settings: React.FC<SettingsProps> = ({
     );
     const [lengthRangeStep, setLengthRangeStep] = useState(
         settings.length_range_step ?? 100
-    );
-    const [minCategoryLength, setMinCategoryLength] = useState(
-        settings.min_category_length ?? 2
     );
     const [snippetLengthDedupe, setSnippetLengthDedupe] = useState(
         settings.snippet_length ?? 30
