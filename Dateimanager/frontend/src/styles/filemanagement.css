@@ -411,6 +411,7 @@
     min-width: 0;
     overflow-x: hidden;
     overflow-y: auto;
+    max-width: 25vw;
 }
 
 .file-content-area.editing .file-sidebar {
