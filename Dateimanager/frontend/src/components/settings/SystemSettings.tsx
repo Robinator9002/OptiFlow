@@ -322,7 +322,7 @@ export default function SystemSettings({
                         <button
                             onClick={requestShutdown}
                             disabled={loadingShutdown}
-                            className="button button-danger"
+                            className="button-danger"
                         >
                             {loadingShutdown
                                 ? "Bitte warten..."

@@ -379,7 +379,7 @@ export default function DataManagement({
                                     <button
                                         onClick={() => setIsRawEditor(true)}
                                         disabled={isBusyState || !fileData}
-                                        className="button danger"
+                                        className="button-danger"
                                     >
                                         Roh-JSON bearbeiten
                                     </button>

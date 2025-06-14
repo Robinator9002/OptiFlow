@@ -285,7 +285,7 @@ export default function UserSettings({
                                     username: currentUser,
                                 })
                             }
-                            className="button danger"
+                            className="button-danger"
                         >
                             Meinen Account endgültig löschen
                         </button>
@@ -374,7 +374,7 @@ export default function UserSettings({
                                                                     user.username,
                                                             })
                                                         }
-                                                        className="button danger"
+                                                        className="button-danger"
                                                         disabled={
                                                             user.username ===
                                                             currentUser
