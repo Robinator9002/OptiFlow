@@ -184,14 +184,8 @@ export default function SystemSettings({
         [setExecutingEvent, setIsBusy]
     );
 
-    const requestShutdown = () => {
-        setShutdownError(null);
-        setPassword("");
-        setShowShutdownConfirm(true);
-        setIsBusy(true);
-    };
-
     const confirmShutdown = useCallback(async () => {
+        setIsBusy(true); // <-- Setze es hier, falls es vorher nicht gesetzt wurde
         try {
             setShutdownError(null);
             const response = await verifyPassword(currentUser, password);
@@ -205,8 +199,12 @@ export default function SystemSettings({
         } catch (err) {
             setShutdownError("Fehler beim Verifizieren des Passworts");
             toast.error("Fehler beim Verifizieren des Passworts");
+        } finally {
+            if (shutdownError) {
+                setIsBusy(false);
+            }
         }
-    }, [currentUser, password]);
+    }, [currentUser, password, shutdownError]);
 
     const handleShutdown = useCallback(async () => {
         setLoadingShutdown(true);
@@ -320,7 +318,12 @@ export default function SystemSettings({
                     <label>
                         Server herunterfahren
                         <button
-                            onClick={requestShutdown}
+                            onClick={() => {
+                                setIsBusy(true);
+                                setShutdownError(null);
+                                setPassword("");
+                                setShowShutdownConfirm(true);
+                            }}
                             disabled={loadingShutdown}
                             className="button-danger"
                         >
@@ -473,15 +476,20 @@ export default function SystemSettings({
                                     e.preventDefault();
                                     confirmShutdown();
                                 }
+                                if (e.key === "Escape") {
+                                    e.preventDefault();
+                                    try {
+                                        setShowShutdownConfirm(false);
+                                        setShutdownError(null);
+                                        setPassword("");
+                                    } finally {
+                                        e.stopPropagation();
+                                        setIsBusy(false);
+                                    }
+                                }
                             }}
                         />
-                        <div className="button-group">
-                            <button
-                                onClick={confirmShutdown}
-                                className="button button-danger"
-                            >
-                                Bestätigen
-                            </button>
+                        <div className="modal-buttons">
                             <button
                                 onClick={() => {
                                     setShowShutdownConfirm(false);
@@ -492,6 +500,12 @@ export default function SystemSettings({
                                 className="button"
                             >
                                 Abbrechen
+                            </button>
+                            <button
+                                onClick={confirmShutdown}
+                                className="button button-danger"
+                            >
+                                Bestätigen
                             </button>
                         </div>
                     </div>

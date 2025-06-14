@@ -182,7 +182,8 @@ function AppContent() {
             (tab === "scanner" ||
                 tab === "pdf-to-ocr" ||
                 tab === "old-files" ||
-                tab === "dedupe")
+                tab === "dedupe"
+            )
         ) {
             toast.warn("Diese Funktion ist für Administratoren reserviert.");
             return;
@@ -408,7 +409,7 @@ function AppContent() {
                                 tabLabel = "Entduplizierung";
                                 break;
                             case "old-files":
-                                tabLabel = "Vergessene Dateien";
+                                tabLabel = "Alte Dateien";
                                 break;
                             case "scanner":
                                 tabLabel = "Index & Scanner";
@@ -499,7 +500,7 @@ function AppContent() {
                 )}
 
                 <div
-                    className="tab-content settings-tab"
+                    className="tab-content"
                     style={{
                         display:
                             activeTab === SETTINGS_TAB_ID ? "block" : "none",

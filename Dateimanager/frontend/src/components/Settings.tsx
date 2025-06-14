@@ -40,19 +40,15 @@ const Settings: React.FC<SettingsProps> = ({
     appActiveTab,
     swapBack,
 }) => {
-    // Holen des gesamten Kontexts. Er ist jetzt die einzige Quelle der Wahrheit.
     const context = useContext(SettingsContext);
 
-    // Frühes Beenden, falls der Kontext noch nicht bereit ist.
     if (!context) {
         return <div>Loading settings context...</div>;
     }
 
-    // Alle States und Setter kommen jetzt aus dem Kontext.
     const {
         loadSettings,
-        settings, // Das gesamte geladene Settings-Objekt
-        // Einzelne States für die Formular-Komponenten
+        settings,
         scannerUsableExtensions,
         setScannerUsableExtensions,
         ocrExcludedDirs,
@@ -89,8 +85,6 @@ const Settings: React.FC<SettingsProps> = ({
     const [isSaving, setIsSaving] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
 
-    // Die meisten lokalen States sind nicht mehr nötig, nur die, die nicht im Context sind.
-    // Wir holen die Startwerte aus dem context.settings Objekt.
     const [searchLimit, setSearchLimit] = useState(
         settings.search_limit ?? 100
     );
@@ -125,9 +119,6 @@ const Settings: React.FC<SettingsProps> = ({
     const [sortOrder, setSortOrder] = useState(settings.sort_order ?? "normal");
     const [themeName, setThemeName] = useState(
         settings.theme_name ?? "default"
-    );
-    const [fontType, setFontType] = useState(
-        settings.font_type ?? "sans-serif"
     );
     const [fontSize, setFontSize] = useState(settings.font_size ?? 1.0);
     const [checkInterval, setCheckInterval] = useState(
@@ -164,7 +155,7 @@ const Settings: React.FC<SettingsProps> = ({
         { id: "scanner", label: "Scanner" },
         { id: "ocr", label: "OCR" },
         { id: "oldFiles", label: "Alte Dateien" },
-        { id: "deduping", label: "Entdublizierung" },
+        { id: "deduping", label: "Entduplizierung" },
         { id: "userSettings", label: "Benutzer" },
         { id: "database", label: "Datenbank" },
         { id: "system", label: "System" },
@@ -180,16 +171,9 @@ const Settings: React.FC<SettingsProps> = ({
         setActiveTab(tabId);
     };
 
-    // Dieser useEffect ist nicht mehr nötig, da der Context das Laden beim Start übernimmt.
-
     const handleSaveSettings = async () => {
-        setIsSaving(false);
-        setIsBusy(false);
-
         if (currentUser) {
-            // Baue das Speicherobjekt korrekt zusammen, mit verschachtelten OCR-Settings.
             const settingsToSave: ApiSettings = {
-                // ... (alle anderen Einstellungen)
                 search_limit: searchLimit,
                 snippet_limit: snippetLimit,
                 old_files_limit: oldFilesLimit,
@@ -211,7 +195,6 @@ const Settings: React.FC<SettingsProps> = ({
                 subfolder: ocrSubfolder,
                 prefix: ocrPrefix,
                 overwrite: ocrOverwrite,
-                // WICHTIG: Die verschachtelte Struktur für OCR wird hier erstellt
                 ocr_processing: {
                     ocr_force: forceOcr,
                     ocr_skip_text_layer: skipText,
@@ -223,7 +206,6 @@ const Settings: React.FC<SettingsProps> = ({
                     ocr_tesseract_config: ocrTesseractConfig,
                 },
                 theme_name: themeName,
-                font_type: fontType,
                 font_size: fontSize,
                 check_interval: checkInterval,
                 max_file_size: maxFileSize,
@@ -241,7 +223,6 @@ const Settings: React.FC<SettingsProps> = ({
                     settingsToSave
                 );
                 toast.success(response.message || "Einstellungen gespeichert!");
-                // Lade die Einstellungen nach dem Speichern neu, um den Context zu aktualisieren.
                 await loadSettings(currentUser);
             } catch (error: any) {
                 toast.error(
@@ -249,24 +230,45 @@ const Settings: React.FC<SettingsProps> = ({
                         error.message || "Unbekannter Fehler"
                     }`
                 );
+            } finally {
+                setIsSaving(false);
+                setIsBusy(false);
             }
         } else {
             toast.error(
                 "Benutzername ist nicht verfügbar. Bitte melden Sie sich an."
             );
+            setIsSaving(false);
+            setIsBusy(false);
         }
     };
 
     const handleResetToDefaults = () => {
-        // Implementierung des Resets...
         toast.warn(
             "Alle Einstellungen wurden auf die Standardwerte zurückgesetzt."
         );
+        // Logik für Reset hier einfügen...
+        setIsResetting(false);
+        setIsBusy(false);
     };
 
     useEffect(() => {
         const handleGlobalKeyDown = (event: KeyboardEvent) => {
+            // =================================================================
+            // DER FIX: Wir überprüfen, ob irgendein Modal aktiv ist.
+            // Wenn ja, ignorieren wir alle globalen Tastenbefehle.
+            // Das verhindert, dass dieser Listener auf "Enter" reagiert,
+            // wenn der Benutzer eigentlich in einem anderen Dialog ist.
+            const isModalActive = document.querySelector(
+                ".modal-overlay, .event-form-overlay, .user-confirmation-overlay"
+            );
+            if (isModalActive) {
+                return;
+            }
+            // =================================================================
+
             if (appActiveTab !== "settings" || isBusy) return;
+
             if (event.key === "Enter") {
                 setIsSaving(true);
                 setIsBusy(true);
@@ -299,14 +301,7 @@ const Settings: React.FC<SettingsProps> = ({
             <div className="settings-content">
                 {activeTab === "general" && (
                     <GeneralSettings
-                        {...{
-                            themeName,
-                            setThemeName,
-                            fontType,
-                            setFontType,
-                            fontSize,
-                            setFontSize,
-                        }}
+                        {...{ themeName, setThemeName, fontSize, setFontSize }}
                     />
                 )}
                 {activeTab === "search" && (
@@ -343,7 +338,6 @@ const Settings: React.FC<SettingsProps> = ({
                 )}
                 {activeTab === "ocr" && (
                     <OCRSettings
-                        // Alle Props kommen jetzt direkt aus dem zentralisierten Context State
                         processorExcludedFolders={ocrExcludedDirs}
                         setProcessorExcludedFolders={setOcrExcludedDirs}
                         subfolder={ocrSubfolder}
@@ -352,7 +346,6 @@ const Settings: React.FC<SettingsProps> = ({
                         setPrefix={setOcrPrefix}
                         overwrite={ocrOverwrite}
                         setOverwrite={setOcrOverwrite}
-                        // HINWEIS: Wir nehmen an, `scanner_cpu_cores` steuert auch die OCR-Worker
                         processingCpuCores={ocrMaxWorkerCount}
                         setProcessingCpuCores={setOcrMaxWorkerCount}
                         forceOcr={forceOcr}
@@ -361,7 +354,6 @@ const Settings: React.FC<SettingsProps> = ({
                         setSkipText={setSkipText}
                         redoOcr={redoOcr}
                         setRedoOcr={setRedoOcr}
-                        // NEU: Reiche alle neuen Props durch
                         ocrLanguage={ocrLanguage}
                         setOcrLanguage={setOcrLanguage}
                         ocrImageDpi={ocrImageDpi}
@@ -406,7 +398,6 @@ const Settings: React.FC<SettingsProps> = ({
                         }}
                     />
                 )}
-
                 {activeTab === "userSettings" && currentUser && (
                     <UserSettings
                         currentUser={currentUser}
@@ -451,8 +442,7 @@ const Settings: React.FC<SettingsProps> = ({
                             setIsBusy(true);
                         }}
                     >
-                        {" "}
-                        Speichern{" "}
+                        Speichern
                     </button>
                     <button
                         className="reset-button"
@@ -461,8 +451,7 @@ const Settings: React.FC<SettingsProps> = ({
                             setIsBusy(true);
                         }}
                     >
-                        {" "}
-                        Zurücksetzen{" "}
+                        Zurücksetzen
                     </button>
                 </div>
             </div>

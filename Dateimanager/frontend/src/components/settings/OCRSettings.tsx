@@ -383,7 +383,7 @@ export default function OCRSettings({
                         />
                     </label>
                     <p className="setting-description">
-                        0=Keine, 1=Gut, 2=Besser, 3=Beste (langsamer).
+                        0=Keine, 1=Gut, 2=Besser, 3=Beste (langsamer, braucht weitere abhängigkeiten).
                     </p>
                 </div>
                 <div

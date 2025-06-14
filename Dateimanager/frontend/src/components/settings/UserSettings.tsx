@@ -272,7 +272,7 @@ export default function UserSettings({
                     </div>
                     <div className="setting-item">
                         <label>Passwort</label>
-                        <button onClick={() => setIsChangingPassword(true)}>
+                        <button onClick={() => {setIsChangingPassword(true); setIsBusy(true);}}>
                             Passwort ändern
                         </button>
                     </div>
@@ -401,7 +401,6 @@ export default function UserSettings({
                         password={password}
                         onLogout={() => {
                             onLogout();
-                            setIsBusy(false);
                         }}
                         onCancel={() => {
                             setIsChangingPassword(false);
