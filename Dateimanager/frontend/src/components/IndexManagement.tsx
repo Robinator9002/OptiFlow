@@ -7,6 +7,8 @@ import {
     loadIndex,
     deleteIndex,
 } from "../api/api.tsx";
+// NEU: Icons aus lucide-react importiert
+import { RefreshCw, FileScan, Download, Trash2 } from "lucide-react";
 
 // --- Type Definitions ---
 interface IndexManagementProps {
@@ -25,6 +27,7 @@ const IndexManagement: React.FC<IndexManagementProps> = ({
 }) => {
     const [confirmAction, setConfirmAction] = useState<ActionType>(null);
 
+    // HINWEIS: Die Emojis hier sind nur für die Modal-Titel, nicht die Buttons.
     const actionConfig = {
         scan: {
             title: "🔍 Scannen bestätigen",
@@ -107,29 +110,31 @@ const IndexManagement: React.FC<IndexManagementProps> = ({
     };
 
     const handleCancel = () => {
-        toast.warn(`⚠️ Aktion abgebrochen.`);
+        toast.warn("⚠️ Aktion abgebrochen.");
         setConfirmAction(null);
     };
 
     return (
         <div className="container index-management-container">
             <h2>Index Verwaltung</h2>
+            {/* HINWEIS: Du solltest noch CSS für .button-container hinzufügen, 
+                damit die Buttons und Icons gut aussehen (z.B. mit display: flex und gap) */}
             <div className="button-container">
                 <button onClick={() => setConfirmAction("actualize")}>
-                    Index aktualisieren
+                    <RefreshCw size={16} /> Index aktualisieren
                 </button>
                 <button onClick={() => setConfirmAction("scan")}>
-                    Dateien scannen
+                    <FileScan size={16} /> Dateien scannen
                 </button>
                 <div>
                     <button onClick={() => setConfirmAction("load")}>
-                        Index laden
+                        <Download size={16} /> Index laden
                     </button>
                     <button
                         className="remove-button"
                         onClick={() => setConfirmAction("delete")}
                     >
-                        Index löschen
+                        <Trash2 size={16} /> Index löschen
                     </button>
                 </div>
             </div>
