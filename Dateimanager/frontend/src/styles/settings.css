@@ -34,7 +34,6 @@
     border: none;
     border-bottom: 1px solid var(--border-tertiary);
     background-color: transparent;
-    cursor: pointer;
     text-align: left;
     width: 100%;
     font-size: 0.95rem;
@@ -43,6 +42,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    border-radius: 0.5rem;
     transition: background-color var(--transition-short),
         color var(--transition-short), border-left var(--transition-short);
     border-left: 3px solid transparent;
@@ -212,9 +212,8 @@
 }
 
 .theme-preview {
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
+    padding: .5rem;
+    border-radius: 50% !important;
     border: 2px solid var(--border-secondary);
     margin-left: 0.5rem;
     display: inline-block;
@@ -318,7 +317,7 @@
     z-index: 100;
 }
 .user-confirmation-box {
-    background: var(--bg-secondary);
+    background: var(--bg-primary);
     padding: 2rem;
     border-radius: 0.75rem;
     box-shadow: var(--shadow-lg);
@@ -326,6 +325,7 @@
     border: 1px solid var(--border-primary);
     width: 90%;
     max-width: 400px;
+    text-wrap: wrap;
 }
 .user-confirmation-box h3 {
     margin-top: 0;
@@ -334,6 +334,9 @@
     display: flex;
     gap: 1rem;
     margin-top: 1.5rem;
+}
+.user-confirmation-box .button-group button {
+    width: 100%;
 }
 
 .user-management-table {

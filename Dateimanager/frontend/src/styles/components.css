@@ -558,7 +558,7 @@ body[data-theme="high-contrast"] .spinner {
     position: relative;
     flex-direction: column;
     width: 100%;
-    max-width: 35rem;
+    max-width: 45rem;
     padding: 2rem 3rem;
     background: var(--bg-primary);
     border-radius: 1rem;
@@ -573,6 +573,16 @@ body[data-theme="high-contrast"] .spinner {
 .password-change-field .button-container button {
     margin: 0 0.5rem 0 0.5rem;
     width: 100%;
+}
+
+.password-change-field .form-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.password-change-field input {
+    max-width: 25rem;
 }
 
 /* --- OLD FILES SECTION --- */
