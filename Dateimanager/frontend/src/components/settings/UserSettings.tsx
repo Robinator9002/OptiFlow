@@ -238,9 +238,11 @@ export default function UserSettings({
     }
 
     // Rendert die eigentlichen Einstellungen
+    // The main component render method
     return (
         <>
             <div className="settings-section">
+                {/* --- Mein Konto Sektion --- */}
                 <div className="settings-section-header">
                     <h3>Mein Konto</h3>
                 </div>
@@ -289,104 +291,109 @@ export default function UserSettings({
                         </button>
                     </div>
                 </div>
+
+                {/* --- Benutzerverwaltung Sektion (nur für Admins) --- */}
+                {isAdmin && (
+                    // Using a fragment to avoid adding an extra div layer
+                    <>
+                        <div className="settings-section-header">
+                            <h3>Benutzerverwaltung</h3>
+                        </div>
+                        {isLoadingUsers ? (
+                            <p>Lade Benutzer...</p>
+                        ) : userError ? (
+                            <p className="error-message">{userError}</p>
+                        ) : (
+                            <div className="table-container">
+                                <table className="user-management-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Benutzername</th>
+                                            <th>Admin</th>
+                                            <th>Letzter Login</th>
+                                            <th className="actions-cell">
+                                                Aktionen
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {userList.map((user) => (
+                                            <tr key={user.username}>
+                                                <td>{user.username}</td>
+                                                <td>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={user.isAdmin}
+                                                        onChange={() =>
+                                                            handleToggleAdmin(
+                                                                user.username
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            user.username ===
+                                                            currentUser
+                                                        }
+                                                        title={
+                                                            user.username ===
+                                                            currentUser
+                                                                ? "Eigenen Admin-Status nicht änderbar"
+                                                                : "Admin-Status umschalten"
+                                                        }
+                                                    />
+                                                </td>
+                                                <td>
+                                                    {user.lastLogin
+                                                        ? new Date(
+                                                              user.lastLogin
+                                                          ).toLocaleString(
+                                                              "de-DE"
+                                                          )
+                                                        : "Nie"}
+                                                </td>
+                                                <td className="actions-cell">
+                                                    <button
+                                                        onClick={() =>
+                                                            setModal({
+                                                                type: "reset",
+                                                                username:
+                                                                    user.username,
+                                                            })
+                                                        }
+                                                        disabled={
+                                                            user.username ===
+                                                            currentUser
+                                                        }
+                                                    >
+                                                        PW Reset
+                                                    </button>
+                                                    <button
+                                                        onClick={() =>
+                                                            setModal({
+                                                                type: "delete",
+                                                                username:
+                                                                    user.username,
+                                                            })
+                                                        }
+                                                        className="button danger"
+                                                        disabled={
+                                                            user.username ===
+                                                            currentUser
+                                                        }
+                                                    >
+                                                        Löschen
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
 
-            {isAdmin && (
-                <div className="settings-section">
-                    <div className="settings-section-header">
-                        <h3>Benutzerverwaltung</h3>
-                    </div>
-                    {isLoadingUsers ? (
-                        <p>Lade Benutzer...</p>
-                    ) : userError ? (
-                        <p className="error-message">{userError}</p>
-                    ) : (
-                        <div className="table-container">
-                            <table className="user-management-table">
-                                <thead>
-                                    <tr>
-                                        <th>Benutzername</th>
-                                        <th>Admin</th>
-                                        <th>Letzter Login</th>
-                                        <th className="actions-cell">
-                                            Aktionen
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {userList.map((user) => (
-                                        <tr key={user.username}>
-                                            <td>{user.username}</td>
-                                            <td>
-                                                <input
-                                                    type="checkbox"
-                                                    checked={user.isAdmin}
-                                                    onChange={() =>
-                                                        handleToggleAdmin(
-                                                            user.username
-                                                        )
-                                                    }
-                                                    disabled={
-                                                        user.username ===
-                                                        currentUser
-                                                    }
-                                                    title={
-                                                        user.username ===
-                                                        currentUser
-                                                            ? "Eigenen Admin-Status nicht änderbar"
-                                                            : "Admin-Status umschalten"
-                                                    }
-                                                />
-                                            </td>
-                                            <td>
-                                                {user.lastLogin
-                                                    ? new Date(
-                                                          user.lastLogin
-                                                      ).toLocaleString("de-DE")
-                                                    : "Nie"}
-                                            </td>
-                                            <td className="actions-cell">
-                                                <button
-                                                    onClick={() =>
-                                                        setModal({
-                                                            type: "reset",
-                                                            username:
-                                                                user.username,
-                                                        })
-                                                    }
-                                                    disabled={
-                                                        user.username ===
-                                                        currentUser
-                                                    }
-                                                >
-                                                    PW Reset
-                                                </button>
-                                                <button
-                                                    onClick={() =>
-                                                        setModal({
-                                                            type: "delete",
-                                                            username:
-                                                                user.username,
-                                                        })
-                                                    }
-                                                    className="button danger"
-                                                    disabled={
-                                                        user.username ===
-                                                        currentUser
-                                                    }
-                                                >
-                                                    Löschen
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-            )}
-
+            {/* --- Modals and Overlays remain outside the main section --- */}
             {isChangingPassword && (
                 <div className="overlay">
                     <ChangePassword
