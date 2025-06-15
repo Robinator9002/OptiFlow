@@ -27,7 +27,7 @@ const PDFProcessor: React.FC<PDFProcessorProps> = ({ setProcessingPDF }) => {
     const [overwrite, setOverwrite] = useState<boolean>(ocrOverwrite);
     const [ignoredDirNames, setIgnoredDirNames] =
         useState<string>(ocrExcludedDirs);
-    const [maxWorkers, setMaxWorkers] = useState<number>(ocrMaxWorkerCount);
+    const [maxWorkers, setMaxWorkers] = useState<number>(ocrMaxWorkerCount ?? 0);
     const [confirmConvertFolder, setConfirmConvertFolder] = useState<
         boolean | null
     >(null);
