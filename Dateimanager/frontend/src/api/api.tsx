@@ -171,12 +171,6 @@ export const findOldFiles = async (params: FindOldFilesParams = {}) => {
     return response.data;
 };
 
-// Überschreiben eines Index-Wertes
-export const updateFile = async (update: FileUpdate) => {
-    const response = await api.post(`/update/`, update);
-    return response.data;
-};
-
 // Öffnen einer Datei oder eines Ordners
 export const openFile = async (path: string) => {
     const response = await api.post(`/open_file/${encodeURIComponent(path)}`);
@@ -226,13 +220,6 @@ export const deleteFile = async (filePath: string) => {
 };
 
 // --- OCR PROCESSING ---
-export const ocrConvertFile = async (filePath: string, outputPath: string) => {
-    const response = await api.post(`/process_pdf_file/`, {
-        input_file: filePath,
-        output_file: outputPath,
-    });
-    return response.data;
-};
 
 // KORRIGIERT: Sendet 'overwrite' als Query-Parameter
 export const ocrConvertIndex = async (overwrite: boolean) => {
@@ -473,25 +460,5 @@ export const getAllEvents = async () => {
 
 export const executeEvent = async (eventIndex: number) => {
     const response = await api.post(`/events/${eventIndex}/execute`);
-    return response.data;
-};
-
-export const findEventByIndex = async (eventIndex: number) => {
-    const response = await api.get(`/events/${eventIndex}`);
-    return response.data;
-};
-
-export const startEventMonitoring = async () => {
-    const response = await api.post("/events/start-monitoring");
-    return response.data;
-};
-
-export const saveEventsToFile = async () => {
-    const response = await api.post("/events/save");
-    return response.data;
-};
-
-export const loadEventsFromFile = async () => {
-    const response = await api.post("/events/load");
     return response.data;
 };
