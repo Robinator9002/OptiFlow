@@ -1,13 +1,13 @@
 /* styles/global.css */
-/* Grundlegende Stile, Typografie, Layouts, Scrollbar, Animationen */
-/* Enthält die Definition der CSS-Variablen für die Themes */
+/* Basic styles, typography, layouts, scrollbar, animations */
+/* Contains the definition of CSS variables for the themes */
 
 /* ------------------------- */
-/* --- Theme Variablen --- */
+/* --- Theme Variables --- */
 /* ------------------------- */
 
 :root {
-    /* Standard (Light) Theme */
+    /* Default (Light) Theme */
     --bg-primary: #f3f6f9;
     --bg-secondary: #e9edf2;
     --bg-tertiary: #dee3e9;
@@ -51,8 +51,10 @@
 
     --shadow-color-rgb: 0, 0, 0;
     --shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color-rgb), 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(var(--shadow-color-rgb), 0.1), 0 2px 4px -2px rgba(var(--shadow-color-rgb), 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(var(--shadow-color-rgb), 0.1), 0 4px 6px -4px rgba(var(--shadow-color-rgb), 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(var(--shadow-color-rgb), 0.1),
+        0 2px 4px -2px rgba(var(--shadow-color-rgb), 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(var(--shadow-color-rgb), 0.1),
+        0 4px 6px -4px rgba(var(--shadow-color-rgb), 0.1);
     --shadow-focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45);
     --shadow-focus-ring-danger: 0 0 0 3px rgba(239, 68, 68, 0.45);
 
@@ -62,7 +64,7 @@
 }
 
 /* Dark Theme Overrides */
-body[data-theme='dark'] {
+body[data-theme="dark"] {
     --bg-primary: #18181b;
     --bg-secondary: #27272a;
     --bg-tertiary: #3f3f46;
@@ -106,14 +108,16 @@ body[data-theme='dark'] {
 
     --shadow-color-rgb: 0, 0, 0;
     --shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color-rgb), 0.2);
-    --shadow-md: 0 4px 6px -1px rgba(var(--shadow-color-rgb), 0.3), 0 2px 4px -2px rgba(var(--shadow-color-rgb), 0.3);
-    --shadow-lg: 0 10px 15px -3px rgba(var(--shadow-color-rgb), 0.4), 0 4px 6px -4px rgba(var(--shadow-color-rgb), 0.4);
+    --shadow-md: 0 4px 6px -1px rgba(var(--shadow-color-rgb), 0.3),
+        0 2px 4px -2px rgba(var(--shadow-color-rgb), 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(var(--shadow-color-rgb), 0.4),
+        0 4px 6px -4px rgba(var(--shadow-color-rgb), 0.4);
     --shadow-focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.5);
     --shadow-focus-ring-danger: 0 0 0 3px rgba(248, 113, 113, 0.5);
 }
 
 /* High Contrast (Light) Theme Overrides */
-body[data-theme='high-contrast'] {
+body[data-theme="high-contrast"] {
     --bg-primary: #ffffff;
     --bg-secondary: #ffffff;
     --bg-tertiary: #e0e0e0;
@@ -167,7 +171,7 @@ body[data-theme='high-contrast'] {
 }
 
 /* ------------------------- */
-/* --- Globale Stile --- */
+/* --- Global Styles --- */
 /* ------------------------- */
 
 html {
@@ -182,11 +186,10 @@ html {
 }
 
 body {
-    /* Standard-Schriftart (wird ggf. überschrieben) */
+    /* Default font (may be overridden) */
     font-family: var(--font-sans);
     margin: 0;
     padding: 1.25rem;
-    /* 20px */
     background-color: var(--bg-secondary);
     color: var(--text-primary);
     display: flex;
@@ -196,40 +199,36 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
-    transition: background-color 0.3s ease, color 0.3s ease, font-family 0.1s ease;
-    /* Font-Übergang hinzugefügt */
+    transition: background-color 0.3s ease, color 0.3s ease,
+        font-family 0.1s ease;
+    /* Added font transition */
     font-size: 1rem;
 }
 
-/* --- NEUE REGELN FÜR SCHRIFTART-AUSWAHL --- */
-body[data-font='serif'] {
+/* --- NEW RULES FOR FONT SELECTION --- */
+body[data-font="serif"] {
     font-family: var(--font-serif);
 }
 
-body[data-font='monospace'] {
+body[data-font="monospace"] {
     font-family: var(--font-mono);
 }
 
-/* Wenn data-font="sans-serif" oder nicht gesetzt ist, gilt der Standard von body */
-/* --- Ende neue Regeln --- */
+/* If data-font="sans-serif" or not set, the body default applies */
+/* --- End of new rules --- */
 
-
-/* ... (Rest der global.css wie zuvor: header, h1, container, button, input etc.) ... */
 /* Header */
 header {
     display: flex; /* Make header a flex container */
     justify-content: space-between; /* Space out the title and logout container */
     align-items: center; /* Vertically center items */
     margin-bottom: 1.25rem;
-    /* 20px */
 }
 
 h1 {
     font-size: 2.5rem;
-    /* 32px */
     color: var(--accent-primary);
     margin-left: 0.9375rem;
-    /* 15px */
     font-weight: 600;
     line-height: 1.2;
     margin-bottom: 0; /* Remove default margin-bottom from h1 */
@@ -252,7 +251,6 @@ h1 {
 
 .settings-tab-button {
     margin-right: 0.5rem;
-    /* 8px */
     color: var(--text-on-accent);
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -263,7 +261,6 @@ h1 {
 
 h2 {
     font-size: 1.5rem;
-    /* 24px */
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 1rem;
@@ -272,7 +269,6 @@ h2 {
 
 h3 {
     font-size: 1.25rem;
-    /* 20px */
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 0.75rem;
@@ -283,39 +279,37 @@ p {
     margin-bottom: 1rem;
 }
 
-/* Allgemeine Container & Layout */
+/* General Container & Layout */
 .container {
     padding: 1.25rem;
-    /* 20px */
     border-radius: 0.5rem;
-    /* 8px */
     box-shadow: var(--shadow-md);
     background-color: var(--bg-primary);
     border: 1px solid var(--border-primary);
-    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 .tab-content {
     display: flex;
     justify-content: left;
     gap: 1.25rem;
-    /* 20px */
     flex-grow: 1;
 }
 
-/* Allgemeine Button-Stile (Basis) */
+/* General Button Styles (Base) */
 button {
     background: var(--accent-primary);
     border: 1px solid var(--accent-primary);
     color: var(--text-on-accent);
     padding: 0.75rem 1.25rem;
-    /* 12px 20px */
     font-size: 1rem;
     cursor: pointer;
     border-radius: 0.3125rem;
-    /* 5px */
     box-shadow: var(--shadow-sm);
-    transition: background-color var(--transition-base), border-color var(--transition-base), transform var(--transition-short), box-shadow var(--transition-base);
+    transition: background-color var(--transition-base),
+        border-color var(--transition-base), transform var(--transition-short),
+        box-shadow var(--transition-base);
     line-height: 1.2;
     user-select: none;
     -webkit-user-select: none;
@@ -336,28 +330,27 @@ button:active {
     box-shadow: inset 0 1px 2px rgba(var(--shadow-color-rgb), 0.1);
 }
 
-/* Allgemeine Eingabefelder (Basis) */
+/* General Input Fields (Base) */
 input,
 select,
 textarea {
     width: 100%;
     padding: 0.625rem;
-    /* 10px */
     margin: 0.3125rem 0;
-    /* 5px */
     border-radius: 0.3125rem;
-    /* 5px */
     border: 1px solid var(--border-secondary);
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-size: 1rem;
     box-sizing: border-box;
-    transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base), color var(--transition-base);
+    transition: border-color var(--transition-base),
+        box-shadow var(--transition-base),
+        background-color var(--transition-base), color var(--transition-base);
     font-family: inherit;
     line-height: inherit;
 }
 
-/* Allgemeine Fokus-Stile */
+/* General Focus Styles */
 button:focus-visible,
 input:focus,
 select:focus,
@@ -376,7 +369,7 @@ textarea:focus {
     outline: 0;
 }
 
-/* Fehlerhafte Inputs */
+/* Erroneous Inputs */
 .error-input {
     border-color: var(--border-danger) !important;
     background-color: var(--bg-accent-red);
@@ -395,13 +388,13 @@ textarea:focus {
 
 /* Danger Button */
 .button-danger {
-	color: var(--text-color-light-on-dark-bg);
-	background-color: var(--accent-danger);
+    color: var(--text-color-light-on-dark-bg);
+    background-color: var(--accent-danger);
     border: none;
 }
 .button-danger:not(:disabled):hover {
-	background-color: var(--accent-danger-hover);
-	color: var(--text-color-light-on-dark-bg);
+    background-color: var(--accent-danger-hover);
+    color: var(--text-color-light-on-dark-bg);
 }
 
 button:disabled,
@@ -425,8 +418,8 @@ textarea:disabled {
     opacity: 0.7;
 }
 
-input[type='checkbox']:disabled,
-input[type='checkbox']:disabled:hover {
+input[type="checkbox"]:disabled,
+input[type="checkbox"]:disabled:hover {
     border-color: var(--accent-disabled) !important;
     background-color: var(--bg-tertiary) !important;
     box-shadow: none !important;
@@ -435,22 +428,19 @@ input[type='checkbox']:disabled:hover {
     opacity: 0.5;
 }
 
-input[type='checkbox']:disabled::before {
+input[type="checkbox"]:disabled::before {
     background-color: var(--text-muted) !important;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
     width: 0.625rem;
-    /* 10px */
     height: 0.625rem;
-    /* 10px */
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: var(--text-muted);
     border-radius: 0.3125rem;
-    /* 5px */
     border: 2px solid var(--bg-secondary);
     background-clip: padding-box;
 }
@@ -462,14 +452,13 @@ input[type='checkbox']:disabled::before {
 ::-webkit-scrollbar-track {
     background-color: var(--bg-tertiary);
     border-radius: 0.3125rem;
-    /* 5px */
 }
 
 ::-webkit-scrollbar-corner {
     background: transparent;
 }
 
-/* Animationen */
+/* Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;

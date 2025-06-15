@@ -1,248 +1,238 @@
 /* src/components/Help/Help.css */
 
-/* Stile für das Hilfe-Modal und dessen Inhalt.
-   Nutzt Variablen aus deiner global.css für Konsistenz.
+/*
+  Styles for the help modal and its content.
+  Uses variables from your global.css for consistency.
 */
 
 .help-modal-overlay {
-	position: fixed; /* Bleibt an Ort und Stelle beim Scrollen */
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(
-		0,
-		0,
-		0,
-		0.7
-	); /* Dunkleres Overlay für besseren Fokus */
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	z-index: 1050; /* Stellt sicher, dass es über anderen Elementen liegt (z.B. Toasts) */
-	padding: 20px; /* Wichtig für kleine Bildschirme, damit Modal nicht am Rand klebt */
-	box-sizing: border-box;
-	opacity: 0; /* Start unsichtbar für Fade-In Animation */
-	animation: fadeInOverlay 0.3s ease-out forwards; /* Fade-In Animation */
+    position: fixed; /* Stays in place when scrolling */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Darker overlay for better focus */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Ensures it's above other elements (e.g., toasts) */
+    padding: 20px; /* Important for small screens so the modal doesn't stick to the edge */
+    box-sizing: border-box;
+    opacity: 0; /* Start invisible for fade-in animation */
+    animation: fadeInOverlay 0.3s ease-out forwards; /* Fade-in animation */
 }
 
 .help-modal-content {
-	background-color: var(
-		--bg-secondary,
-		#ffffff
-	); /* Nutzt Variable aus global.css, Fallback weiß */
-	color: var(
-		--text-primary,
-		#1f2937
-	); /* Nutzt Variable, Fallback dunkles Grau */
-	padding: 25px 30px;
-	border-radius: var(--border-radius, 8px); /* Nutzt Variable, Fallback 8px */
-	box-shadow: var(
-		--shadow-lg,
-		0 10px 15px -3px rgba(0, 0, 0, 0.1),
-		0 4px 6px -4px rgba(0, 0, 0, 0.1)
-	); /* Nutzt Variable */
-	width: 100%;
-	max-width: 750px; /* Etwas breiter für mehr Inhalt */
-	max-height: 85vh; /* Begrenzt Höhe, um Scrollen zu ermöglichen */
-	display: flex;
-	flex-direction: column;
-	overflow: hidden; /* Verhindert, dass Inhalt überläuft, bevor Scrollen aktiv wird */
-	transform: scale(0.95); /* Start leicht skaliert für Pop-In Animation */
-	animation: popInModal 0.3s 0.1s ease-out forwards; /* Pop-In Animation mit leichter Verzögerung */
+    background-color: var(
+        --bg-secondary,
+        #ffffff
+    ); /* Uses variable from global.css, fallback white */
+    color: var(--text-primary, #1f2937); /* Uses variable, fallback dark gray */
+    padding: 25px 30px;
+    border-radius: var(--border-radius, 8px); /* Uses variable, fallback 8px */
+    box-shadow: var(
+        --shadow-lg,
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -4px rgba(0, 0, 0, 0.1)
+    ); /* Uses variable */
+    width: 100%;
+    max-width: 750px; /* A bit wider for more content */
+    max-height: 85vh; /* Limits height to allow scrolling */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevents content from overflowing before scrolling is active */
+    transform: scale(0.95); /* Start slightly scaled for pop-in animation */
+    animation: popInModal 0.3s 0.1s ease-out forwards; /* Pop-in animation with a slight delay */
 }
 
 .help-modal-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	border-bottom: 1px solid var(--border-primary, #d1d5db); /* Nutzt Variable */
-	padding-bottom: 15px;
-	margin-bottom: 20px;
-	flex-shrink: 0; /* Verhindert, dass Header schrumpft */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-primary, #d1d5db); /* Uses variable */
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    flex-shrink: 0; /* Prevents the header from shrinking */
 }
 
 .help-modal-header h2 {
-	margin: 0;
-	font-size: 1.7em; /* Etwas größer */
-	font-weight: 600;
-	color: var(--accent-primary, #3b82f6); /* Nutzt Akzentfarbe */
+    margin: 0;
+    font-size: 1.7em; /* A bit larger */
+    font-weight: 600;
+    color: var(--accent-primary, #3b82f6); /* Uses accent color */
 }
 
 .close-help-button {
-	background: none;
-	border: none;
-	box-shadow: none;
-	font-size: 2.2em; /* Größer für bessere Klickbarkeit */
-	font-weight: bold;
-	color: var(--text-muted, #6b7280); /* Nutzt Variable */
-	cursor: pointer;
-	padding: 0;
-	line-height: 1;
-	transition: color 0.2s ease, transform 0.2s ease;
+    background: none;
+    border: none;
+    box-shadow: none;
+    font-size: 2.2em; /* Larger for better clickability */
+    font-weight: bold;
+    color: var(--text-muted, #6b7280); /* Uses variable */
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .close-help-button:hover {
-	color: var(--text-danger, #b91c1c); /* Nutzt Variable */
-	background: none;
-	border: none;
-	box-shadow: none;
-	transform: scale(1.1);
+    color: var(--text-danger, #b91c1c); /* Uses variable */
+    background: none;
+    border: none;
+    box-shadow: none;
+    transform: scale(1.1);
 }
 
 .help-modal-body {
-	overflow-y: auto; /* Ermöglicht Scrollen, wenn Inhalt zu lang ist */
-	/* Custom Scrollbar (passend zu global.css, falls dort definiert) */
-	scrollbar-width: thin; /* Für Firefox */
-	scrollbar-color: var(--text-muted, #6b7280) var(--bg-tertiary, #dee3e9); /* Für Firefox */
-	padding-right: 10px; /* Etwas Platz für die Scrollbar, um Überlappung zu vermeiden */
-	margin-right: -20px; /* Kompensiert padding-right, um vollen Platz zu nutzen, wenn Scrollbar nicht da ist */
-	padding-left: 5px; /* Kleiner Einzug links */
-	flex-grow: 1; /* Nimmt verfügbaren Platz ein */
+    overflow-y: auto; /* Enables scrolling if content is too long */
+    /* Custom Scrollbar (matches global.css, if defined there) */
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: var(--text-muted, #6b7280) var(--bg-tertiary, #dee3e9); /* For Firefox */
+    padding-right: 10px; /* Some space for the scrollbar to avoid overlap */
+    margin-right: -20px; /* Compensates for padding-right to use full space when scrollbar is not present */
+    padding-left: 5px; /* Small indent on the left */
+    flex-grow: 1; /* Takes up available space */
 }
 
-/* Custom Scrollbar für Webkit-Browser */
+/* Custom Scrollbar for Webkit-browsers */
 .help-modal-body::-webkit-scrollbar {
-	width: 8px;
+    width: 8px;
 }
 .help-modal-body::-webkit-scrollbar-track {
-	background: var(--bg-tertiary, #dee3e9);
-	border-radius: var(--border-radius, 8px);
+    background: var(--bg-tertiary, #dee3e9);
+    border-radius: var(--border-radius, 8px);
 }
 .help-modal-body::-webkit-scrollbar-thumb {
-	background-color: var(--text-muted, #6b7280);
-	border-radius: var(--border-radius, 8px);
-	border: 2px solid var(--bg-tertiary, #dee3e9);
+    background-color: var(--text-muted, #6b7280);
+    border-radius: var(--border-radius, 8px);
+    border: 2px solid var(--bg-tertiary, #dee3e9);
 }
 .help-modal-body::-webkit-scrollbar-thumb:hover {
-	background-color: var(--text-secondary, #374151);
+    background-color: var(--text-secondary, #374151);
 }
 
 .help-modal-body section {
-	margin-bottom: 30px; /* Mehr Abstand zwischen Sektionen */
+    margin-bottom: 30px; /* More space between sections */
 }
 
 .help-modal-body h3 {
-	font-size: 1.35em; /* Etwas größer */
-	color: var(--text-primary, #1f2937);
-	margin-top: 0; /* Kein oberer Margin für erste Sektion-Überschrift */
-	margin-bottom: 15px; /* Mehr Abstand nach unten */
-	border-bottom: 1px solid var(--border-secondary, #9ca3af); /* Nutzt Variable */
-	padding-bottom: 8px;
+    font-size: 1.35em; /* A bit larger */
+    color: var(--text-primary, #1f2937);
+    margin-top: 0; /* No top margin for the first section heading */
+    margin-bottom: 15px; /* More space at the bottom */
+    border-bottom: 1px solid var(--border-secondary, #9ca3af); /* Uses variable */
+    padding-bottom: 8px;
 }
 
 .help-modal-body ul,
 .help-modal-body dl {
-	list-style: none;
-	padding-left: 0;
+    list-style: none;
+    padding-left: 0;
 }
 
 .help-modal-body ul li {
-	margin-bottom: 10px; /* Etwas mehr Abstand */
-	line-height: 1.6;
-	display: flex; /* Für bessere Ausrichtung von strong und Beschreibung */
-	align-items: flex-start;
+    margin-bottom: 10px;
+    line-height: 1.6;
+    display: flex; /* For better alignment of strong and description */
+    align-items: flex-start;
 }
 
 .help-modal-body ul li strong {
-	color: var(--accent-primary, #3b82f6);
-	margin-right: 8px;
-	display: inline-block;
-	font-weight: 600; /* Etwas fetter */
-	flex-shrink: 0; /* Verhindert, dass strong-Element schrumpft */
-	width: 150px; /* Feste Breite für bessere Lesbarkeit der Liste */
+    color: var(--accent-primary, #3b82f6);
+    margin-right: 8px;
+    display: inline-block;
+    font-weight: 600;
+    flex-shrink: 0; /* Prevents the strong element from shrinking */
+    width: 150px; /* Fixed width for better list readability */
 }
 
 .help-modal-body ul li span {
-	/* Der Beschreibungstext */
-	flex-grow: 1;
+    /* The description text */
+    flex-grow: 1;
 }
 
 .help-modal-body dt {
-	font-weight: 600; /* Fetter */
-	color: var(--text-primary, #1f2937);
-	margin-top: 15px;
-	font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-primary, #1f2937);
+    margin-top: 15px;
+    font-size: 1.1em;
 }
 
 .help-modal-body dd {
-	margin-left: 0; /* Kein Einzug, da dt schon hervorsticht */
-	margin-bottom: 10px;
-	padding-left: 15px; /* Leichter Einzug für die Beschreibung */
-	border-left: 2px solid var(--border-tertiary, #e5e7eb); /* Visuelle Trennung */
-	font-size: 1em;
-	line-height: 1.6;
+    margin-left: 0; /* No indent, as dt already stands out */
+    margin-bottom: 10px;
+    padding-left: 15px; /* Slight indent for the description */
+    border-left: 2px solid var(--border-tertiary, #e5e7eb); /* Visual separation */
+    font-size: 1em;
+    line-height: 1.6;
 }
 
 .help-modal-footer {
-	border-top: 1px solid var(--border-primary, #d1d5db);
-	padding-top: 20px;
-	margin-top: 15px; /* Etwas weniger Margin, da Body schon Abstand hat */
-	text-align: right;
-	flex-shrink: 0; /* Verhindert, dass Footer schrumpft */
+    border-top: 1px solid var(--border-primary, #d1d5db);
+    padding-top: 20px;
+    margin-top: 15px;
+    text-align: right;
+    flex-shrink: 0; /* Prevents the footer from shrinking */
 }
 
 .help-modal-footer .action-button {
-	/* Nutzt globale Button-Stile, kann hier aber angepasst werden */
-	background-color: var(--accent-primary, #3b82f6);
-	color: var(
-		--text-on-accent,
-		#ffffff
-	); /* Nutzt Variable für Text auf Akzent */
-	padding: 10px 20px;
+    /* Uses global button styles, but can be adjusted here */
+    background-color: var(--accent-primary, #3b82f6);
+    color: var(--text-on-accent, #ffffff);
+    padding: 10px 20px;
 }
 .help-modal-footer .action-button:hover {
-	background-color: var(--accent-primary-hover, #2563eb); /* Nutzt Variable */
+    background-color: var(--accent-primary-hover, #2563eb); /* Uses variable */
 }
 
-/* Animationen für das Modal */
+/* Animations for the Modal */
 @keyframes fadeInOverlay {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes popInModal {
-	from {
-		transform: scale(0.95);
-		opacity: 0.5;
-	}
-	to {
-		transform: scale(1);
-		opacity: 1;
-	}
+    from {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
-/* Responsive Anpassungen für das Hilfe-Modal */
+/* Responsive adjustments for the help modal */
 @media (max-width: 768px) {
-	.help-modal-content {
-		padding: 20px;
-		max-height: 95vh; /* Mehr Höhe auf kleineren Bildschirmen erlauben */
-	}
-	.help-modal-header h2 {
-		font-size: 1.5em;
-	}
-	.help-modal-body ul li {
-		flex-direction: column; /* Strong und Beschreibung untereinander */
-		align-items: flex-start;
-	}
-	.help-modal-body ul li strong {
-		width: auto; /* Keine feste Breite mehr */
-		margin-bottom: 4px;
-	}
+    .help-modal-content {
+        padding: 20px;
+        max-height: 95vh; /* Allow more height on smaller screens */
+    }
+    .help-modal-header h2 {
+        font-size: 1.5em;
+    }
+    .help-modal-body ul li {
+        flex-direction: column; /* Stack strong and description */
+        align-items: flex-start;
+    }
+    .help-modal-body ul li strong {
+        width: auto; /* No more fixed width */
+        margin-bottom: 4px;
+    }
 }
 
 @media (max-width: 480px) {
-	.help-modal-header h2 {
-		font-size: 1.3em;
-	}
-	.help-modal-body h3 {
-		font-size: 1.2em;
-	}
-	.help-modal-body dd {
-		padding-left: 10px;
-	}
+    .help-modal-header h2 {
+        font-size: 1.3em;
+    }
+    .help-modal-body h3 {
+        font-size: 1.2em;
+    }
+    .help-modal-body dd {
+        padding-left: 10px;
+    }
 }

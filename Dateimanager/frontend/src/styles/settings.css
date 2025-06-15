@@ -1,8 +1,8 @@
 /* ==========================================================================
-   EINSTELLUNGEN - GLOBALE STILE
+   SETTINGS - GLOBAL STYLES
    ========================================================================== */
 
-/* Globale Container für die Einstellungsseite */
+/* Global container for the settings page */
 .settings-container {
     display: flex;
     width: 100%;
@@ -72,36 +72,36 @@
     z-index: 1;
 }
 
-/* WICHTIGE ÄNDERUNG HIER: .settings-content wird zum Flex-Container */
+/* IMPORTANT CHANGE HERE: .settings-content becomes a flex container */
 .settings-content {
     flex-grow: 1;
     background-color: var(--bg-primary);
     transition: background-color var(--transition-base);
-    
-    /* Flexbox-Magie beginnt */
+
+    /* Flexbox magic begins */
     display: flex;
     flex-direction: column;
-    overflow: auto; /* Verhindert, dass der Inhalt "ausblutet" */
+    overflow: auto; /* Prevents content from "bleeding out" */
 }
 
 /* ==========================================================================
-   ALLGEMEINE FORMULAR- & SEKTIONSSTILE
+   GENERAL FORM & SECTION STYLES
    ========================================================================== */
 
-   /* WICHTIGE ÄNDERUNG HIER: .settings-section wird flexibel */
+/* IMPORTANT CHANGE HERE: .settings-section becomes flexible */
 .settings-section {
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-tertiary);
     border-radius: 0.5rem;
-    margin: 1.75rem 2rem; /* Ersetzt das Padding vom Parent */
+    margin: 1.75rem 2rem; /* Replaces padding from parent */
     padding: 1.5rem;
     transition: background-color var(--transition-base),
         border-color var(--transition-base);
 
-    /* Flex-Kind-Magie: Erlaube diesem Element zu wachsen und zu schrumpfen */
+    /* Flex child magic: Allow this element to grow and shrink */
     flex-grow: 1;
     max-height: 50vh;
-    overflow-y: auto; /* Scrollbar erscheint hier, wenn nötig */
+    overflow-y: auto; /* Scrollbar appears here if necessary */
 }
 
 .settings-section:last-child {
@@ -166,7 +166,7 @@
     max-width: 95%;
 }
 
-/* Stile für Checkboxen und Radio-Buttons */
+/* Styles for checkboxes and radio buttons */
 .checkbox-label,
 .radio-label {
     display: flex;
@@ -187,7 +187,7 @@
 }
 
 /* ==========================================================================
-   SPEZIFISCHE KOMPONENTENSTILE
+   SPECIFIC COMPONENT STYLES
    ========================================================================== */
 
 /* --- GeneralSettings --- */
@@ -208,7 +208,7 @@
 }
 
 .theme-preview {
-    padding: .5rem;
+    padding: 0.5rem;
     border-radius: 50% !important;
     border: 2px solid var(--border-secondary);
     margin-left: 0.5rem;
@@ -526,10 +526,10 @@
 }
 
 /* ==========================================================================
-   AKTIONEN-LEISTE (FOOTER)
+   ACTIONS FOOTER
    ========================================================================== */
 
-/* WICHTIGE ÄNDERUNG HIER: .settings-actions wird zum normalen Flex-Item */
+/* IMPORTANT CHANGE HERE: .settings-actions becomes a normal flex item */
 .settings-actions {
     display: flex;
     justify-content: flex-end;
@@ -541,14 +541,7 @@
     transition: background-color var(--transition-base),
         border-color var(--transition-base);
 
-    /* Entferne absolute Positionierung */
-    /* position: absolute; */ /* <- Entfernt */
-    /* bottom: 0; */          /* <- Entfernt */
-    /* left: 0; */            /* <- Entfernt */
-    /* right: 0; */           /* <- Entfernt */
-    /* z-index: 100; */       /* <- Entfernt */
-
-    /* Sag dem Flex-Container, dieses Element nicht zu verkleinern */
+    /* Removed absolute positioning */
     flex-shrink: 0;
 }
 
