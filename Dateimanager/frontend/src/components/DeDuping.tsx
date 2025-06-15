@@ -1,9 +1,14 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { toast } from "react-toastify";
 import { FolderOpen, FileText, X } from "lucide-react";
-import { SettingsContext } from "../context/SettingsContext";
-import { findDuplicates, loadDuplicates, saveDuplicates, deleteFile } from "../api/api";
-import { ConfirmModal } from "./ConfirmModal";
+import { SettingsContext } from "../context/SettingsContext.tsx";
+import {
+    findDuplicates,
+    loadDuplicates,
+    saveDuplicates,
+    deleteFile,
+} from "../api/api.tsx";
+import { ConfirmModal } from "./ConfirmModal.tsx";
 
 // --- Type Definitions ---
 interface DeDupingProps {
@@ -17,7 +22,6 @@ interface FileInGroup {
     modified_at: string;
 }
 
-// Interface for a single duplicate group as it comes from the API
 interface DuplicateGroupData {
     file_count: number;
     avg_similarity: number;
@@ -25,19 +29,15 @@ interface DuplicateGroupData {
     files: FileInGroup[];
 }
 
-// Interface for a duplicate group as used in the state (with group_id)
 interface DuplicateGroup extends DuplicateGroupData {
     group_id: string;
 }
 
-// Type for the state that stores the duplicate groups.
-// The key is the group_id (string), the value is the group object without the ID itself.
 interface DuplicateGroupsState {
     [key: string]: DuplicateGroupData;
 }
 
 // --- Helper Functions ---
-
 const formatBytes = (
     bytes: number | null | undefined,
     decimals: number = 2
@@ -65,12 +65,10 @@ const formatAge = (isoString: string | null | undefined): string => {
     try {
         const date: Date = new Date(isoString);
         if (isNaN(date.getTime())) return "Ungültiges Datum";
-
         const now: Date = new Date();
         const diffInSeconds: number = Math.floor(
             (now.getTime() - date.getTime()) / 1000
         );
-
         if (diffInSeconds < 60) return "gerade eben";
         if (diffInSeconds < 3600)
             return `vor ${Math.floor(diffInSeconds / 60)} min`;
@@ -83,7 +81,6 @@ const formatAge = (isoString: string | null | undefined): string => {
 };
 
 // --- Component ---
-
 const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
     const settings = useContext(SettingsContext);
     const minCategoryLength = settings?.minCategoryLength;
@@ -94,7 +91,6 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
     const [dupesError, setDupesError] = useState<string | null>(null);
     const [isDupeSearchRunning, setIsDupeSearchRunning] =
         useState<boolean>(false);
-
     const [expandedGroupId, setExpandedGroupId] = useState<string | null>(null);
     const [confirmDeleteFilePath, setConfirmDeleteFilePath] = useState<
         string | null
@@ -104,20 +100,47 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
     >(null);
     const [deletingItem, setDeletingItem] = useState<boolean>(false);
 
-    const hasLoadedInitialDupes = useRef<boolean>(false);
-    const initialDuplicateGroups = useRef<DuplicateGroupsState>({});
+    // States for search/filter functionality
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [filteredGroups, setFilteredGroups] = useState<DuplicateGroup[]>([]);
 
-    const extractAndSetLengthRanges = (groups: DuplicateGroupsState): void => {
-        const ranges = new Set<string>();
-        for (const groupId in groups) {
-            if (
-                Object.prototype.hasOwnProperty.call(groups, groupId) &&
-                groups[groupId].length_range
-            ) {
-                ranges.add(groups[groupId].length_range);
-            }
+    const hasLoadedInitialDupes = useRef<boolean>(false);
+
+    // --- Filter logic for search bar ---
+    useEffect(() => {
+        const allGroups: DuplicateGroup[] = Object.keys(duplicateGroups).map(
+            (groupId: string): DuplicateGroup => ({
+                group_id: groupId,
+                ...duplicateGroups[groupId],
+            })
+        );
+
+        if (!searchQuery.trim()) {
+            setFilteredGroups(allGroups);
+            return;
         }
-    };
+
+        const lowercasedQuery = searchQuery.toLowerCase().trim();
+        const filtered = allGroups.filter((group) => {
+            // Check if query matches group details or any file within the group
+            const inGroupName = group.group_id
+                .toLowerCase()
+                .includes(lowercasedQuery);
+            const inLengthRange = group.length_range
+                .toLowerCase()
+                .includes(lowercasedQuery);
+
+            const inFile = group.files.some(
+                (file) =>
+                    file.name.toLowerCase().includes(lowercasedQuery) ||
+                    file.path.toLowerCase().includes(lowercasedQuery)
+            );
+
+            return inGroupName || inLengthRange || inFile;
+        });
+
+        setFilteredGroups(filtered);
+    }, [searchQuery, duplicateGroups]);
 
     useEffect(() => {
         const loadInitialDuplicates = async (): Promise<void> => {
@@ -133,8 +156,6 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
                     Object.keys(loadedResult.result).length > 0
                 ) {
                     setDuplicateGroups(loadedResult.result);
-                    initialDuplicateGroups.current = loadedResult.result;
-                    extractAndSetLengthRanges(loadedResult.result);
                 } else {
                     toast.info(
                         loadedResult?.message ||
@@ -162,15 +183,12 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
         setLoadingDupes(true);
         setDupesError(null);
         setDuplicateGroups({});
-        initialDuplicateGroups.current = {};
         setExpandedGroupId(null);
 
         try {
             const result = await findDuplicates();
             if (result?.result) {
                 setDuplicateGroups(result.result);
-                initialDuplicateGroups.current = result.result;
-                extractAndSetLengthRanges(result.result);
                 toast.info(
                     `📁 ${
                         Object.keys(result.result).length
@@ -202,9 +220,7 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
                 toast.success(
                     `🗑️ Datei erfolgreich gelöscht: ${confirmDeleteFilePath}`
                 );
-
-                // Update state locally to reflect deletion
-                const newGroups = { ...initialDuplicateGroups.current };
+                const newGroups = { ...duplicateGroups };
                 let groupModified = false;
                 for (const groupId in newGroups) {
                     const group = newGroups[groupId];
@@ -223,36 +239,20 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
                 }
                 if (groupModified) {
                     setDuplicateGroups(newGroups);
-                    initialDuplicateGroups.current = newGroups;
-                    extractAndSetLengthRanges(newGroups);
                     await saveDuplicates();
                 }
             } else if (confirmDeleteGroupId) {
                 const groupToDelete = duplicateGroups[confirmDeleteGroupId];
                 if (groupToDelete?.files?.length > 0) {
-                    const filesToDeletePaths = groupToDelete.files.map(
-                        (file) => file.path
-                    );
-                    for (const filePath of filesToDeletePaths) {
-                        try {
-                            await deleteFile(filePath);
-                        } catch (err) {
-                            console.error(
-                                `Fehler beim Löschen von Datei ${filePath}`,
-                                err
-                            );
-                        }
+                    for (const file of groupToDelete.files) {
+                        await deleteFile(file.path);
                     }
                     toast.success(
                         `🗑️ Gruppe ${confirmDeleteGroupId} gelöscht.`
                     );
-
-                    // Update state locally
-                    const newGroups = { ...initialDuplicateGroups.current };
+                    const newGroups = { ...duplicateGroups };
                     delete newGroups[confirmDeleteGroupId];
                     setDuplicateGroups(newGroups);
-                    initialDuplicateGroups.current = newGroups;
-                    extractAndSetLengthRanges(newGroups);
                     if (expandedGroupId === confirmDeleteGroupId)
                         setExpandedGroupId(null);
                     await saveDuplicates();
@@ -267,13 +267,6 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
             setConfirmDeleteGroupId(null);
         }
     };
-
-    const displayedGroups: DuplicateGroup[] = Object.keys(duplicateGroups).map(
-        (groupId: string): DuplicateGroup => ({
-            group_id: groupId,
-            ...duplicateGroups[groupId],
-        })
-    );
 
     return (
         <div className={"dedupe-container settings-section"}>
@@ -293,22 +286,36 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
                         : "Duplikate suchen"}
                 </button>
             </div>
-            {dupesError && !loadingDupes && (
-                <p
-                    className="folder-selector-error"
-                    style={{ textAlign: "left" }}
+
+            {Object.keys(duplicateGroups).length > 0 && (
+                <div
+                    className="old-files-list-header"
+                    style={{ marginBottom: "1rem" }}
                 >
-                    {dupesError}
-                </p>
+                    <h3>Gefundene Gruppen ({filteredGroups.length}):</h3>
+                    <div className="search-relevance-input">
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Gruppen nach Dateiname oder Pfad filtern..."
+                        />
+                    </div>
+                </div>
             )}
 
-            {/* Render Groups */}
-            {displayedGroups.length > 0 && (
+            {dupesError && !loadingDupes && (
+                <p className="folder-selector-error">{dupesError}</p>
+            )}
+
+            {loadingDupes && <p>Lade Duplikate...</p>}
+
+            {!loadingDupes && filteredGroups.length > 0 && (
                 <ul
                     className="dedupe-groups-list"
                     style={{ listStyle: "none", padding: 0 }}
                 >
-                    {displayedGroups.map((group) => (
+                    {filteredGroups.map((group) => (
                         <li
                             key={group.group_id}
                             className={`dedupe-group-item ${
@@ -394,13 +401,7 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
                                     {group.files.map((file) => (
                                         <li
                                             key={file.path}
-                                            style={{
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                alignItems: "center",
-                                                padding: "5px",
-                                                cursor: "pointer",
-                                            }}
+                                            className="dedupe-file-item"
                                             onClick={(e: React.MouseEvent) => {
                                                 e.stopPropagation();
                                                 onFileSelected(file.path);
@@ -473,6 +474,15 @@ const DeDuping: React.FC<DeDupingProps> = ({ onFileSelected }) => {
                     ))}
                 </ul>
             )}
+
+            {!loadingDupes &&
+                filteredGroups.length === 0 &&
+                Object.keys(duplicateGroups).length > 0 && (
+                    <p className="info-message">
+                        Keine Gruppen entsprechen der Suche nach "{searchQuery}
+                        ".
+                    </p>
+                )}
 
             {(confirmDeleteFilePath || confirmDeleteGroupId) && (
                 <ConfirmModal
