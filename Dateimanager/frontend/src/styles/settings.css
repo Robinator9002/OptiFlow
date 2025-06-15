@@ -72,36 +72,30 @@
     z-index: 1;
 }
 
-/* IMPORTANT CHANGE HERE: .settings-content becomes a flex container */
 .settings-content {
     flex-grow: 1;
     background-color: var(--bg-primary);
     transition: background-color var(--transition-base);
-
-    /* Flexbox magic begins */
     display: flex;
     flex-direction: column;
-    overflow: auto; /* Prevents content from "bleeding out" */
+    overflow: auto;
 }
 
 /* ==========================================================================
    GENERAL FORM & SECTION STYLES
    ========================================================================== */
 
-/* IMPORTANT CHANGE HERE: .settings-section becomes flexible */
 .settings-section {
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-tertiary);
     border-radius: 0.5rem;
-    margin: 1.75rem 2rem; /* Replaces padding from parent */
+    margin: 1.75rem 2rem;
     padding: 1.5rem;
     transition: background-color var(--transition-base),
         border-color var(--transition-base);
-
-    /* Flex child magic: Allow this element to grow and shrink */
     flex-grow: 1;
     max-height: 50vh;
-    overflow-y: auto; /* Scrollbar appears here if necessary */
+    overflow-y: auto;
 }
 
 .settings-section:last-child {
@@ -166,7 +160,6 @@
     max-width: 95%;
 }
 
-/* Styles for checkboxes and radio buttons */
 .checkbox-label,
 .radio-label {
     display: flex;
@@ -416,9 +409,25 @@
 /* --- SystemSettings --- */
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1rem;
+    /* 1 column on small screens */
+    grid-template-columns: repeat(1, 1fr);
 }
+
+/* 2 columns for medium screens */
+@media (min-width: 768px) {
+    .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 3 columns for large screens */
+@media (min-width: 1024px) {
+    .events-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 .event-card {
     background-color: var(--bg-primary);
     border: 1px solid var(--border-tertiary);
@@ -442,6 +451,7 @@
     background-color: transparent;
     border-style: dashed;
     cursor: pointer;
+    min-height: 150px; /* Ensure it has some height */
 }
 .event-card.add-new:hover {
     background-color: var(--bg-accent);
@@ -529,7 +539,6 @@
    ACTIONS FOOTER
    ========================================================================== */
 
-/* IMPORTANT CHANGE HERE: .settings-actions becomes a normal flex item */
 .settings-actions {
     display: flex;
     justify-content: flex-end;
@@ -540,8 +549,6 @@
     box-sizing: border-box;
     transition: background-color var(--transition-base),
         border-color var(--transition-base);
-
-    /* Removed absolute positioning */
     flex-shrink: 0;
 }
 

@@ -39,13 +39,13 @@ interface FrequencyOption {
 
 // --- Constants ---
 const ALLOWED_EVENTS: AllowedEventOption[] = [
-    { value: "scanner", label: "Scanner aktualisieren" },
-    { value: "file-structure", label: "Struktur neu einlesen" },
+    { value: "scanner", label: "Update Scanner" },
+    { value: "file-structure", label: "Re-read Structure" },
 ];
 const FREQUENCIES: FrequencyOption[] = [
-    { value: "hourly", label: "Stündlich" },
-    { value: "daily", label: "Täglich" },
-    { value: "weekly", label: "Wöchentlich" },
+    { value: "hourly", label: "Hourly" },
+    { value: "daily", label: "Daily" },
+    { value: "weekly", label: "Weekly" },
 ];
 
 const initialFormData: EventData = {
@@ -82,7 +82,7 @@ export default function SystemSettings({
             const list = await getAllEvents();
             setEvents(list);
         } catch {
-            toast.error("Fehler beim Laden der Events.");
+            toast.error("Error loading events.");
         } finally {
             setIsBusy(false);
         }
@@ -130,22 +130,22 @@ export default function SystemSettings({
     const handleFormSubmit = useCallback(async () => {
         const { event, frequency, times } = formData;
         if (!event || times.some((t) => !t)) {
-            toast.error("Bitte alle Felder ausfüllen.");
+            toast.error("Please fill out all fields.");
             return;
         }
         setIsBusy(true);
         try {
             if (editingIndex === "new") {
                 await addEvent(frequency, times, event);
-                toast.success("Event hinzugefügt");
+                toast.success("Event added");
             } else if (typeof editingIndex === "number") {
                 await updateEvent(editingIndex, frequency, times, event);
-                toast.success("Event aktualisiert");
+                toast.success("Event updated");
             }
             closeForm();
             await loadEvents();
         } catch {
-            toast.error("Fehler beim Speichern des Events");
+            toast.error("Error saving event");
         } finally {
             setIsBusy(false);
         }
@@ -156,10 +156,10 @@ export default function SystemSettings({
             setIsBusy(true);
             try {
                 await deleteEvent(i);
-                toast.success("Event gelöscht");
+                toast.success("Event deleted");
                 await loadEvents();
             } catch {
-                toast.error("Fehler beim Löschen des Events");
+                toast.error("Error deleting event");
             } finally {
                 setIsBusy(false);
             }
@@ -173,9 +173,9 @@ export default function SystemSettings({
             setExecutingEvent(true);
             try {
                 await executeEvent(i);
-                toast.success("Event ausgeführt");
+                toast.success("Event executed");
             } catch {
-                toast.error("Fehler beim Ausführen des Events");
+                toast.error("Error executing event");
             } finally {
                 setExecutingEvent(false);
                 setIsBusy(false);
@@ -185,7 +185,7 @@ export default function SystemSettings({
     );
 
     const confirmShutdown = useCallback(async () => {
-        setIsBusy(true); // <-- Setze es hier, falls es vorher nicht gesetzt wurde
+        setIsBusy(true);
         try {
             setShutdownError(null);
             const response = await verifyPassword(currentUser, password);
@@ -193,28 +193,28 @@ export default function SystemSettings({
                 setShowShutdownConfirm(false);
                 setShowFinalShutdownConfirm(true);
             } else {
-                setShutdownError("Passwort nicht korrekt!");
-                toast.error("Passwort ist nicht korrekt!");
+                setShutdownError("Incorrect password!");
+                toast.error("Incorrect password!");
             }
         } catch (err) {
-            setShutdownError("Fehler beim Verifizieren des Passworts");
-            toast.error("Fehler beim Verifizieren des Passworts");
+            setShutdownError("Error verifying password");
+            toast.error("Error verifying password");
         } finally {
             if (shutdownError) {
                 setIsBusy(false);
             }
         }
-    }, [currentUser, password, shutdownError]);
+    }, [currentUser, password, shutdownError, setIsBusy]);
 
     const handleShutdown = useCallback(async () => {
         setLoadingShutdown(true);
         setIsBusy(true);
         try {
             await shutdown(password);
-            toast.success("Server wird heruntergefahren");
+            toast.success("Server is shutting down");
             onLogout();
         } catch {
-            toast.error("Fehler beim Herunterfahren");
+            toast.error("Error during shutdown");
         } finally {
             setLoadingShutdown(false);
             setShowFinalShutdownConfirm(false);
@@ -222,10 +222,8 @@ export default function SystemSettings({
         }
     }, [password, setIsBusy, onLogout]);
 
-    // Add Keybindings
     useEffect(() => {
         const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-            // 2. Event-Typ hinzufügen
             if (showShutdownConfirm) {
                 if (e.key === "Enter") {
                     e.preventDefault();
@@ -243,7 +241,7 @@ export default function SystemSettings({
                     }
                 }
             }
-            if (editingIndex) {
+            if (editingIndex !== null) {
                 if (e.key === "Enter") {
                     e.preventDefault();
                     handleFormSubmit();
@@ -256,7 +254,13 @@ export default function SystemSettings({
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [showShutdownConfirm, editingIndex, currentUser, password, shutdownError]); // Abhängigkeiten sind korrekt
+    }, [
+        showShutdownConfirm,
+        editingIndex,
+        confirmShutdown,
+        handleFormSubmit,
+        closeForm,
+    ]);
 
     return (
         <div className="settings-section">
@@ -265,70 +269,68 @@ export default function SystemSettings({
             </div>
 
             <div className="setting-group">
-                <h3>Geplante Aufgaben (Events)</h3>
+                <h3>Scheduled Tasks (Events)</h3>
                 <div className="events-grid">
-                    {ALLOWED_EVENTS.map((opt) => {
-                        const idx = events.findIndex(
-                            (e) => e.event === opt.value
+                    {/* First, render all existing events */}
+                    {events.map((ev, idx) => {
+                        const eventOption = ALLOWED_EVENTS.find(
+                            (o) => o.value === ev.event
                         );
-                        const ev = idx >= 0 ? events[idx] : null;
-                        if (ev) {
-                            return (
-                                <div key={opt.value} className="event-card">
-                                    <div className="event-card-header">
-                                        {opt.label}
-                                    </div>
-                                    <div className="event-details">
-                                        <div>Frequenz: {ev.frequency}</div>
-                                        <div>Zeiten: {ev.times.join(", ")}</div>
-                                    </div>
-                                    <div className="event-card-actions">
-                                        <button
-                                            className="button-icon"
-                                            onClick={() => openForm(idx)}
-                                            title="Bearbeiten"
-                                        >
-                                            ✏️
-                                        </button>
-                                        <button
-                                            className="button-icon"
-                                            onClick={() => handleExecute(idx)}
-                                            title="Jetzt ausführen"
-                                        >
-                                            ▶️
-                                        </button>
-                                        <button
-                                            className="button-icon button-danger"
-                                            onClick={() => handleDelete(idx)}
-                                            title="Löschen"
-                                        >
-                                            🗑️
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        }
+                        const label = eventOption
+                            ? eventOption.label
+                            : "Unknown Event";
                         return (
-                            <div
-                                key={opt.value}
-                                className="event-card add-new"
-                                onClick={() => openForm("new")}
-                            >
-                                <div className="event-card-header">
-                                    {opt.label}
+                            <div key={ev.event} className="event-card">
+                                <div className="event-card-header">{label}</div>
+                                <div className="event-details">
+                                    <div>Frequency: {ev.frequency}</div>
+                                    <div>Times: {ev.times.join(", ")}</div>
                                 </div>
-                                <span>+</span>
+                                <div className="event-card-actions">
+                                    <button
+                                        className="button-icon"
+                                        onClick={() => openForm(idx)}
+                                        title="Edit"
+                                    >
+                                        ✏️
+                                    </button>
+                                    <button
+                                        className="button-icon"
+                                        onClick={() => handleExecute(idx)}
+                                        title="Execute Now"
+                                    >
+                                        ▶️
+                                    </button>
+                                    <button
+                                        className="button-icon button-danger"
+                                        onClick={() => handleDelete(idx)}
+                                        title="Delete"
+                                    >
+                                        🗑️
+                                    </button>
+                                </div>
                             </div>
                         );
                     })}
+
+                    {/* Then, if there are fewer events than allowed types, show the "add new" button */}
+                    {events.length < ALLOWED_EVENTS.length && (
+                        <div
+                            className="event-card add-new"
+                            onClick={() => openForm("new")}
+                            title="Add New Event"
+                        >
+                            <span>+</span>
+                        </div>
+                    )}
                 </div>
             </div>
 
             <div className="setting-group">
-                <h3>Konfiguration</h3>
+                <h3>Configuration</h3>
                 <div className="setting-item">
                     <label htmlFor="checkInterval">
-                        Event Überprüfungsintervall (Sekunden)
+                        Event Check Interval (Seconds)
                         <input
                             id="checkInterval"
                             type="number"
@@ -342,17 +344,17 @@ export default function SystemSettings({
                         />
                     </label>
                     <p className="setting-description">
-                        Wie oft überprüft wird ob eine der Aufgaben fällig ist
-                        (in Sekunden).
+                        How often to check if a scheduled task is due (in
+                        seconds).
                     </p>
                 </div>
             </div>
 
             <div className="setting-group">
-                <h3>Systemsteuerung</h3>
+                <h3>System Control</h3>
                 <div className="setting-item">
                     <label>
-                        Server herunterfahren
+                        Shutdown Server
                         <button
                             onClick={() => {
                                 setIsBusy(true);
@@ -363,14 +365,12 @@ export default function SystemSettings({
                             disabled={loadingShutdown}
                             className="button-danger"
                         >
-                            {loadingShutdown
-                                ? "Bitte warten..."
-                                : "Herunterfahren"}
+                            {loadingShutdown ? "Please wait..." : "Shutdown"}
                         </button>
                     </label>
                     <p className="setting-description">
-                        Fährt den gesamten Anwendungs-Server herunter. Erfordert
-                        eine Passwortbestätigung.
+                        Shuts down the entire application server. Requires
+                        password confirmation.
                     </p>
                 </div>
             </div>
@@ -386,11 +386,11 @@ export default function SystemSettings({
                         >
                             <h3>
                                 {editingIndex === "new"
-                                    ? "Neue Aufgabe"
-                                    : "Aufgabe bearbeiten"}
+                                    ? "New Task"
+                                    : "Edit Task"}
                             </h3>
                             <div className="setting-item">
-                                <label>Aufgabentyp</label>
+                                <label>Task Type</label>
                                 <select
                                     value={formData.event}
                                     onChange={(e) =>
@@ -401,7 +401,7 @@ export default function SystemSettings({
                                     }
                                     disabled={editingIndex !== "new"}
                                 >
-                                    <option value="">-- wählen --</option>
+                                    <option value="">-- select --</option>
                                     {ALLOWED_EVENTS.filter((o) =>
                                         editingIndex === "new"
                                             ? !events.some(
@@ -416,7 +416,7 @@ export default function SystemSettings({
                                 </select>
                             </div>
                             <div className="setting-item">
-                                <label>Häufigkeit</label>
+                                <label>Frequency</label>
                                 <select
                                     value={formData.frequency}
                                     onChange={(e) =>
@@ -435,7 +435,7 @@ export default function SystemSettings({
                                 </select>
                             </div>
                             <div className="setting-item">
-                                <label>Zeit(en) (HH:MM)</label>
+                                <label>Time(s) (HH:MM)</label>
                                 {formData.times.map((t, i) => (
                                     <div key={i} className="time-input-group">
                                         <input
@@ -466,7 +466,7 @@ export default function SystemSettings({
                                     className="add-time-btn"
                                     onClick={addTimeField}
                                 >
-                                    + Zeit hinzufügen
+                                    + Add Time
                                 </button>
                             </div>
                             <div className="button-group">
@@ -475,13 +475,13 @@ export default function SystemSettings({
                                     className="button"
                                     onClick={closeForm}
                                 >
-                                    Abbrechen
+                                    Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     className="button button-primary"
                                 >
-                                    Speichern
+                                    Save
                                 </button>
                             </div>
                         </form>
@@ -492,17 +492,17 @@ export default function SystemSettings({
             {showShutdownConfirm && (
                 <div className="modal-overlay">
                     <div className="modal-content shutdown-confirm-modal">
-                        <h3>Identität Bestätigen</h3>
+                        <h3>Confirm Identity</h3>
                         <p>
-                            Für das Herunterfahren bestätigen sie bitte ihre
-                            Identität mit ihrem Passwort.
+                            To proceed with the shutdown, please confirm your
+                            identity with your password.
                         </p>
                         {shutdownError && (
                             <p className="error-message">{shutdownError}</p>
                         )}
                         <input
                             type="password"
-                            placeholder="Passwort"
+                            placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className={shutdownError ? "input-error" : ""}
@@ -518,13 +518,13 @@ export default function SystemSettings({
                                 }}
                                 className="button"
                             >
-                                Abbrechen
+                                Cancel
                             </button>
                             <button
                                 onClick={confirmShutdown}
                                 className="button button-danger"
                             >
-                                Bestätigen
+                                Confirm
                             </button>
                         </div>
                     </div>
@@ -533,8 +533,8 @@ export default function SystemSettings({
 
             {showFinalShutdownConfirm && (
                 <ConfirmModal
-                    title="Herunterfahren Bestätigen"
-                    message="Sind Sie sicher, dass Sie den Server herunterfahren wollen? Alle nicht gespeicherten Änderungen gehen verloren."
+                    title="Confirm Shutdown"
+                    message="Are you sure you want to shut down the server? All unsaved changes will be lost."
                     onConfirm={handleShutdown}
                     onCancel={() => {
                         setShowFinalShutdownConfirm(false);
