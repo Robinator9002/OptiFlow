@@ -314,9 +314,6 @@ class DateiController:
     def get_user_admin_status(self, username):
         return self.account_manager.get_user_admin_status(username)
     
-    def get_user_password_reset_status(self, username):
-        return self.account_manager.get_user_password_reset_status(username)
-    
     def load_settings(self, username):
         return self.account_manager.load_settings(username)
     
@@ -412,24 +409,25 @@ class DateiController:
         # Check for the specific dedupe similarity threshold name
         if hasattr(settings, 'similarity_threshold') and settings.similarity_threshold is not None:
             self.file_scanner.similarity_threshold = settings.similarity_threshold
-            
-    def change_username(self, user, new_username):
-        self.account_manager.change_username(user.username, user.password, new_username)
     
-    def change_password(self, user, new_password):
-        self.account_manager.change_password(user.username, user.password, new_password)
+    # --- User Settings ---
+    def change_username(self, user, new_username):
+        """Wrapper für die Namensänderung."""
+        return self.account_manager.change_username(user.username, user.password, new_username)
+    
+    def change_password(self, user, admin_user, password_reset, new_password):
+        """Wrapper für die Passwortänderung."""
+        return self.account_manager.change_password(user.username, user.password, admin_user.username, admin_user.password, password_reset, new_password)
                 
-    def change_admin_status(self, user, admin_user):
-        self.account_manager.change_admin_status(user['username'], admin_user['username'], admin_user['password'], check_hash=False)
+    def change_admin_status(self, target_username: str, admin_username: str, admin_password: str, new_status: bool):
+        """Wrapper für die Änderung des Admin-Status."""
+        return self.account_manager.change_admin_status(target_username, admin_username, admin_password, new_status)
 
     def remove_user(self, target_username: str, admin_username: str, admin_password: str) -> tuple[bool, str]:
         """Leitet eine Löschanfrage sicher an den AccountManager weiter."""
         return self.account_manager.delete_user(target_username, admin_username, admin_password)
 
-    def reset_password(self, target_username: str, admin_username: str, admin_password: str) -> bool:
-        """Leitet eine Passwort-Reset-Anfrage sicher an den AccountManager weiter."""
-        return self.account_manager.request_password_reset(target_username, admin_username, admin_password)
-                
+    # --- Database Settings ---
     def backup_database(self, database_name: str):
         return self.read_json_file(self.get_database_path_by_name(database_name))
     

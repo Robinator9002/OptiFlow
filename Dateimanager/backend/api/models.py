@@ -136,7 +136,14 @@ class ChangeUsernameRequest(BaseModel):
 
 class ChangePasswordRequest(BaseModel):
     user: User
+    admin_user: Optional[User] = None
+    password_reset: Optional[bool] = False
     new_password: str
+
+class SetAdminStatusRequest(BaseModel):
+    """Neues Modell für die Admin-Status-Änderung."""
+    admin_password: str
+    new_status: bool
 
 class ShutdownRequest(BaseModel):
     password: str
@@ -152,7 +159,6 @@ class UserManagement(BaseModel):
     admin_user: Optional[User] = None
     make_admin: Optional[bool] = None
     remove_user: Optional[bool] = None
-    reset_password: Optional[bool] = None
     
 class DataWrapper(BaseModel):
     data: Union[Dict, List]

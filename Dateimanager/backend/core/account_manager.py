@@ -12,10 +12,6 @@ class AccountManager:
     """
 
     def __init__(self, data_file: str = "data/users.json", auto_login_time: int = 24):
-        """
-        Initialisiert den AccountManager.
-        Die hardcodierte 'admin_backup' Backdoor wurde entfernt.
-        """
         self.data_file = data_file
         self.auto_login_time = auto_login_time
         
@@ -39,18 +35,29 @@ class AccountManager:
         with open(self.data_file, "w", encoding="utf-8") as f:
             json.dump(self.users, f, indent=4)
 
+    def get_user(self, username: str) -> Optional[Dict]:
+        """Sucht und gibt einen Benutzer anhand seines Benutzernamens zurück."""
+        return next((user for user in self.users if user.get("username") == username), None)
+
+    def verify_password(self, username: str, password: str) -> bool:
+        """Verifiziert ein Passwort sicher mit bcrypt."""
+        user = self.get_user(username)
+        if not user or 'passwordHash' not in user or not isinstance(password, str):
+            return False
+        
+        try:
+            return bcrypt.checkpw(password.encode("utf-8"), user["passwordHash"].encode("utf-8"))
+        except (ValueError, TypeError):
+            return False
+
     def create_user(self, username: str, password: str, admin_username: str, admin_password: str, is_admin: bool) -> tuple[bool, str]:
-        """Erstellt einen neuen Benutzer, verifiziert durch einen Administrator."""
         if not self.verify_password(admin_username, admin_password):
             return False, "Ungültige Administrator-Anmeldedaten."
-
         admin_user = self.get_user(admin_username)
         if not admin_user or not admin_user.get("isAdmin"):
             return False, "Nur ein Administrator kann neue Benutzer erstellen."
-
         if self.get_user(username):
             return False, f"Benutzername '{username}' bereits vergeben."
-
         password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
         self.users.append({
             "username": username,
@@ -63,35 +70,62 @@ class AccountManager:
         self.save_users()
         return True, f"Benutzer '{username}' erfolgreich erstellt."
 
-    def get_user(self, username: str) -> Optional[Dict]:
-        """Sucht und gibt einen Benutzer anhand seines Benutzernamens zurück."""
-        return next((user for user in self.users if user.get("username") == username), None)
+    def change_password(self, username: str, old_password: str, admin_username: str, admin_password: str, password_reset: bool, new_password: str) -> bool:
+        user = self.get_user(username)
+        if password_reset:
+            if self.verify_password(admin_username, admin_password) and user:
+                user["passwordHash"] = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+                user["passwordReset"] = False
+                self.save_users()
+                return True
 
-    def change_password(self, username: str, old_password: str, new_password: str) -> bool:
-        """Ändert das Passwort eines Benutzers nach Verifizierung des alten Passworts."""
         if self.verify_password(username, old_password):
-            user = self.get_user(username)
             if user:
                 user["passwordHash"] = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
                 user["passwordReset"] = False
                 self.save_users()
                 return True
         return False
+        
+    def change_username(self, current_username: str, password: str, new_username: str) -> tuple[bool, str]:
+        """Ändert den Benutzernamen eines Benutzers nach Verifizierung."""
+        if not self.verify_password(current_username, password):
+            return False, "Falsches Passwort."
+        
+        if self.get_user(new_username):
+            return False, f"Der Benutzername '{new_username}' ist bereits vergeben."
 
-    def request_password_reset(self, target_username: str, admin_username: str, admin_password: str) -> bool:
-        """Setzt das 'passwordReset'-Flag für einen Benutzer, autorisiert durch einen Admin."""
-        if self.verify_password(admin_username, admin_password):
-            admin_user = self.get_user(admin_username)
-            if admin_user and admin_user.get("isAdmin"):
-                target_user = self.get_user(target_username)
-                if target_user:
-                    target_user["passwordReset"] = True
-                    self.save_users()
-                    return True
-        return False
+        user = self.get_user(current_username)
+        if user:
+            user['username'] = new_username
+            self.save_users()
+            return True, f"Benutzername erfolgreich zu '{new_username}' geändert."
+        return False, "Benutzer nicht gefunden."
+
+    def change_admin_status(self, target_username: str, admin_username: str, admin_password: str, new_status: bool) -> tuple[bool, str]:
+        """Ändert den Admin-Status eines Benutzers, autorisiert durch einen Admin."""
+        if not self.verify_password(admin_username, admin_password):
+            return False, "Ungültige Administrator-Anmeldedaten."
+        
+        admin_user = self.get_user(admin_username)
+        if not admin_user or not admin_user.get("isAdmin"):
+            return False, "Diese Aktion ist nur für Administratoren."
+
+        target_user = self.get_user(target_username)
+        if not target_user:
+            return False, f"Zielbenutzer '{target_username}' nicht gefunden."
+            
+        if target_username == admin_username and not new_status:
+            admins = [u for u in self.users if u.get("isAdmin")]
+            if len(admins) <= 1:
+                return False, "Der letzte Administrator kann seinen Status nicht entfernen."
+
+        target_user['isAdmin'] = new_status
+        self.save_users()
+        status_text = "erteilt" if new_status else "entzogen"
+        return True, f"Admin-Status für '{target_username}' erfolgreich {status_text}."
 
     def delete_user(self, target_username: str, admin_username: str, admin_password: str) -> tuple[bool, str]:
-        """Löscht einen Benutzer, autorisiert durch das Passwort des ausführenden Admins."""
         if target_username == admin_username:
              admins = [u for u in self.users if u.get("isAdmin")]
              if len(admins) <= 1 and self.get_user(target_username).get("isAdmin"):
@@ -113,37 +147,19 @@ class AccountManager:
         
         return False, f"Benutzer '{target_username}' nicht gefunden."
 
-    def verify_password(self, username: str, password: str) -> bool:
-        """
-        Verifiziert ein Passwort sicher mit bcrypt. Dies ist die EINZIGE Methode
-        zur Passwortprüfung. Alle unsicheren Varianten (`check_hash`, `admin_backup`,
-        `passwordReset`-Bypass) wurden entfernt.
-        """
-        user = self.get_user(username)
-        if not user or 'passwordHash' not in user or not isinstance(password, str):
-            return False
-        
-        try:
-            return bcrypt.checkpw(password.encode("utf-8"), user["passwordHash"].encode("utf-8"))
-        except (ValueError, TypeError):
-            return False
-
     def set_last_login(self, username: str):
-        """Setzt den Zeitstempel des letzten Logins."""
         user = self.get_user(username)
         if user:
             user["lastLogin"] = datetime.now().isoformat()
             self.save_users()
 
     def clear_last_login(self, username: str):
-        """Entfernt den Zeitstempel des letzten Logins."""
         user = self.get_user(username)
         if user:
             user["lastLogin"] = None
             self.save_users()
 
     def is_auto_login_valid(self, username: str) -> bool:
-        """Prüft, ob der Auto-Login-Zeitraum noch gültig ist."""
         user = self.get_user(username)
         if not user or not user.get("lastLogin"):
             return False
@@ -154,17 +170,10 @@ class AccountManager:
             return False
 
     def get_user_admin_status(self, username: str) -> bool:
-        """Gibt den Admin-Status eines Benutzers zurück."""
         user = self.get_user(username)
         return user.get("isAdmin", False) if user else False
 
-    def get_user_password_reset_status(self, username: str) -> bool:
-        """Gibt zurück, ob für einen Benutzer ein Passwort-Reset angefordert wurde."""
-        user = self.get_user(username)
-        return user.get("passwordReset", False) if user else False
-
     def save_settings(self, username: str, settings: Dict) -> tuple[bool, str]:
-        """Speichert die Einstellungen für einen Benutzer."""
         user = self.get_user(username)
         if user:
             user["settings"] = settings
@@ -173,6 +182,5 @@ class AccountManager:
         return False, "Benutzer nicht gefunden."
 
     def load_settings(self, username: str) -> Optional[Dict]:
-        """Lädt die Einstellungen für einen Benutzer."""
         user = self.get_user(username)
         return user.get("settings") if user and "settings" in user else None
