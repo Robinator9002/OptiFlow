@@ -213,7 +213,7 @@ class FileScanner:
                  max_size_kb: int = 0, max_content_size_let: Optional[int] = None, processor=None,
                  num_processes: Optional[int] = None, filename_exact_match_score: int = 5,
                  filename_partial_match_score: int = 3, content_match_score: int = 1, scan_delay: int = 0,
-                 size_tolerance_kb: float = 2.0, similarity_threshold: float = 0.90, search_limit: int = 100,
+                 similarity_threshold: float = 0.90, search_limit: int = 100,
                  snippet_limit: int = 0, snippet_window: int = 40, proximity_window: int = 20, 
                  max_age_days: int = 1000, old_files_limit: int = 0, sort_by: str = 'age', sort_order: str = 'normal',
                  length_range_step: int = 10, min_category_length: int = 2, snippet_length: int = 5,      
@@ -240,7 +240,6 @@ class FileScanner:
         self.filename_partial_match_score = filename_partial_match_score
         self.content_match_score = content_match_score
         self.scan_delay = scan_delay
-        self.size_tolerance_kb = size_tolerance_kb
         self.similarity_threshold = similarity_threshold
         self.search_limit = search_limit
         self.snippet_limit = snippet_limit

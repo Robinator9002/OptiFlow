@@ -390,12 +390,6 @@ class DateiManager:
             # Gib spezifischere Fehlermeldung zurück, wenn möglich
             return f"Fehler beim Lesen der Datei: {e}"
 
-
-    def overwrite_file(self, file_path: str, content: str) -> bool:
-        """Überschreibt den Inhalt einer Datei mit dem gegebenen Inhalt."""
-        # Nutzt die aktualisierte write_content Funktion
-        return self.write_content(file_path, content)
-
     # --- JSON/Text Lese/Schreib-Wrapper (unverändert) ---
     def read_json_file(self, file_path: str):
         norm_path = os.path.normpath(file_path)
@@ -427,20 +421,3 @@ class DateiManager:
         except Exception as e:
              logging.error(f"Allgemeiner Fehler beim Speichern von JSON '{file_path}': {e}")
              return {"error": f"Allgemeiner Fehler beim Speichern der JSON-Datei '{file_path}'."}
-
-
-    def read_text_file(self, file_path: str):
-        content = self.read_file(file_path) # Nutzt zentrale Lesefunktion
-        if content and not content.startswith("Fehler"):
-            return {"content": content}
-        elif content and content.startswith("Fehler"):
-            return {"error": content} # Gib Lesefehler weiter
-        else:
-            return {"error": f"Datei '{file_path}' konnte nicht gelesen werden oder ist leer."}
-
-    def save_text_file(self, file_path: str, content: str):
-        if self.write_content(file_path, content): # Nutzt zentrale Schreibfunktion
-            return {"message": f"Datei '{file_path}' erfolgreich gespeichert."}
-        else:
-            # write_content loggt den Fehler bereits
-            return {"error": f"Fehler beim Speichern der Textdatei '{file_path}'."}
