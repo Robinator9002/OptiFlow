@@ -491,7 +491,7 @@ export default function SystemSettings({
             )}
 
             {showShutdownConfirm && (
-                <div className="modal-overlay">
+                <div className="overlay">
                     <div className="modal-content shutdown-confirm-modal">
                         <h3>Confirm Identity</h3>
                         <p>
