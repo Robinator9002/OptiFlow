@@ -41,6 +41,7 @@ interface FrequencyOption {
 const ALLOWED_EVENTS: AllowedEventOption[] = [
     { value: "scanner", label: "Update Scanner" },
     { value: "file-structure", label: "Re-read Structure" },
+    { value: "convert-index-ocr", label: "Convert Full Index to OCR" },
 ];
 const FREQUENCIES: FrequencyOption[] = [
     { value: "hourly", label: "Hourly" },

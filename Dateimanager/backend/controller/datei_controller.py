@@ -183,11 +183,14 @@ class DateiController:
         )
 
     # Event Triggered
-    def on_event_triggered(self, event: Event) -> None:
+    def on_event_triggered(self, event: str) -> None:
+        """Handles the execution of a triggered event."""
         if event == 'scanner':
             self.actualize_index()
         if event == 'file-structure':
             self.rescan_file_structure()
+        if event == 'convert-index-ocr':
+            self.process_index(overwrite=False)
 
     # Event hinzufügen
     def add_event(self, frequency: str, times: List[str], event: str) -> bool:
