@@ -13,6 +13,12 @@
 		"app:dev": "concurrently \"npm run dev\" \"wait-on http-get://localhost:5173 && npm run electron:start\""
 	},
 	"dependencies": {
+		"@codemirror/lang-javascript": "^6.2.4",
+		"@codemirror/language": "^6.11.1",
+		"@codemirror/state": "^6.5.2",
+		"@codemirror/theme-one-dark": "^6.1.2",
+		"@codemirror/view": "^6.37.2",
+		"@uiw/react-codemirror": "^4.23.13",
 		"axios": "^1.9.0",
 		"electron-is-dev": "^3.0.1",
 		"lucide-react": "^0.511.0",
