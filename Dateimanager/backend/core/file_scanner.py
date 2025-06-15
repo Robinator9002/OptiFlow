@@ -466,13 +466,16 @@ class FileScanner:
         if not entry or entry.get("type") != "file":
             return default_resp(f"Datei '{path}' nicht im Index oder kein Dateityp.")
 
-        file_info_out = {k:v for k,v in entry.items() if k not in ['content_full', 'cleaned_content', 'content_hash', 'file_hash', 'content']} # Exclude full content from this basic info
-        # Add truncated content back if needed for display, or rely on snippets
-        file_info_out['content_preview'] = entry.get('content') # Truncated preview
+        file_info_out = {k:v for k,v in entry.items() if k not in ['content_full', 'cleaned_content', 'content_hash', 'file_hash', 'content']}
+        file_info_out['content_preview'] = entry.get('content') 
 
-        content_to_search = entry.get("content_full") or entry.get("content") 
-        if not content_to_search: return default_resp(f"Kein Inhalt für '{path}'.", file_info_out)
+        raw_content = entry.get("content_full") or entry.get("content") 
+        if not raw_content: return default_resp(f"Kein Inhalt für '{path}'.", file_info_out)
         
+        # Normalisiere die Zeilenumbrüche, BEVOR wir suchen und Offsets berechnen.
+        # Das stellt die Konsistenz mit dem Frontend sicher.
+        content_to_search = raw_content.replace('\r\n', '\n')
+
         queries = [q.strip().lower() for q in query_input.split(",") if q.strip()]
         if not queries: return default_resp("Keine Suchbegriffe.", file_info_out)
 
@@ -488,7 +491,7 @@ class FileScanner:
         if not raw_matches: return default_resp(f"Keine Treffer für '{query_input}' in '{path}'.", file_info_out)
 
         merged_hits = merge_intervals(sorted(raw_matches, key=lambda x: x[0]))
-        hit_count = len(merged_hits) # This is the count of distinct query hit regions
+        hit_count = len(merged_hits)
         
         snippet_bounds = sorted([{'start':max(0,s-self.snippet_window), 'end':min(len(content_to_search),e+self.snippet_window)} for s,e in merged_hits], key=lambda x:x['start'])
         final_snippets = []
@@ -502,10 +505,7 @@ class FileScanner:
         final_snippets.sort(key=lambda x: x['score'], reverse=True)
         if self.snippet_limit and self.snippet_limit > 0: final_snippets = final_snippets[:self.snippet_limit]
         
-        # The top-level "message" field is not part of FileContentResult model usually
-        # The FastAPI endpoint constructs its own message.
         return {"file":file_info_out, "match_count":hit_count, "snippets":final_snippets}
-
 
     def find_old_files(self, max_age_days: Optional[int] = None, old_files_limit: Optional[int] = None, 
                        sort_by: Optional[str] = None, sort_order: Optional[str] = None) -> List[Dict[str, Any]]:
