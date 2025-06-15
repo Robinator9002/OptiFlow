@@ -69,7 +69,7 @@ body[data-theme='dark'] {
     --bg-accent: #334155;
     --bg-accent-green: #164e35;
     --bg-accent-red: #7f1d1d;
-    --bg-code: #1f2937;
+    --bg-code: #21212a;
     --bg-overlay: rgba(var(--shadow-color-rgb), 0.7);
     --bg-snippet-highlight: rgba(var(--accent-primary-rgb), 0.25);
     --bg-snippet-highlight-active: rgba(var(--accent-primary-rgb), 0.5);

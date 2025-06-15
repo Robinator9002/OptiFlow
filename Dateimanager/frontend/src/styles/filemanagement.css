@@ -227,11 +227,6 @@
     box-shadow: var(--shadow-sm);
 }
 
-.file-preview-container pre {
-    max-height: 54.5vh;
-    overflow-y: auto;
-}
-
 .file-preview-container.empty-preview {
     justify-content: center;
     align-items: center;
@@ -316,14 +311,15 @@
     position: relative;
 }
 
-.file-editor,
-.file-preview-content {
+/* Base styles for preview and editor containers */
+.file-preview-content,
+.file-editor .cm-editor {
     width: 100%;
-    height: 50vh;
+    max-height: 50vh;
     overflow: auto;
     font-family: var(--font-mono);
     color: var(--text-primary);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     background-color: var(--bg-code);
     border: 1px solid var(--border-tertiary);
     border-radius: 0.25rem;
@@ -331,11 +327,39 @@
     box-sizing: border-box;
 }
 
+/* Specific styles for the CodeMirror editor component */
+.file-editor .cm-editor {
+    outline: none;
+    height: 100%;
+}
+
+.file-editor .cm-scroller {
+    font-family: var(--font-mono);
+}
+
+.file-editor .cm-editor.cm-focused {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-focus-ring);
+}
+
+/* NEW: Styles for CodeMirror highlights */
+.cm-highlight {
+    background-color: var(--bg-snippet-highlight);
+    color: var(--text-on-accent);
+}
+
+.cm-highlight-active {
+    background-color: var(--bg-snippet-highlight-active);
+    border: 1px solid var(--border-accent);
+    color: var(--text-on-accent);
+}
+
+/* Styles for the <pre> view highlights */
 .full-snippet-highlight {
     background-color: var(--bg-snippet-highlight);
     border-radius: 3px;
     cursor: pointer;
-    transition: background-color var(--transition-short); /* Kleine Animation hinzugefügt */
+    transition: background-color var(--transition-short);
     color: var(--text-on-accent);
 }
 
@@ -343,31 +367,6 @@
     background-color: var(--bg-snippet-highlight-active);
     border: 1px solid var(--border-accent);
     color: var(--text-on-accent);
-}
-
-.file-editor {
-    resize: none;
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.file-editor:focus {
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px var(--accent-focus-ring);
-}
-.highlighted-text {
-    background-color: var(--highlight-bg);
-    color: black !important;
-    padding: 0 0.05em;
-    border-radius: 3px;
-    transition: background-color 0.2s ease;
-    cursor: pointer;
-}
-
-.highlighted-text.active-highlight {
-    background-color: var(--active-highlight-bg);
-    color: var(--active-highlight-text);
-    box-shadow: 0 0 0 2px var(--active-highlight-bg);
 }
 
 /* --- Right Column: In-File Search & Actions --- */
@@ -413,11 +412,6 @@
     outline: none;
 }
 
-/* DER GEISTERJÄGER:
-  Diese Regel zielt auf den nativen "Löschen"-Button, den Webkit-Browser
-  (Chrome, Safari, etc.) automatisch in input[type="search"] einfügen.
-  Indem wir das Standard-Aussehen entfernen, verschwindet der Button.
-*/
 .in-file-search-bar input[type="search"]::-webkit-search-cancel-button,
 .in-file-search-bar input[type="search"]::-webkit-search-decoration {
     -webkit-appearance: none;
