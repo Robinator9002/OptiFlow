@@ -304,10 +304,7 @@ export const registerUser = async (
 };
 
 export const loginUser = async (username: string, password: string) => {
-    const response = await api.post(`/login/`, {
-        username,
-        password,
-    });
+    const response = await api.post(`/login/`, { username, password });
     if (response.data.access_token) {
         localStorage.setItem("accessToken", response.data.access_token);
     }
@@ -338,36 +335,19 @@ export const getUserAdminStatus = async (username: string) => {
     return response.data;
 };
 
-export const getResetPasswordStatus = async (username: string) => {
-    const response = await api.get(`/users/${username}/reset_password/`);
-    return response.data;
-};
-
 export const getAllUsers = async () => {
     const response = await api.get(`/users/`);
     return response.data;
 };
 
 export const setUserAdminStatus = async (
-    username: string,
-    admin_username: string,
-    admin_password: string
+    targetUsername: string,
+    adminPassword: string,
+    newStatus: boolean
 ) => {
-    const response = await api.post(`/users/${username}/admin/`, {
-        username: admin_username,
-        password: admin_password,
-    });
-    return response.data;
-};
-
-export const resetUserPassword = async (
-    username: string,
-    admin_username: string,
-    admin_password: string
-) => {
-    const response = await api.post(`/reset_password/${username}/`, {
-        username: admin_username,
-        password: admin_password,
+    const response = await api.post(`/users/${targetUsername}/admin/`, {
+        admin_password: adminPassword,
+        new_status: newStatus,
     });
     return response.data;
 };
@@ -398,10 +378,15 @@ export const changeUsername = async (
 export const changePassword = async (
     username: string,
     oldPassword: string,
+    admin_username: string | null = null,
+    admin_password: string | null = null,
+    password_reset: boolean = false,
     newPassword: string
 ) => {
     const requestBody = {
-        user: { username, password: oldPassword },
+        user: { username: username, password: oldPassword },
+        admin_user: { username: admin_username, password: admin_password },
+        password_reset: password_reset,
         new_password: newPassword,
     };
     const response = await api.post("/change_password/", requestBody);

@@ -10,13 +10,11 @@ import IndexManagement from "./components/IndexManagement.tsx";
 import PDFProcessor from "./components/OCRProcessor.tsx";
 import Login from "./components/Login.tsx";
 import Settings from "./components/Settings.tsx";
-import { ChangePassword } from "./components/settings/ChangePassword.tsx";
 import { Help } from "./components/Help.tsx";
 import {
     getScannerConfig,
     autoLogin,
     getUserAdminStatus,
-    getResetPasswordStatus,
     logoutUser,
     getFileInfo,
 } from "./api/api.tsx";
@@ -51,7 +49,6 @@ function AppContent() {
     const [loggedIn, setLoggedIn] = useState(false);
     const [currentUser, setCurrentUser] = useState<string | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
-    const [resetPassword, setResetPassword] = useState(false);
     const [confirmLogout, setConfirmLogout] = useState(false);
     const [selectedFile, setSelectedFile] = useState<any | null>(null);
     const [showHelpModal, setShowHelpModal] = useState(false);
@@ -79,10 +76,6 @@ function AppContent() {
                 try {
                     const adminStatus = await getUserAdminStatus(currentUser);
                     setIsAdmin(adminStatus.isAdmin);
-                    const resetStatus = await getResetPasswordStatus(
-                        currentUser
-                    );
-                    setResetPassword(resetStatus.passwordReset);
                 } catch (error) {
                     console.error(
                         "Fehler beim Abrufen des Benutzerstatus:",
@@ -219,7 +212,7 @@ function AppContent() {
                 return;
             }
 
-            if (confirmLogout || resetPassword) {
+            if (confirmLogout) {
                 return;
             }
 
@@ -320,7 +313,7 @@ function AppContent() {
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [activeTab, isAdmin, showHelpModal, confirmLogout, resetPassword]);
+    }, [activeTab, isAdmin, showHelpModal, confirmLogout]);
 
     if (!loggedIn) {
         return <Login onLoginSuccess={handleLoginSuccess} />;
@@ -329,17 +322,6 @@ function AppContent() {
     // Die `Settings`-Komponente erhält nun die `showRelevance`-Werte aus den geladenen Einstellungen.
     return (
         <>
-            {resetPassword && currentUser && (
-                <div className="app-container overlay">
-                    <ChangePassword
-                        currentUser={currentUser}
-                        password=""
-                        onLogout={() => setResetPassword(false)}
-                        onCancel={handleLogout}
-                    />
-                </div>
-            )}
-
             <div className="app-container" ref={appContainerRef} tabIndex={-1}>
                 <ToastContainer
                     position="top-right"

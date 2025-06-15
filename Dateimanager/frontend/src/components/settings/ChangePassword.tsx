@@ -6,6 +6,9 @@ import { changePassword } from "../../api/api";
 interface ChangePasswordProps {
     currentUser: string;
     password: string; // Das alte, bestätigte Passwort
+    adminUser: string | null,
+    adminPassword: string | null,
+    passwordReset: boolean,
     onLogout: () => void;
     onCancel: () => void;
 }
@@ -13,6 +16,9 @@ interface ChangePasswordProps {
 export const ChangePassword: FC<ChangePasswordProps> = ({
     currentUser,
     password,
+    adminUser = null,
+    adminPassword = null,
+    passwordReset = false,
     onLogout,
     onCancel,
 }) => {
@@ -33,6 +39,7 @@ export const ChangePassword: FC<ChangePasswordProps> = ({
                         active.tagName === "TEXTAREA";
                     if (isInput) {
                         e.preventDefault();
+                        e.stopPropagation();
                         // Wir können hier kein Event übergeben, da wir es nicht haben.
                         // Stattdessen rufen wir die Logik direkt auf, was sauberer ist.
                         handlePasswordChangeSubmit();
@@ -41,6 +48,7 @@ export const ChangePassword: FC<ChangePasswordProps> = ({
             }
             if (e.key === "Escape") {
                 e.preventDefault();
+                e.stopPropagation();
                 onCancel();
             }
         };
@@ -92,6 +100,9 @@ export const ChangePassword: FC<ChangePasswordProps> = ({
             const response = await changePassword(
                 currentUser,
                 password,
+                adminUser,
+                adminPassword,
+                passwordReset,
                 newPassword
             );
             toast.success(response.message);

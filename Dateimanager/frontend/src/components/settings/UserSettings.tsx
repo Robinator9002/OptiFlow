@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
-import { ConfirmModal } from "../ConfirmModal.tsx";
-import { ChangePassword } from "./ChangePassword.tsx";
+import { ConfirmModal } from "../ConfirmModal";
+import { ChangePassword } from "./ChangePassword";
 import {
     getAllUsers,
     setUserAdminStatus,
     deleteUser,
-    resetUserPassword,
     changeUsername,
     verifyPassword,
-} from "../../api/api.tsx";
+} from "../../api/api";
 
 // --- Typdefinitionen ---
 interface UserSettingsProps {
@@ -48,7 +47,6 @@ export default function UserSettings({
     const [isLoadingUsers, setIsLoadingUsers] = useState<boolean>(false);
     const [userError, setUserError] = useState<string | null>(null);
 
-    // States für verschiedene Bestätigungs-Modals
     const [modal, setModal] = useState<
         | { type: "delete"; username: string }
         | { type: "reset"; username: string }
@@ -56,7 +54,6 @@ export default function UserSettings({
         | null
     >(null);
 
-    // Holt die Benutzerliste, wenn der User Admin ist.
     const fetchUsers = useCallback(async () => {
         if (!isAdmin) return;
         setIsLoadingUsers(true);
@@ -78,7 +75,6 @@ export default function UserSettings({
         }
     }, [isConfirmed, fetchUsers]);
 
-    // Bestätigt die Identität des Benutzers mit seinem Passwort.
     const handleConfirmUser = useCallback(async () => {
         if (!password) {
             setConfirmationError("Bitte Passwort eingeben.");
@@ -101,7 +97,6 @@ export default function UserSettings({
         }
     }, [currentUser, password, setIsBusy]);
 
-    // Ändert den Benutzernamen.
     const handleUsernameChange = useCallback(async () => {
         const trimmedNewUsername = newUsername.trim();
         if (!trimmedNewUsername) {
@@ -117,7 +112,8 @@ export default function UserSettings({
             onLogout();
         } catch (err: any) {
             toast.error(
-                err.message || "Benutzername konnte nicht geändert werden."
+                err.response?.data?.detail ||
+                    "Benutzername konnte nicht geändert werden."
             );
         } finally {
             setIsBusy(false);
@@ -131,18 +127,22 @@ export default function UserSettings({
         setIsBusy,
     ]);
 
-    // Schaltet den Admin-Status eines Benutzers um.
-    const handleToggleAdmin = async (targetUsername: string) => {
+    const handleToggleAdmin = async (
+        targetUsername: string,
+        newStatus: boolean
+    ) => {
+        setIsBusy(true);
         try {
-            await setUserAdminStatus(targetUsername, currentUser, password);
+            await setUserAdminStatus(targetUsername, password, newStatus);
             toast.success(`Admin-Status für ${targetUsername} geändert.`);
-            await fetchUsers(); // Liste neu laden
+            await fetchUsers();
         } catch (err: any) {
-            toast.error(`Fehler: ${err.message}`);
+            toast.error(`Fehler: ${err.response?.data?.detail || err.message}`);
+        } finally {
+            setIsBusy(false);
         }
     };
 
-    // Löscht einen Benutzer.
     const handleDeleteUser = async (targetUsername: string) => {
         setModal(null);
         setIsBusy(true);
@@ -155,31 +155,12 @@ export default function UserSettings({
                 await fetchUsers();
             }
         } catch (err: any) {
-            toast.error(`Fehler: ${err.message}`);
+            toast.error(`Fehler: ${err.response?.data?.detail || err.message}`);
         } finally {
             setIsBusy(false);
         }
     };
 
-    // Setzt das Passwort eines Benutzers zurück.
-    const handleResetPassword = async (targetUsername: string) => {
-        setModal(null);
-        setIsBusy(true);
-        try {
-            const response = await resetUserPassword(
-                targetUsername,
-                currentUser,
-                password
-            );
-            toast.success(response.message);
-        } catch (err: any) {
-            toast.error(`Fehler: ${err.message}`);
-        } finally {
-            setIsBusy(false);
-        }
-    };
-
-    // Keyboard-Events für den Bestätigungsdialog
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (!isConfirmed) {
@@ -195,12 +176,10 @@ export default function UserSettings({
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, [isConfirmed, handleConfirmUser, swapBack]);
 
-    // Stellt sicher, dass die App blockiert ist, solange nicht bestätigt wurde.
     useEffect(() => {
         setIsBusy(!isConfirmed);
     }, [isConfirmed, setIsBusy]);
 
-    // Rendert den Bestätigungs-Bildschirm
     if (!isConfirmed) {
         return (
             <div className="user-confirmation-overlay">
@@ -237,12 +216,9 @@ export default function UserSettings({
         );
     }
 
-    // Rendert die eigentlichen Einstellungen
-    // The main component render method
     return (
         <>
             <div className="settings-section">
-                {/* --- Mein Konto Sektion --- */}
                 <div className="settings-section-header">
                     <h3>Mein Konto</h3>
                 </div>
@@ -272,7 +248,12 @@ export default function UserSettings({
                     </div>
                     <div className="setting-item">
                         <label>Passwort</label>
-                        <button onClick={() => {setIsChangingPassword(true); setIsBusy(true);}}>
+                        <button
+                            onClick={() => {
+                                setIsChangingPassword(true);
+                                setIsBusy(true);
+                            }}
+                        >
                             Passwort ändern
                         </button>
                     </div>
@@ -292,9 +273,7 @@ export default function UserSettings({
                     </div>
                 </div>
 
-                {/* --- Benutzerverwaltung Sektion (nur für Admins) --- */}
                 {isAdmin && (
-                    // Using a fragment to avoid adding an extra div layer
                     <>
                         <div className="settings-section-header">
                             <h3>Benutzerverwaltung</h3>
@@ -326,7 +305,8 @@ export default function UserSettings({
                                                         checked={user.isAdmin}
                                                         onChange={() =>
                                                             handleToggleAdmin(
-                                                                user.username
+                                                                user.username,
+                                                                !user.isAdmin
                                                             )
                                                         }
                                                         disabled={
@@ -352,13 +332,14 @@ export default function UserSettings({
                                                 </td>
                                                 <td className="actions-cell">
                                                     <button
-                                                        onClick={() =>
+                                                        onClick={() => {
+                                                            setIsBusy(true);
                                                             setModal({
                                                                 type: "reset",
                                                                 username:
                                                                     user.username,
                                                             })
-                                                        }
+                                                        }}
                                                         disabled={
                                                             user.username ===
                                                             currentUser
@@ -367,13 +348,14 @@ export default function UserSettings({
                                                         PW Reset
                                                     </button>
                                                     <button
-                                                        onClick={() =>
+                                                        onClick={() => {
+                                                            setIsBusy(true);
                                                             setModal({
                                                                 type: "delete",
                                                                 username:
                                                                     user.username,
-                                                            })
-                                                        }
+                                                            });
+                                                        }}
                                                         className="button-danger"
                                                         disabled={
                                                             user.username ===
@@ -393,12 +375,14 @@ export default function UserSettings({
                 )}
             </div>
 
-            {/* --- Modals and Overlays remain outside the main section --- */}
             {isChangingPassword && (
                 <div className="overlay">
                     <ChangePassword
                         currentUser={currentUser}
                         password={password}
+                        adminUser={null}
+                        adminPassword={null}
+                        passwordReset={false}
                         onLogout={() => {
                             onLogout();
                         }}
@@ -420,13 +404,22 @@ export default function UserSettings({
                 />
             )}
             {modal?.type === "reset" && (
-                <ConfirmModal
-                    title="Passwort zurücksetzen"
-                    message={`Soll das Passwort für "${modal.username}" wirklich zurückgesetzt werden? Der Benutzer muss dann ein neues Passwort anfordern.`}
-                    isDanger={true}
-                    onConfirm={() => handleResetPassword(modal.username)}
-                    onCancel={() => setModal(null)}
-                />
+                <div className="overlay"><ChangePassword
+                    currentUser={modal.username}
+                    password={''}
+                    adminUser={currentUser}
+                    adminPassword={password}
+                    passwordReset={true}
+                    onLogout={() => {
+                        toast.success(`Das Passwort des Benutzers ${modal.username} wurde erfolgreich geändert!`);
+                        setIsBusy(false);
+                        setModal(null);
+                    }}
+                    onCancel={() => {
+                        setModal(null);
+                        setIsBusy(false);
+                    }}
+                /></div>
             )}
             {modal?.type === "username" && (
                 <ConfirmModal
