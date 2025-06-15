@@ -545,16 +545,3 @@
     /* Mindestbreite entfernen */
     /* Weitere spezifische Stile, falls gewünscht */
 }
-
-.clear-dedupe-search-button {
-    position: absolute;
-    left: 23%;
-    border: none !important;
-    background: none !important;
-    box-shadow: none !important;
-    color: var(--accent-danger) !important;
-}
-
-.clear-dedupe-search-button:hover {
-    color: var(--accent-danger-hover) !important;
-}

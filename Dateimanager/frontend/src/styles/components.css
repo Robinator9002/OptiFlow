@@ -48,31 +48,6 @@
     border-color: var(--border-secondary);
 }
 
-/* Fokus-Stil wird von global.css geerbt */
-
-/* Fortschrittsbalken */
-.progress-bar {
-    width: 100%;
-    background-color: var(--bg-tertiary);
-    height: 0.625rem;
-    /* 10px */
-    border-radius: 0.3125rem;
-    /* 5px */
-    margin-top: 0.625rem;
-    /* 10px */
-    overflow: hidden;
-}
-
-.progress-bar span {
-    display: block;
-    height: 100%;
-    width: 0%;
-    background-color: var(--accent-primary);
-    border-radius: 0.3125rem;
-    /* 5px */
-    transition: width var(--transition-long);
-}
-
 /* Overlay / Modal / Spinner */
 .overlay {
     position: fixed;
@@ -505,32 +480,6 @@ body[data-theme="high-contrast"] .spinner {
     opacity: 1;
 }
 
-/* File Card */
-.file-card {
-    display: flex;
-    align-items: center;
-    background: var(--bg-primary);
-    padding: 0.75rem 0.9375rem;
-    border-radius: 0.25rem;
-    border: 1px solid var(--border-tertiary);
-    box-shadow: none;
-    transition: background-color var(--transition-base),
-        border-color var(--transition-base);
-    cursor: pointer;
-}
-
-.file-card:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--border-secondary);
-}
-
-.file-icon {
-    margin-right: 0.75rem;
-    font-size: 1.3rem;
-    color: var(--accent-primary);
-    flex-shrink: 0;
-}
-
 /* .file-info is now in the Old Files section */
 
 .file-name {
@@ -561,6 +510,7 @@ body[data-theme="high-contrast"] .spinner {
     max-width: 45rem;
     padding: 2rem 3rem;
     background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
     border-radius: 1rem;
 }
 
