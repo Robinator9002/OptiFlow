@@ -30,6 +30,7 @@ interface FileSearchProps {
     setDeletedFile: React.Dispatch<React.SetStateAction<string | null>>;
     isSearchCollapsed: boolean;
     onToggleCollapse: () => void;
+    onSearchResults: (results: SearchResultItem[]) => void;
 }
 
 // --- Component ---
@@ -43,14 +44,17 @@ const FileSearch: React.FC<FileSearchProps> = ({
     setDeletedFile,
     isSearchCollapsed,
     onToggleCollapse,
+    onSearchResults,
 }) => {
     const [query, setQuery] = useState<string>("");
     const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const resultsContainerRef = useRef<HTMLUListElement>(null);
 
     const clearSearch = () => {
         setQuery("");
         setSearchResults([]);
+        onSearchResults([]);
     };
 
     const handleSearch = async () => {
@@ -63,16 +67,19 @@ const FileSearch: React.FC<FileSearchProps> = ({
             const responseData = await searchFiles(query);
             if (responseData?.data && Array.isArray(responseData.data)) {
                 setSearchResults(responseData.data);
+                onSearchResults(responseData.data); // Lift state up
                 toast.success(
                     `✅ ${responseData.data.length} Ergebnisse gefunden!`
                 );
             } else {
                 setSearchResults([]);
+                onSearchResults([]); // Lift state up
                 toast.info("⚠️ Keine passenden Dateien gefunden.");
             }
         } catch (error: any) {
             toast.error(`❌ Fehler bei der Suche: ${error.message}`);
             setSearchResults([]);
+            onSearchResults([]); // Lift state up
         } finally {
             setSearchingFiles(false);
         }
@@ -80,18 +87,35 @@ const FileSearch: React.FC<FileSearchProps> = ({
 
     useEffect(() => {
         if (deletedFile) {
-            setSearchResults((prev) =>
-                prev.filter((result) => result.file.path !== deletedFile)
+            const newResults = searchResults.filter(
+                (result) => result.file.path !== deletedFile
             );
+            setSearchResults(newResults);
+            onSearchResults(newResults);
             setDeletedFile(null);
         }
-    }, [deletedFile, setDeletedFile]);
+    }, [deletedFile, setDeletedFile, searchResults, onSearchResults]);
 
     useEffect(() => {
         if (!isSearchCollapsed) {
             searchInputRef.current?.focus();
         }
     }, [isSearchCollapsed]);
+
+    // Scroll to selected file
+    useEffect(() => {
+        if (selectedFile && resultsContainerRef.current) {
+            const selectedItem = resultsContainerRef.current.querySelector(
+                ".selected"
+            ) as HTMLLIElement;
+            if (selectedItem) {
+                selectedItem.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                });
+            }
+        }
+    }, [selectedFile]);
 
     return (
         <div
@@ -125,9 +149,16 @@ const FileSearch: React.FC<FileSearchProps> = ({
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            onKeyDown={(e) =>
-                                e.key === "Enter" && handleSearch()
-                            }
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") handleSearch();
+                                // Prevent default browser behavior for arrow keys in this input
+                                if (
+                                    e.key === "ArrowUp" ||
+                                    e.key === "ArrowDown"
+                                ) {
+                                    e.preventDefault();
+                                }
+                            }}
                             placeholder="Suchbegriff eingeben"
                         />
                         {query && (
@@ -151,7 +182,7 @@ const FileSearch: React.FC<FileSearchProps> = ({
                         </button>
                     </div>
                     <div className="file-search-results-wrapper">
-                        <ul className="file-list">
+                        <ul className="file-list" ref={resultsContainerRef}>
                             {searchResults.map((resultItem) => (
                                 <li
                                     key={resultItem.file.path}

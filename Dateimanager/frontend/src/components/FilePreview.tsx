@@ -1,12 +1,10 @@
-import React, {
-    useEffect,
-    useState,
-    useCallback,
-    useRef,
-} from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { toast } from "react-toastify";
 import { X, Loader2 } from "lucide-react";
-import FileSearchPanel, { type HighlightPosition } from "./FileSearchPanel.tsx";
+import FileSearchPanel, {
+    type HighlightPosition,
+    type FileSearchPanelRef,
+} from "./FileSearchPanel.tsx";
 import { ConfirmModal } from "./ConfirmModal.tsx";
 
 // --- TYPE DEFINITIONS ---
@@ -30,11 +28,14 @@ interface FilePreviewContainerProps {
     onFileDeleted: (filePath: string) => void;
     isAdmin: boolean;
     setIsSearchCollapsed: (isCollapsed: boolean) => void;
+    setIsFileSearchActive: (isActive: boolean) => void;
+    setEditingFile: (isEditing: boolean) => void;
+    setSnippetNavCallback: (
+        callback: { navigate: (dir: "next" | "prev") => void } | null
+    ) => void;
 }
 
 // --- RENDER-ONLY SUB-COMPONENTS ---
-// This internal FileContentView is kept as its simple, array-based rendering is
-// tightly coupled with the editor's overlay functionality.
 const FileContentView: React.FC<{
     content: string | null;
     highlightPositions: HighlightPosition[];
@@ -91,22 +92,23 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     onFileDeleted,
     isAdmin,
     setIsSearchCollapsed,
+    setIsFileSearchActive,
+    setEditingFile,
+    setSnippetNavCallback,
 }) => {
     // --- STATE MANAGEMENT ---
-    // Note how search-related states are now gone from here.
     const [content, setContent] = useState<string | null>(null);
     const [originalContent, setOriginalContent] = useState<string>("");
     const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
     const [loadingContent, setLoadingContent] = useState<boolean>(false);
     const [contentError, setContentError] = useState<string | null>(null);
-    const [editingFile, setEditingFile] = useState<boolean>(false);
+    const [editingFile, setLocalEditingFile] = useState<boolean>(false); // Local state for rendering
     const [savingFile, setSavingFile] = useState<boolean>(false);
     const [showConfirmSaveModal, setShowConfirmSaveModal] =
         useState<boolean>(false);
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] =
         useState<boolean>(false);
 
-    // State for highlights is now controlled by FileSearchPanel via callbacks.
     const [highlightPositions, setHighlightPositions] = useState<
         HighlightPosition[]
     >([]);
@@ -115,19 +117,26 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     // --- REFS ---
     const previewContentRef = useRef<HTMLDivElement>(null);
     const editorRef = useRef<HTMLTextAreaElement>(null);
+    const searchPanelRef = useRef<FileSearchPanelRef>(null);
 
     // --- HELPER FUNCTIONS & API CALLS ---
     const resetSearchState = useCallback(() => {
         setHighlightPositions([]);
         setActiveSnippetIndex(-1);
-    }, []);
+        setIsFileSearchActive(false);
+    }, [setIsFileSearchActive]);
+
+    const handleSetEditing = (isEditing: boolean) => {
+        setLocalEditingFile(isEditing);
+        setEditingFile(isEditing); // Lift state up for keybindings
+    };
 
     const closeFile = useCallback(() => {
         setSelectedFile(null);
         setContent(null);
         setOriginalContent("");
         setFileInfo(null);
-        setEditingFile(false);
+        handleSetEditing(false);
         setContentError(null);
         resetSearchState();
         setIsSearchCollapsed(false);
@@ -170,14 +179,14 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     const handleEdit = () => {
         if (content === null) return;
         setOriginalContent(content);
-        setEditingFile(true);
+        handleSetEditing(true);
         resetSearchState(); // Clear highlights when entering edit mode
         setIsSearchCollapsed(true);
     };
 
     const handleCancelEdit = () => {
         setContent(originalContent);
-        setEditingFile(false);
+        handleSetEditing(false);
         toast.info("↩ Änderungen verworfen.");
     };
 
@@ -189,7 +198,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
             const { writeFile } = await import("../api/api.tsx");
             await writeFile({ file_path: selectedFile.path, content });
             setOriginalContent(content);
-            setEditingFile(false);
+            handleSetEditing(false);
             toast.success("✅ Datei erfolgreich gespeichert!");
         } catch (error) {
             toast.error(
@@ -226,6 +235,16 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
 
     // --- EFFECTS ---
     useEffect(() => {
+        if (searchPanelRef.current) {
+            setSnippetNavCallback({
+                navigate: searchPanelRef.current.navigateSnippet,
+            });
+        } else {
+            setSnippetNavCallback(null);
+        }
+    }, [searchPanelRef, setSnippetNavCallback, activeSnippetIndex]); // Rerun when activeSnippetIndex changes
+
+    useEffect(() => {
         if (!selectedFile?.path) {
             closeFile();
             return;
@@ -233,7 +252,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         const loadFileData = async () => {
             setLoadingContent(true);
             setContentError(null);
-            setEditingFile(false);
+            handleSetEditing(false);
             resetSearchState();
             try {
                 const { getFileInfo } = await import("../api/api.tsx");
@@ -342,7 +361,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                                 height: "100%",
                             }}
                         >
-                            {/* The visual layer with highlights is disabled during editing for simplicity and performance */}
                             <textarea
                                 ref={editorRef}
                                 value={content ?? ""}
@@ -368,13 +386,14 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                 </div>
 
                 <div className="file-sidebar">
-                    {/* THE BIG CHANGE: Delegate all search functionality to the dedicated panel */}
                     <FileSearchPanel
+                        ref={searchPanelRef}
                         filePath={selectedFile.path}
                         fileContent={content}
                         activeSnippetIndex={activeSnippetIndex}
                         onHighlightPositionsChange={setHighlightPositions}
                         onActiveSnippetIndexChange={setActiveSnippetIndex}
+                        onSearchStatusChange={setIsFileSearchActive}
                     />
 
                     <div className="file-actions">
