@@ -428,9 +428,7 @@
 .dedupe-group-item button.disfirm:focus-visible,
 .dedupe-group-item .dedupe-group-files li button.disfirm-small:focus-visible {
     outline: none;
-    /* Standard-Outline entfernen */
     box-shadow: var(--shadow-focus-ring-danger);
-    /* Fokus-Ring Schatten (Danger) */
     border-color: var(--accent-danger-border-hover);
 }
 
@@ -439,11 +437,8 @@
     opacity: 0.6;
     cursor: not-allowed;
     background-color: var(--accent-disabled);
-    /* Disabled Hintergrund */
     color: var(--accent-disabled-text);
-    /* Disabled Textfarbe */
     border-color: var(--accent-disabled);
-    /* Disabled Border */
     box-shadow: none;
 }
 
@@ -540,8 +535,5 @@
 /* Spezifisches Styling für den X Button, wenn nötig */
 .filter-controls .action-button.clear-search-button {
     padding: 8px;
-    /* Quadratisches Padding */
     min-width: auto;
-    /* Mindestbreite entfernen */
-    /* Weitere spezifische Stile, falls gewünscht */
 }

@@ -6,9 +6,9 @@ import React, {
     useContext,
 } from "react";
 import { toast } from "react-toastify";
-import { findOldFiles, deleteFile } from "../api/api.tsx";
-import { ConfirmModal } from "./ConfirmModal.tsx";
-import { SettingsContext } from "../context/SettingsContext.tsx";
+import { findOldFiles, deleteFile } from "../../api/api.tsx";
+import { ConfirmModal } from "../modals/ConfirmModal.tsx";
+import { SettingsContext } from "../../context/SettingsContext.tsx";
 
 // --- Type Definitions ---
 

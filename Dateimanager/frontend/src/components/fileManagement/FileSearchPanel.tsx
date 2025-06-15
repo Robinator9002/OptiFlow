@@ -14,6 +14,7 @@ import {
     Loader2,
     X,
 } from "lucide-react";
+const { searchInFile } = await import("../../api/api.tsx");
 
 // --- Type Definitions ---
 
@@ -117,7 +118,6 @@ const FileSearchPanel = forwardRef<FileSearchPanelRef, FileSearchPanelProps>(
             onHighlightPositionsChange([]);
 
             try {
-                const { searchInFile } = await import("../api/api.tsx");
                 const result: ApiSearchResponse = await searchInFile(
                     searchTerm,
                     filePath

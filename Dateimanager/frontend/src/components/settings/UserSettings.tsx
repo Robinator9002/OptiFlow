@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
-import { ConfirmModal } from "../ConfirmModal";
-import { ChangePassword } from "./ChangePassword";
+import { ConfirmModal } from "../modals/ConfirmModal";
+import { ChangePassword } from "../modals/ChangePassword";
 import {
     getAllUsers,
     setUserAdminStatus,

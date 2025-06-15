@@ -15,7 +15,7 @@ import {
     type Settings as ApiSettings,
 } from "../api/api";
 import { SettingsContext } from "../context/SettingsContext";
-import { ConfirmModal } from "./ConfirmModal";
+import { ConfirmModal } from "./modals/ConfirmModal";
 
 interface SettingsProps {
     currentUser: string | null;

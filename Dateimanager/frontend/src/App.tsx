@@ -3,14 +3,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import myAppIcon from "/icon.png";
-import FileManagement from "./components/FileManagement.tsx";
-import DeDuping from "./components/DeDuping.tsx";
-import OldFiles from "./components/OldFiles.tsx";
-import IndexManagement from "./components/IndexManagement.tsx";
-import PDFProcessor from "./components/OCRProcessor.tsx";
-import Login from "./components/Login.tsx";
+import FileManagement from "./components/fileManagement/FileManagement.tsx";
+import DeDuping from "./components/deduping/DeDuping.tsx";
+import OldFiles from "./components/oldFiles/OldFiles.tsx";
+import IndexManagement from "./components/indexManagement/IndexManagement.tsx";
+import PDFProcessor from "./components/processing/OCRProcessor.tsx";
+import Login from "./components/login/Login.tsx";
 import Settings from "./components/Settings.tsx";
-import { Help } from "./components/Help.tsx";
+import { Help } from "./components/utility/Help.tsx";
 import {
     getScannerConfig,
     autoLogin,
@@ -22,8 +22,8 @@ import {
     SettingsContext,
     SettingsProvider,
 } from "./context/SettingsContext.tsx";
-import { ConfirmModal } from "./components/ConfirmModal.tsx";
-import ScannerConfig from "./components/ScannerConfig.tsx";
+import { ConfirmModal } from "./components/modals/ConfirmModal.tsx";
+import ScannerConfig from "./components/indexManagement/ScannerConfig.tsx";
 
 // Definieren der Tab-Reihenfolge für die Navigation
 const TAB_ORDER = ["search", "dedupe", "old-files", "scanner", "pdf-to-ocr"];

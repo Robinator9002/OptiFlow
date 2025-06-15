@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
-import { ConfirmModal } from "./ConfirmModal";
-import { ocrConvertFolder, ocrConvertIndex } from "../api/api";
-import { FolderSelector } from "./FolderSelector";
-import { SettingsContext } from "../context/SettingsContext";
+import { ConfirmModal } from "../modals/ConfirmModal";
+import { ocrConvertFolder, ocrConvertIndex } from "../../api/api";
+import { FolderSelector } from "../modals/FolderSelector";
+import { SettingsContext } from "../../context/SettingsContext";
 
 interface PDFProcessorProps {
     setProcessingPDF: (isProcessing: boolean) => void;

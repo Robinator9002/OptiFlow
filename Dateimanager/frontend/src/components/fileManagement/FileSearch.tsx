@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
-import { searchFiles } from "../api/api.tsx";
+import { searchFiles } from "../../api/api.tsx";
 import {
     ChevronLeft,
     ChevronRight,

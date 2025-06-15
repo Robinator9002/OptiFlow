@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { getFileStructure, rescanFileStructure } from "../api/api.tsx";
+import { getFileStructure, rescanFileStructure } from "../../api/api.tsx";
 import { Folder, FolderOpen, X, RotateCw, Check } from "lucide-react";
 
 // Define the structure for a node in the folder tree

@@ -5,9 +5,10 @@ import FileSearchPanel, {
     type HighlightPosition,
     type FileSearchPanelRef,
 } from "./FileSearchPanel";
-import { ConfirmModal } from "./ConfirmModal";
+import { ConfirmModal } from "../modals/ConfirmModal";
 import FileContentView from "./FileContentView";
 import { type ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import { openFile, openFileInExplorer, writeFile, deleteFile, getFileInfo } from "../../api/api"
 
 // --- TYPE DEFINITIONS ---
 interface SelectedFile {
@@ -102,7 +103,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     const handleOpenFile = async () => {
         if (!selectedFile) return;
         try {
-            const { openFile } = await import("../api/api");
             await openFile(selectedFile.path);
             toast.info("Datei wird geöffnet...");
         } catch (error) {
@@ -119,7 +119,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     const handleOpenInExplorer = async () => {
         if (!selectedFile) return;
         try {
-            const { openFileInExplorer } = await import("../api/api");
             await openFileInExplorer(selectedFile.path);
         } catch (error) {
             toast.error(
@@ -152,7 +151,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         setShowConfirmSaveModal(false);
         setSavingFile(true);
         try {
-            const { writeFile } = await import("../api/api");
             await writeFile({ file_path: selectedFile.path, content });
             setOriginalContent(content);
             handleSetEditing(false);
@@ -175,7 +173,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         if (!selectedFile) return;
         setShowDeleteConfirmModal(false);
         try {
-            const { deleteFile } = await import("../api/api");
             await deleteFile(selectedFile.path);
             toast.success(`🗑️ Datei "${selectedFile.name}" gelöscht!`);
             onFileDeleted(selectedFile.path);
@@ -213,7 +210,6 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
             handleSetEditing(false);
             resetSearchState();
             try {
-                const { getFileInfo } = await import("../api/api");
                 const data: FileInfo = await getFileInfo(selectedFile.path);
                 setFileInfo(data);
 

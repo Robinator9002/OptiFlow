@@ -8,7 +8,7 @@ import CodeMirror, { type ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { EditorView, Decoration, type DecorationSet } from "@codemirror/view";
 import { StateField, StateEffect } from "@codemirror/state";
-import { monochromeTheme } from "./EditorTheme"; 
+import { monochromeTheme } from "../EditorTheme"; 
 // --- Type Imports ---
 import type { HighlightPosition } from "./FileSearchPanel";
 

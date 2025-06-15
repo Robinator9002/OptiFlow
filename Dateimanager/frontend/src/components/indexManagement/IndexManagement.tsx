@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { ConfirmModal } from "./ConfirmModal.tsx";
+import { ConfirmModal } from "../modals/ConfirmModal.tsx";
 import {
     scanFiles,
     actualizeIndex,
     loadIndex,
     deleteIndex,
-} from "../api/api.tsx";
+} from "../../api/api.tsx";
 // NEU: Icons aus lucide-react importiert
 import { RefreshCw, FileScan, Download, Trash2 } from "lucide-react";
 

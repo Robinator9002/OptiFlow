@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import { toast } from "react-toastify";
-import { ConfirmModal } from "./ConfirmModal";
-import { updateScannerConfig, type ScannerConfigs } from "../api/api";
-import { FolderSelector } from "./FolderSelector";
-import { SettingsContext } from "../context/SettingsContext";
+import { ConfirmModal } from "../modals/ConfirmModal";
+import { updateScannerConfig, type ScannerConfigs } from "../../api/api";
+import { FolderSelector } from "../modals/FolderSelector";
+import { SettingsContext } from "../../context/SettingsContext";
 
 // --- FIX: The local interface is no longer needed. We import it from api.tsx. ---
 // interface ScannerConfigData { ... }

@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { toast } from "react-toastify";
 import { FolderOpen, FileText, X } from "lucide-react";
-import { SettingsContext } from "../context/SettingsContext.tsx";
+import { SettingsContext } from "../../context/SettingsContext.tsx";
 import {
     findDuplicates,
     loadDuplicates,
     saveDuplicates,
     deleteFile,
-} from "../api/api.tsx";
-import { ConfirmModal } from "./ConfirmModal.tsx";
+} from "../../api/api.tsx";
+import { ConfirmModal } from "../modals/ConfirmModal.tsx";
 
 // --- Type Definitions ---
 interface DeDupingProps {

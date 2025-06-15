@@ -9,7 +9,7 @@ import {
     deleteEvent,
     executeEvent,
 } from "../../api/api.tsx";
-import { ConfirmModal } from "../ConfirmModal.tsx";
+import { ConfirmModal } from "../modals/ConfirmModal.tsx";
 
 // --- Type Definitions ---
 interface SystemSettingsProps {

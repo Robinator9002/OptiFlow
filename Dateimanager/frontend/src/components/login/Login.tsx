@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { loginUser, registerUser } from "../api/api.tsx";
+import { loginUser, registerUser } from "../../api/api.tsx";
 import { toast } from "react-toastify";
 
 // --- Type Definitions ---
