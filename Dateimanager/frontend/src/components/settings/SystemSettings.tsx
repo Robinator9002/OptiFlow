@@ -471,17 +471,17 @@ export default function SystemSettings({
                             </div>
                             <div className="button-group">
                                 <button
-                                    type="submit"
-                                    className="button button-primary"
-                                >
-                                    Speichern
-                                </button>
-                                <button
                                     type="button"
                                     className="button"
                                     onClick={closeForm}
                                 >
                                     Abbrechen
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="button button-primary"
+                                >
+                                    Speichern
                                 </button>
                             </div>
                         </form>
