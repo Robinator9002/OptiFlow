@@ -36,7 +36,6 @@ export interface HighlightPosition {
     start: number;
     end: number;
     snippetIndex: number;
-    isFullSnippet?: boolean; // Keep track of the broader snippet area
 }
 
 interface FileSearchPanelProps {
@@ -48,8 +47,10 @@ interface FileSearchPanelProps {
     onSearchStatusChange: (isActive: boolean) => void;
 }
 
+// UPDATED: Ref interface now includes clearSearch
 export interface FileSearchPanelRef {
     navigateSnippet: (direction: "prev" | "next") => void;
+    clearSearch: () => void;
 }
 
 const SnippetItem = forwardRef<
@@ -98,7 +99,8 @@ const FileSearchPanel = forwardRef<FileSearchPanelRef, FileSearchPanelProps>(
             onHighlightPositionsChange([]);
             onActiveSnippetIndexChange(-1);
             onSearchStatusChange(false);
-            searchInputRef.current?.focus();
+            // We no longer focus here, as this function might be called
+            // during context switches where focus should be elsewhere.
         }, [
             onHighlightPositionsChange,
             onActiveSnippetIndexChange,
@@ -125,17 +127,13 @@ const FileSearchPanel = forwardRef<FileSearchPanelRef, FileSearchPanelProps>(
                 onSearchStatusChange(foundSnippets.length > 0);
 
                 if (foundSnippets.length > 0) {
-                    const positions: HighlightPosition[] = [];
-
-                    foundSnippets.forEach((snippet, index) => {
-                        positions.push({
+                    const positions: HighlightPosition[] = foundSnippets.map(
+                        (snippet, index) => ({
                             start: snippet.start,
                             end: snippet.end,
                             snippetIndex: index,
-                            isFullSnippet: true,
-                        });
-                    });
-
+                        })
+                    );
                     positions.sort((a, b) => a.start - b.start);
 
                     onHighlightPositionsChange(positions);
@@ -179,9 +177,17 @@ const FileSearchPanel = forwardRef<FileSearchPanelRef, FileSearchPanelProps>(
             [activeSnippetIndex, snippets.length, onActiveSnippetIndexChange]
         );
 
+        // UPDATED: Expose the clearSearch function
         useImperativeHandle(ref, () => ({
             navigateSnippet,
+            clearSearch,
         }));
+
+        // This effect is to clear the search if the file path changes
+        // This is a defensive measure; FilePreview also handles this.
+        useEffect(() => {
+            clearSearch();
+        }, [filePath, clearSearch]);
 
         useEffect(() => {
             activeSnippetRef.current?.scrollIntoView({
@@ -202,7 +208,6 @@ const FileSearchPanel = forwardRef<FileSearchPanelRef, FileSearchPanelProps>(
                         onKeyDown={(e) => {
                             if (e.key === "Enter") executeSearch();
                             if (e.key === "Escape") clearSearch();
-                            // Also allow navigation from the input itself
                             if (e.key === "ArrowUp" || e.key === "ArrowDown") {
                                 e.preventDefault();
                                 navigateSnippet(

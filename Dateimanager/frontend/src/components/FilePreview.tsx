@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { toast } from "react-toastify";
-import { X, Loader2 } from "lucide-react";
+import { X } from "lucide-react";
 import FileSearchPanel, {
     type HighlightPosition,
     type FileSearchPanelRef,
-} from "./FileSearchPanel.tsx";
-import { ConfirmModal } from "./ConfirmModal.tsx";
+} from "./FileSearchPanel";
+import { ConfirmModal } from "./ConfirmModal";
+import FileContentView from "./FileContentView";
+import { type ReactCodeMirrorRef } from "@uiw/react-codemirror";
 
 // --- TYPE DEFINITIONS ---
 interface SelectedFile {
@@ -35,55 +37,6 @@ interface FilePreviewContainerProps {
     ) => void;
 }
 
-// --- RENDER-ONLY SUB-COMPONENTS ---
-const FileContentView: React.FC<{
-    content: string | null;
-    highlightPositions: HighlightPosition[];
-    activeSnippetIndex: number;
-    onHighlightClick: (snippetIndex: number) => void;
-}> = ({
-    content,
-    highlightPositions,
-    activeSnippetIndex,
-    onHighlightClick,
-}) => {
-    if (content === null) return null;
-    if (highlightPositions.length === 0) return <>{content}</>;
-
-    const parts: (string | React.JSX.Element)[] = [];
-    let lastIndex = 0;
-
-    highlightPositions.forEach((pos, i) => {
-        if (pos.start > lastIndex) {
-            parts.push(content.substring(lastIndex, pos.start));
-        }
-
-        const isSnippetActive = pos.snippetIndex === activeSnippetIndex;
-        let className = "highlighted-text";
-        if (pos.isFullSnippet) {
-            className = isSnippetActive
-                ? "full-snippet-highlight active"
-                : "full-snippet-highlight";
-        }
-
-        parts.push(
-            <mark
-                key={i}
-                className={className}
-                onClick={() => onHighlightClick(pos.snippetIndex)}
-            >
-                {content.substring(pos.start, pos.end)}
-            </mark>
-        );
-        lastIndex = pos.end;
-    });
-
-    if (lastIndex < content.length) {
-        parts.push(content.substring(lastIndex));
-    }
-    return <>{parts}</>;
-};
-
 // --- MAIN COMPONENT ---
 
 const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
@@ -102,7 +55,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
     const [loadingContent, setLoadingContent] = useState<boolean>(false);
     const [contentError, setContentError] = useState<string | null>(null);
-    const [editingFile, setLocalEditingFile] = useState<boolean>(false); // Local state for rendering
+    const [editingFile, setLocalEditingFile] = useState<boolean>(false);
     const [savingFile, setSavingFile] = useState<boolean>(false);
     const [showConfirmSaveModal, setShowConfirmSaveModal] =
         useState<boolean>(false);
@@ -116,11 +69,14 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
 
     // --- REFS ---
     const previewContentRef = useRef<HTMLDivElement>(null);
-    const editorRef = useRef<HTMLTextAreaElement>(null);
+    const editorRef = useRef<ReactCodeMirrorRef>(null);
     const searchPanelRef = useRef<FileSearchPanelRef>(null);
 
     // --- HELPER FUNCTIONS & API CALLS ---
+
+    // UPDATED: This function now also calls the search panel's clearSearch method.
     const resetSearchState = useCallback(() => {
+        searchPanelRef.current?.clearSearch();
         setHighlightPositions([]);
         setActiveSnippetIndex(-1);
         setIsFileSearchActive(false);
@@ -128,7 +84,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
 
     const handleSetEditing = (isEditing: boolean) => {
         setLocalEditingFile(isEditing);
-        setEditingFile(isEditing); // Lift state up for keybindings
+        setEditingFile(isEditing);
     };
 
     const closeFile = useCallback(() => {
@@ -146,7 +102,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     const handleOpenFile = async () => {
         if (!selectedFile) return;
         try {
-            const { openFile } = await import("../api/api.tsx");
+            const { openFile } = await import("../api/api");
             await openFile(selectedFile.path);
             toast.info("Datei wird geöffnet...");
         } catch (error) {
@@ -163,7 +119,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     const handleOpenInExplorer = async () => {
         if (!selectedFile) return;
         try {
-            const { openFileInExplorer } = await import("../api/api.tsx");
+            const { openFileInExplorer } = await import("../api/api");
             await openFileInExplorer(selectedFile.path);
         } catch (error) {
             toast.error(
@@ -187,6 +143,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     const handleCancelEdit = () => {
         setContent(originalContent);
         handleSetEditing(false);
+        resetSearchState(); // Clear search on cancel
         toast.info("↩ Änderungen verworfen.");
     };
 
@@ -195,10 +152,11 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         setShowConfirmSaveModal(false);
         setSavingFile(true);
         try {
-            const { writeFile } = await import("../api/api.tsx");
+            const { writeFile } = await import("../api/api");
             await writeFile({ file_path: selectedFile.path, content });
             setOriginalContent(content);
             handleSetEditing(false);
+            resetSearchState(); // Clear search on save
             toast.success("✅ Datei erfolgreich gespeichert!");
         } catch (error) {
             toast.error(
@@ -217,7 +175,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         if (!selectedFile) return;
         setShowDeleteConfirmModal(false);
         try {
-            const { deleteFile } = await import("../api/api.tsx");
+            const { deleteFile } = await import("../api/api");
             await deleteFile(selectedFile.path);
             toast.success(`🗑️ Datei "${selectedFile.name}" gelöscht!`);
             onFileDeleted(selectedFile.path);
@@ -242,7 +200,7 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
         } else {
             setSnippetNavCallback(null);
         }
-    }, [searchPanelRef, setSnippetNavCallback, activeSnippetIndex]); // Rerun when activeSnippetIndex changes
+    }, [searchPanelRef, setSnippetNavCallback, activeSnippetIndex]);
 
     useEffect(() => {
         if (!selectedFile?.path) {
@@ -255,12 +213,18 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
             handleSetEditing(false);
             resetSearchState();
             try {
-                const { getFileInfo } = await import("../api/api.tsx");
+                const { getFileInfo } = await import("../api/api");
                 const data: FileInfo = await getFileInfo(selectedFile.path);
                 setFileInfo(data);
-                const displayContent = data.content ?? "(Datei ist leer)";
-                setContent(displayContent);
-                setOriginalContent(displayContent);
+
+                // Wir normalisieren die Zeilenumbrüche, bevor wir den State setzen.
+                // Dadurch wird sichergestellt, dass die Zeichen-Offsets vom Backend
+                // sowohl für die <pre>-Ansicht als auch für CodeMirror konsistent sind.
+                const rawContent = data.content ?? "(Datei ist leer)";
+                const normalizedContent = rawContent.replace(/\r\n/g, "\n");
+
+                setContent(normalizedContent);
+                setOriginalContent(normalizedContent);
             } catch (error) {
                 const message =
                     error instanceof Error ? error.message : String(error);
@@ -274,32 +238,20 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
     }, [selectedFile?.path, closeFile, resetSearchState]);
 
     useEffect(() => {
-        if (activeSnippetIndex === -1) return;
+        // This effect is now ONLY for the read-only preview mode.
+        // Scrolling in the editor is handled by CodeMirror itself.
+        if (editingFile || activeSnippetIndex === -1) return;
 
         const activeHighlight = highlightPositions.find(
-            (p) => p.snippetIndex === activeSnippetIndex && p.isFullSnippet
+            (p) => p.snippetIndex === activeSnippetIndex
         );
         if (!activeHighlight) return;
 
-        const targetElement = editingFile
-            ? editorRef.current
-            : previewContentRef.current?.querySelector(
-                  ".full-snippet-highlight.active"
-              );
+        const targetElement = previewContentRef.current?.querySelector(
+            ".full-snippet-highlight.active"
+        );
 
-        if (editingFile && editorRef.current) {
-            const editor = editorRef.current;
-            editor.focus();
-            editor.setSelectionRange(
-                activeHighlight.start,
-                activeHighlight.end
-            );
-            // Simple scroll logic
-            const textBefore = editor.value.substring(0, activeHighlight.start);
-            const lines = textBefore.split("\n").length;
-            const approxScrollTop = lines * 1.5 * 16; // Approximation
-            editor.scrollTop = approxScrollTop - editor.clientHeight / 2;
-        } else if (!editingFile && targetElement) {
+        if (targetElement) {
             targetElement.scrollIntoView({
                 behavior: "smooth",
                 block: "center",
@@ -348,41 +300,17 @@ const FilePreviewContainer: React.FC<FilePreviewContainerProps> = ({
                 className={`file-content-area ${editingFile ? "editing" : ""}`}
             >
                 <div className="file-content" ref={previewContentRef}>
-                    {loadingContent ? (
-                        <div className="spinner-container">
-                            <Loader2 className="animate-spin" size={48} />
-                        </div>
-                    ) : editingFile ? (
-                        <div
-                            className="file-editor-wrapper"
-                            style={{
-                                position: "relative",
-                                width: "100%",
-                                height: "100%",
-                            }}
-                        >
-                            <textarea
-                                ref={editorRef}
-                                value={content ?? ""}
-                                onChange={(e) => setContent(e.target.value)}
-                                className="file-editor"
-                                style={{
-                                    zIndex: 1,
-                                    backgroundColor: "transparent",
-                                    color: "inherit",
-                                }}
-                            />
-                        </div>
-                    ) : (
-                        <pre className="file-preview-content">
-                            <FileContentView
-                                content={content}
-                                highlightPositions={highlightPositions}
-                                activeSnippetIndex={activeSnippetIndex}
-                                onHighlightClick={setActiveSnippetIndex}
-                            />
-                        </pre>
-                    )}
+                    <FileContentView
+                        ref={editorRef}
+                        isLoading={loadingContent}
+                        isEditing={editingFile}
+                        content={content}
+                        // UPDATED: The new editor passes the value directly.
+                        onContentChange={(value) => setContent(value)}
+                        highlightPositions={highlightPositions}
+                        activeSnippetIndex={activeSnippetIndex}
+                        onHighlightClick={setActiveSnippetIndex}
+                    />
                 </div>
 
                 <div className="file-sidebar">

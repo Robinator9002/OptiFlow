@@ -94,25 +94,22 @@ const FileManagement: React.FC<FileManagementProps> = ({
     // --- Keybinding Logic ---
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            // Check if the event target is an input, textarea, etc. to avoid overriding typing.
             const target = event.target as HTMLElement;
-            const isTypingInInput = target.tagName === "INPUT";
-            const isTypingInTextarea = target.tagName === "TEXTAREA";
+            // UPDATED: Check for the CodeMirror editor class instead of TEXTAREA
+            const isTypingInEditor = target.closest(".cm-editor");
 
             // Rule 2: Prioritize in-file search navigation
             if (
                 (event.key === "ArrowUp" || event.key === "ArrowDown") &&
                 isFileSearchActive &&
-                !isTypingInTextarea // Allow arrows in editor, but hijack for navigation otherwise
+                !isTypingInEditor // Allow arrows in editor, but hijack for navigation otherwise
             ) {
                 // If focus is on search input, let it navigate snippets
-                if (document.activeElement?.tagName !== "TEXTAREA") {
                     event.preventDefault();
                     handleNavigateSnippets(
                         event.key === "ArrowDown" ? "next" : "prev"
                     );
                     return;
-                }
             }
 
             // Rule 1: Navigate main search results
@@ -120,8 +117,7 @@ const FileManagement: React.FC<FileManagementProps> = ({
                 (event.key === "ArrowUp" || event.key === "ArrowDown") &&
                 searchResults.length > 0 &&
                 !isSearchCollapsed &&
-                !isEditing &&
-                !isTypingInInput // Don't interfere if user is typing in any input
+                !isEditing
             ) {
                 event.preventDefault();
                 handleNavigateSearchResults(

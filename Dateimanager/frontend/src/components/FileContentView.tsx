@@ -1,232 +1,201 @@
-import React, { useEffect } from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
+import { Loader2 } from "lucide-react";
 
-// Define the structure for a highlight position object
-interface HighlightPosition {
-    start: number;
-    end: number;
-    snippetIndex: number;
-}
+// --- CodeMirror Imports ---
+// NOTE: These dependencies would need to be added to your project.
+// npm install @uiw/react-codemirror @codemirror/lang-javascript @codemirror/state @codemirror/view
+import CodeMirror, { type ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
+import { EditorView, Decoration, type DecorationSet } from "@codemirror/view";
+import { StateField, StateEffect } from "@codemirror/state";
+import { monochromeTheme } from "./EditorTheme"; 
+// --- Type Imports ---
+import type { HighlightPosition } from "./FileSearchPanel";
 
-// Define the props for the FileContentView component
-interface FileContentViewProps {
-    content: string | null;
-    isEditing: boolean;
-    highlightPositions: HighlightPosition[];
-    activeSnippetIndex: number;
-    onContentChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-    onContentClick: (event: React.MouseEvent<HTMLPreElement>) => void;
-    // --- FIX START ---
-    // The previous type was too strict. `React.Ref<T>` is a more general type for refs
-    // that correctly handles refs created with `useRef<T>(null)`. It accounts for
-    // the .current property being `T | null`.
-    previewContentRef: React.Ref<HTMLPreElement>;
-    // --- FIX END ---
-    isLoading: boolean;
-}
+// --- CodeMirror Decorations for Highlighting ---
 
-// Helper function for basic HTML escaping
-const escapeHtml = (text: string | null): string => {
-    if (typeof text !== "string") {
-        console.warn("escapeHtml received non-string input:", text);
-        return String(text || "");
-    }
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-};
+// Decoration for the currently active search result
+const activeHighlightDecoration = Decoration.mark({
+    class: "cm-highlight-active",
+});
+// Decoration for all other search results
+const inactiveHighlightDecoration = Decoration.mark({ class: "cm-highlight" });
 
-// Helper function to compare two Sets
-const areSetsEqual = (set1: Set<any>, set2: Set<any>): boolean => {
-    if (set1.size !== set2.size) {
-        return false;
-    }
-    for (const item of set1) {
-        if (!set2.has(item)) {
-            return false;
-        }
-    }
-    return true;
-};
+// An "Effect" is CodeMirror's way of dispatching changes to its state.
+// We define one to update our highlights.
+const setHighlightsEffect = StateEffect.define<{
+    positions: HighlightPosition[];
+    activeIndex: number;
+}>();
 
-// Helper function to generate HTML with highlights based on snippet positions
-const generateHighlightedHtml = (
-    content: string,
-    highlightPositions: HighlightPosition[],
-    activeSnippetIndex: number
-): string => {
-    if (!highlightPositions || highlightPositions.length === 0) {
-        return escapeHtml(content);
-    }
-
-    const snippetIndicesAtIndex: Set<number>[] = new Array(content.length)
-        .fill(null)
-        .map(() => new Set());
-
-    highlightPositions.forEach((pos) => {
-        const start = Math.max(0, pos.start);
-        const end = Math.min(content.length, pos.end);
-        for (let i = start; i < end; i++) {
-            snippetIndicesAtIndex[i].add(pos.snippetIndex);
-        }
-    });
-
-    let html = "";
-    let isCurrentlyHighlighted = false;
-    let currentHighlightSnippetIndices: Set<number> = new Set();
-
-    for (let i = 0; i < content.length; i++) {
-        const snippetsHere = snippetIndicesAtIndex[i];
-        const shouldBeHighlighted = snippetsHere.size > 0;
-
-        const prevSnippets = i > 0 ? snippetIndicesAtIndex[i - 1] : new Set();
-        const snippetSetChanged = !areSetsEqual(snippetsHere, prevSnippets);
-
-        if (
-            shouldBeHighlighted &&
-            (!isCurrentlyHighlighted || snippetSetChanged)
-        ) {
-            if (isCurrentlyHighlighted) {
-                html += `</mark>`;
-            }
-
-            isCurrentlyHighlighted = true;
-            currentHighlightSnippetIndices = new Set(snippetsHere);
-
-            const classes = ["highlighted-text"];
-            if (
-                activeSnippetIndex !== -1 &&
-                currentHighlightSnippetIndices.has(activeSnippetIndex)
-            ) {
-                classes.push("active-highlight");
-            }
-
-            const dataAttr =
-                currentHighlightSnippetIndices.size > 0
-                    ? `data-snippet-indices="${Array.from(
-                          currentHighlightSnippetIndices
-                      ).join(",")}"`
-                    : "";
-
-            html += `<mark class="${classes.join(" ")}" ${dataAttr}>`;
-        } else if (!shouldBeHighlighted && isCurrentlyHighlighted) {
-            isCurrentlyHighlighted = false;
-            html += `</mark>`;
-        }
-
-        html += escapeHtml(content[i]);
-    }
-
-    if (isCurrentlyHighlighted) {
-        html += `</mark>`;
-    }
-
-    return html;
-};
-
-/**
- * Component to display or edit file content with optional highlighting.
- */
-const FileContentView: React.FC<FileContentViewProps> = ({
-    content,
-    isEditing,
-    highlightPositions,
-    activeSnippetIndex,
-    onContentChange,
-    onContentClick,
-    previewContentRef,
-    isLoading,
-}) => {
-    const displayedContentHtml =
-        isEditing || !content
-            ? escapeHtml(content)
-            : generateHighlightedHtml(
-                  content,
-                  highlightPositions,
-                  activeSnippetIndex
-              );
-    // The useEffect hook doesn't need to change, because it already checks
-    // for `previewContentRef.current` being truthy.
-    useEffect(() => {
-        const currentRef = (
-            previewContentRef as React.RefObject<HTMLPreElement>
-        )?.current;
-        if (
-            activeSnippetIndex >= 0 &&
-            highlightPositions.length > 0 &&
-            currentRef
-        ) {
-            const allMarks = Array.from(
-                currentRef.querySelectorAll<HTMLElement>(
-                    "mark.highlighted-text"
-                )
-            );
-
-            allMarks.forEach((mark) =>
-                mark.classList.remove("active-highlight")
-            );
-
-            const targetMark = allMarks.find((mark) => {
-                const indicesAttr = mark.getAttribute("data-snippet-indices");
-                if (!indicesAttr) return false;
-                const indices = indicesAttr.split(",").map(Number);
-                return indices.includes(activeSnippetIndex);
-            });
-
-            allMarks.forEach((mark) => {
-                const indicesAttr = mark.getAttribute("data-snippet-indices");
-                if (indicesAttr) {
-                    const indices = indicesAttr.split(",").map(Number);
-                    if (indices.includes(activeSnippetIndex)) {
-                        mark.classList.add("active-highlight");
-                    }
-                }
-            });
-
-            if (targetMark) {
-                targetMark.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                    inline: "nearest",
-                });
-            } else {
-                console.warn(
-                    "Could not find mark element for activeSnippetIndex:",
-                    activeSnippetIndex
+// A "StateField" holds and computes state for the editor.
+// This field will manage our set of highlight decorations.
+const highlightStateField = StateField.define<DecorationSet>({
+    create() {
+        return Decoration.none;
+    },
+    update(highlights, tr) {
+        // Move decorations along with text changes
+        highlights = highlights.map(tr.changes);
+        // Look for our specific effect to update the decorations
+        for (let e of tr.effects) {
+            if (e.is(setHighlightsEffect)) {
+                const { positions, activeIndex } = e.value;
+                // Create a new set of decorations based on the search results
+                highlights = Decoration.set(
+                    positions.map((p) => {
+                        const deco =
+                            p.snippetIndex === activeIndex
+                                ? activeHighlightDecoration
+                                : inactiveHighlightDecoration;
+                        return deco.range(p.start, p.end);
+                    })
                 );
             }
-        } else if (currentRef) {
-            currentRef
-                .querySelectorAll(".active-highlight")
-                .forEach((mark) => mark.classList.remove("active-highlight"));
         }
-    }, [activeSnippetIndex, highlightPositions, previewContentRef]);
+        return highlights;
+    },
+    // This provides the decorations to the editor view
+    provide: (f) => EditorView.decorations.from(f),
+});
 
-    return (
-        <div className={`file-content ${isEditing ? "editing" : "previewing"}`}>
-            {isLoading ? (
+// --- Type Definitions for Component Props ---
+interface FileContentViewProps {
+    isLoading: boolean;
+    isEditing: boolean;
+    content: string | null;
+    highlightPositions: HighlightPosition[];
+    activeSnippetIndex: number;
+    onContentChange: (value: string) => void;
+    onHighlightClick: (snippetIndex: number) => void;
+}
+
+/**
+ * Renders file content.
+ * - In read-only mode, it uses a <pre> tag with <mark> for highlights.
+ * - In edit mode, it uses a full-featured CodeMirror editor with decorations
+ * for highlighting search results.
+ */
+const FileContentView = forwardRef<ReactCodeMirrorRef, FileContentViewProps>(
+    (
+        {
+            isLoading,
+            isEditing,
+            content,
+            highlightPositions,
+            activeSnippetIndex,
+            onContentChange,
+            onHighlightClick,
+        },
+        ref
+    ) => {
+        const editorViewRef = useRef<EditorView | null>(null);
+
+        // This effect syncs the search results from the parent component
+        // with the CodeMirror editor's state.
+        useEffect(() => {
+            const view = editorViewRef.current;
+            if (view && isEditing) {
+                // Dispatch effects to update highlights and scroll to the active one.
+                const effects: StateEffect<any>[] = [
+                    setHighlightsEffect.of({
+                        positions: highlightPositions,
+                        activeIndex: activeSnippetIndex,
+                    }),
+                ];
+
+                const activePos = highlightPositions.find(
+                    (p) => p.snippetIndex === activeSnippetIndex
+                );
+
+                if (activePos) {
+                    effects.push(
+                        EditorView.scrollIntoView(activePos.start, {
+                            y: "center",
+                        })
+                    );
+                }
+
+                view.dispatch({ effects });
+            }
+        }, [highlightPositions, activeSnippetIndex, isEditing]);
+
+        // 1. Show a spinner while content is loading
+        if (isLoading) {
+            return (
                 <div className="spinner-container">
-                    <div className="spinner"></div>
+                    <Loader2 className="animate-spin" size={48} />
                 </div>
-            ) : isEditing ? (
-                <textarea
-                    value={content || ""}
-                    onChange={onContentChange}
-                    spellCheck="false"
+            );
+        }
+
+        // 2. Show a CodeMirror editor for editing
+        if (isEditing) {
+            return (
+                <CodeMirror
+                    ref={ref}
+                    value={content ?? ""}
+                    height="50vh"
                     className="file-editor"
+                    extensions={[
+                        javascript({ jsx: true }), // Example language support
+                        highlightStateField, // Our custom highlighting logic
+                        EditorView.lineWrapping, // Enable line wrapping
+                        ...monochromeTheme,
+                    ]}
+                    onChange={onContentChange}
+                    onCreateEditor={(view) => {
+                        // Keep a reference to the underlying EditorView instance
+                        editorViewRef.current = view;
+                    }}
                 />
-            ) : (
-                <pre
-                    className="file-preview-content"
-                    ref={previewContentRef}
-                    dangerouslySetInnerHTML={{ __html: displayedContentHtml }}
-                    onClick={onContentClick}
-                ></pre>
-            )}
-        </div>
-    );
-};
+            );
+        }
+
+        // 3. Show a read-only view with optional highlights (unchanged)
+        if (content === null) {
+            return null;
+        }
+
+        if (highlightPositions.length === 0) {
+            return <pre className="file-preview-content">{content}</pre>;
+        }
+
+        const parts: (string | React.JSX.Element)[] = [];
+        let lastIndex = 0;
+        const sortedPositions = [...highlightPositions].sort(
+            (a, b) => a.start - b.start
+        );
+
+        sortedPositions.forEach((pos, i) => {
+            if (pos.start > lastIndex) {
+                parts.push(content.substring(lastIndex, pos.start));
+            }
+            const isSnippetActive = pos.snippetIndex === activeSnippetIndex;
+            parts.push(
+                <mark
+                    key={`${pos.snippetIndex}-${pos.start}-${i}`}
+                    className={
+                        isSnippetActive
+                            ? "full-snippet-highlight active"
+                            : "full-snippet-highlight"
+                    }
+                    onClick={() => onHighlightClick(pos.snippetIndex)}
+                >
+                    {content.substring(pos.start, pos.end)}
+                </mark>
+            );
+            lastIndex = Math.max(lastIndex, pos.end);
+        });
+
+        if (lastIndex < content.length) {
+            parts.push(content.substring(lastIndex));
+        }
+
+        return <pre className="file-preview-content">{parts}</pre>;
+    }
+);
+
+FileContentView.displayName = "FileContentView";
 
 export default FileContentView;
