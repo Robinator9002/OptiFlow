@@ -4,4 +4,4 @@ call .venv\Scripts\activate
 
 REM Wechsle in das Frontend-Verzeichnis und starte npm
 cd frontend
-npm start
+npm run app:dev

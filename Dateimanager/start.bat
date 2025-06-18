@@ -11,4 +11,4 @@ python wait_for_uvicorn.py
 
 REM Wechsle in das Frontend-Verzeichnis und starte npm
 cd ..\..\frontend
-npm start
+npm run app:dev
