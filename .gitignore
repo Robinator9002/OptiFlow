@@ -6,3 +6,5 @@ __pycache__/
 data/
 count_lines.py
 environment/
+# Speziell die Datei Manager Zip Datei (zu groß für Github) 
+Dateimanager.zip
