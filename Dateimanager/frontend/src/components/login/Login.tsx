@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { loginUser, registerUser } from "../../api/api.tsx";
+import React, { useState, useEffect } from "react";
+import { loginUser, registerUser, checkNoUsersExist } from "../../api/api.tsx";
 import { toast } from "react-toastify";
 
 // --- Type Definitions ---
@@ -11,6 +11,7 @@ interface LoginProps {
 // --- Component ---
 
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+    // Component state
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [adminUsername, setAdminUsername] = useState<string>("");
@@ -19,6 +20,27 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
+    const [noUsersExist, setNoUsersExist] = useState<boolean>(false);
+    
+    // NEU: State für die Sichtbarkeit des "Passwort vergessen"-Modals
+    const [showResetModal, setShowResetModal] = useState<boolean>(false);
+
+    // Check on initial render if any users exist to toggle setup mode
+    useEffect(() => {
+        const checkUserStatus = async () => {
+            try {
+                const response = await checkNoUsersExist();
+                if (response.no_users) {
+                    setNoUsersExist(true);
+                    setIsRegistering(true); // Switch to registration for first user
+                }
+            } catch (err) {
+                console.error("Fehler bei der Prüfung des Benutzerstatus:", err);
+                toast.error("Fehler bei der Kommunikation mit dem Server.");
+            }
+        };
+        checkUserStatus();
+    }, []); // Empty dependency array ensures this runs only once
 
     const handleSubmit = async (
         e: React.FormEvent<HTMLFormElement>
@@ -30,7 +52,6 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         const trimmedUsername = username.trim();
         const trimmedPassword = password.trim();
 
-        // Validation
         if (!trimmedUsername || !trimmedPassword) {
             const msg = "Benutzername und Passwort dürfen nicht leer sein.";
             setError(msg);
@@ -38,18 +59,18 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             setLoading(false);
             return;
         }
+        
+        if (isRegistering && trimmedPassword.length < 4) {
+            const msg = "Das Passwort muss mindestens 4 Zeichen lang sein.";
+            setError(msg);
+            toast.error(msg);
+            setLoading(false);
+            return;
+        }
 
-        if (isRegistering) {
-            if (trimmedPassword.length < 4) {
-                const msg = "Das Passwort muss mindestens 4 Zeichen lang sein.";
-                setError(msg);
-                toast.error(msg);
-                setLoading(false);
-                return;
-            }
+        if (isRegistering && !noUsersExist) {
             if (!adminUsername.trim() || !adminPassword.trim()) {
-                const msg =
-                    "Administrator-Zugangsdaten sind für die Registrierung erforderlich.";
+                const msg = "Administrator-Zugangsdaten sind für die Registrierung erforderlich.";
                 setError(msg);
                 toast.error(msg);
                 setLoading(false);
@@ -63,9 +84,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                 response = await registerUser(
                     trimmedUsername,
                     trimmedPassword,
-                    adminUsername.trim(),
-                    adminPassword.trim(),
-                    isAdmin
+                    noUsersExist ? null : adminUsername.trim(),
+                    noUsersExist ? null : adminPassword.trim(),
+                    noUsersExist ? true : isAdmin
                 );
             } else {
                 response = await loginUser(trimmedUsername, trimmedPassword);
@@ -91,7 +112,6 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             } else if (err instanceof Error) {
                 errorMessage = err.message;
             }
-
             setError(errorMessage);
             toast.error(errorMessage);
         } finally {
@@ -99,80 +119,124 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         }
     };
 
+    const getTitle = () => {
+        if (isRegistering && noUsersExist) return "Ersten Admin erstellen";
+        if (isRegistering) return "Registrieren";
+        return "Anmelden";
+    };
+
     return (
-        <div className="login-container">
-            <form onSubmit={handleSubmit} className="login-form">
-                <h2>{isRegistering ? "Registrieren" : "Anmelden"}</h2>
-                {error && <p className="error-message">{error}</p>}
-                <input
-                    type="text"
-                    placeholder="Benutzername"
-                    autoFocus
-                    value={username}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setUsername(e.target.value)
-                    }
-                    className={error ? "error-input" : ""}
-                />
-                <input
-                    type="password"
-                    placeholder="Passwort"
-                    value={password}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setPassword(e.target.value)
-                    }
-                    className={error ? "error-input" : ""}
-                />
-                {isRegistering && (
-                    <>
-                        <input
-                            type="text"
-                            placeholder="Administrator-Benutzername"
-                            value={adminUsername}
-                            onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>
-                            ) => setAdminUsername(e.target.value)}
-                            className={error ? "error-input" : ""}
-                        />
-                        <input
-                            type="password"
-                            placeholder="Administrator-Passwort"
-                            value={adminPassword}
-                            onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>
-                            ) => setAdminPassword(e.target.value)}
-                            className={error ? "error-input" : ""}
-                        />
-                        <label>
-                            Administrator:
+        <>
+            {/* NEU: Das Modal wird außerhalb des Formulars gerendert, wenn der State true ist */}
+            {showResetModal && (
+                <div className="overlay" onClick={() => setShowResetModal(false)}>
+                    <div className="modal-content modal-danger" onClick={(e) => e.stopPropagation()}>
+                        <div className="reset-warning">
+                        <h3>Passwort-Reset</h3>
+                        <p>
+                           Um den Zugriff auf die Anwendung wiederherzustellen, müssen Sie die Datei <code>data/users.json</code> manuell löschen, die sich direkt in dem Projektverzeichnis befinden sollte.
+                        </p>
+                            <h4>WARNUNG: DIESER VORGANG IST ENDGÜLTIG</h4>
+                            <p>
+                                Durch das Löschen der Datei <code>data/users.json</code> werden <strong>alle Benutzerkonten</strong>, Passwörter und benutzerspezifische Einstellungen unwiderruflich entfernt.
+                            </p>
+                            <p>
+                                Ihre indizierten Dateien, der Duplikat-Cache und geplante Events bleiben vollständig erhalten. Nur die Benutzerdatenbank wird zurückgesetzt.
+                            </p>
+                            <p>
+                               Nachdem Sie die Datei gelöscht haben, können Sie hier einen neuen Administrator-Account anlegen.
+                            </p>
+                        </div>
+                        <div className="modal-buttons">
+                            <button onClick={() => setShowResetModal(false)} className="confirm">
+                                Verstanden
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            <div className="login-container">
+                <form onSubmit={handleSubmit} className="login-form">
+                    <h2>{getTitle()}</h2>
+                    
+                    {noUsersExist && isRegistering && (
+                         <p className="info-message">Willkommen! Da noch keine Benutzer existieren, wird jetzt der erste Administrator-Account angelegt.</p>
+                    )}
+
+                    {error && <p className="error-message">{error}</p>}
+                    
+                    <input
+                        type="text"
+                        placeholder="Benutzername"
+                        autoFocus
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className={error ? "error-input" : ""}
+                    />
+                    <input
+                        type="password"
+                        placeholder="Passwort"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className={error ? "error-input" : ""}
+                    />
+                    
+                    {isRegistering && !noUsersExist && (
+                        <>
                             <input
-                                type="checkbox"
-                                checked={isAdmin}
-                                onChange={(
-                                    e: React.ChangeEvent<HTMLInputElement>
-                                ) => setIsAdmin(e.target.checked)}
+                                type="text"
+                                placeholder="Administrator-Benutzername"
+                                value={adminUsername}
+                                onChange={(e) => setAdminUsername(e.target.value)}
+                                className={error ? "error-input" : ""}
                             />
-                        </label>
-                    </>
-                )}
-                <button type="submit" disabled={loading}>
-                    {loading
-                        ? "Lädt..."
-                        : isRegistering
-                        ? "Registrieren"
-                        : "Anmelden"}
-                </button>
-                <button
-                    type="button"
-                    onClick={() => setIsRegistering(!isRegistering)}
-                    disabled={loading}
-                >
-                    {isRegistering
-                        ? "Zurück zum Login"
-                        : "Neuen Benutzer anlegen"}
-                </button>
-            </form>
-        </div>
+                            <input
+                                type="password"
+                                placeholder="Administrator-Passwort"
+                                value={adminPassword}
+                                onChange={(e) => setAdminPassword(e.target.value)}
+                                className={error ? "error-input" : ""}
+                            />
+                            <label>
+                                Administrator:
+                                <input
+                                    type="checkbox"
+                                    checked={isAdmin}
+                                    onChange={(e) => setIsAdmin(e.target.checked)}
+                                />
+                            </label>
+                        </>
+                    )}
+                    
+                    <button type="submit" disabled={loading}>
+                        {loading ? "Lädt..." : getTitle()}
+                    </button>
+                    
+                    {!noUsersExist && (
+                        <button
+                            type="button"
+                            onClick={() => setIsRegistering(!isRegistering)}
+                            disabled={loading}
+                            className="toggle-button"
+                        >
+                            {isRegistering
+                                ? "Zurück zum Login"
+                                : "Neuen Benutzer anlegen"}
+                        </button>
+                    )}
+                     
+                    {/* NEU: Der Hilfetext ist jetzt ein Link, der das Modal öffnet */}
+                    {!isRegistering && (
+                        <p className="help-text">
+                           <a href="#" onClick={(e) => { e.preventDefault(); setShowResetModal(true); }}>
+                             Passwort vergessen?
+                           </a>
+                        </p>
+                    )}
+                </form>
+            </div>
+        </>
     );
 };
 

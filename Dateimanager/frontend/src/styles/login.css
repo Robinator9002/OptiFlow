@@ -31,7 +31,7 @@
     text-align: center;
     color: var(--text-primary);
     font-size: 1.8rem;
-    margin-bottom: 1.5625rem;
+    margin-bottom: 0.625rem; /* Reduced margin */
     font-weight: 600;
 }
 
@@ -60,6 +60,7 @@
     color: var(--text-on-accent);
     font-size: 1.1rem;
     box-shadow: var(--shadow-md);
+    cursor: pointer;
     /* Inherits global button styles */
 }
 
@@ -72,6 +73,17 @@
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
 }
+
+.login-form button.toggle-button {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+.login-form button.toggle-button:hover {
+     background: var(--bg-tertiary);
+     color: var(--text-primary);
+}
+
 
 .login-form label {
     display: flex;
@@ -97,4 +109,59 @@
     border: 1px solid var(--border-danger);
     transition: background-color 0.3s ease, border-color 0.3s ease,
         color 0.3s ease;
+}
+
+.info-message {
+    color: var(--text-primary);
+    text-align: center;
+    padding: 0.625rem;
+    background-color: var(--bg-accent-blue);
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-accent);
+    margin-bottom: 0.9375rem;
+}
+
+.help-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* NEU: Styling für den "Passwort vergessen?" Link */
+.help-text a {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.2s ease, border-bottom-color 0.2s ease;
+}
+
+.help-text a:hover {
+    color: var(--text-primary);
+    border-bottom-color: var(--text-primary);
+}
+
+/* NEU: Hilfs-Styling für den Warnhinweis im Modal */
+.reset-warning {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: rgba(var(--accent-danger-rgb), 0.1);
+    border: 1px solid rgba(var(--accent-danger-rgb), 0.3);
+    border-radius: 0.375rem;
+}
+.reset-warning h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--text-danger);
+    font-weight: bold;
+}
+.reset-warning code {
+    background-color: rgba(var(--shadow-color-rgb), 0.2);
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
 }

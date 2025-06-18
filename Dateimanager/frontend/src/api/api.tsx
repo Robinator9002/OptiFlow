@@ -50,10 +50,6 @@ export interface Settings {
     subfolder?: string;
     prefix?: string;
     overwrite?: boolean;
-    // REMOVED these individual fields as they are now part of ocr_processing
-    // force_ocr?: boolean;
-    // skip_text?: boolean;
-    // redo_ocr?: boolean;
     theme_name?: string;
     font_type?: string;
     font_size?: number;
@@ -66,8 +62,6 @@ export interface Settings {
     snippet_step?: number;
     signature_size?: number;
     similarity_threshold?: number;
-
-    // NEW: Add the nested OCR settings interface
     ocr_processing?: OCRSettings;
 }
 
@@ -221,10 +215,8 @@ export const deleteFile = async (filePath: string) => {
 
 // --- OCR PROCESSING ---
 
-// KORRIGIERT: Sendet 'overwrite' als Query-Parameter
 export const ocrConvertIndex = async (overwrite: boolean) => {
     const response = await api.post(`/process_index/`, null, {
-        // Body ist null
         params: {
             overwrite: overwrite,
         },
@@ -270,11 +262,18 @@ export const rescanFileStructure = async (path: string | null) => {
 };
 
 // --- USER MANAGEMENT ---
+
+// NEUER API AUFRUF
+export const checkNoUsersExist = async () => {
+    const response = await api.get(`/api/no_users_exist`);
+    return response.data;
+};
+
 export const registerUser = async (
     username: string,
     password: string,
-    adminUsername: string,
-    adminPassword: string,
+    adminUsername: string | null,
+    adminPassword: string | null,
     isAdmin: boolean
 ) => {
     const response = await api.post(`/register/`, {

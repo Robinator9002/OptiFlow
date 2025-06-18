@@ -50,25 +50,46 @@ class AccountManager:
         except (ValueError, TypeError):
             return False
 
-    def create_user(self, username: str, password: str, admin_username: str, admin_password: str, is_admin: bool) -> tuple[bool, str]:
-        if not self.verify_password(admin_username, admin_password):
-            return False, "Ungültige Administrator-Anmeldedaten."
-        admin_user = self.get_user(admin_username)
-        if not admin_user or not admin_user.get("isAdmin"):
-            return False, "Nur ein Administrator kann neue Benutzer erstellen."
+    def create_user(self, username: str, password: str, admin_username: Optional[str], admin_password: Optional[str], is_admin: bool) -> tuple[bool, str]:
+        """
+        Erstellt einen neuen Benutzer. Wenn keine Benutzer vorhanden sind, wird der erste Benutzer
+        automatisch als Administrator erstellt, ohne dass Administrator-Anmeldeinformationen erforderlich sind.
+        """
+        # NEUE LOGIK: Prüfen, ob dies der erste Benutzer ist
+        is_first_user = not self.users
+
+        if not is_first_user:
+            # Bestehende Logik für das Hinzufügen von Benutzern durch einen Admin
+            if not admin_username or not admin_password:
+                return False, "Administrator-Anmeldeinformationen sind erforderlich."
+            if not self.verify_password(admin_username, admin_password):
+                return False, "Ungültige Administrator-Anmeldedaten."
+            admin_user = self.get_user(admin_username)
+            if not admin_user or not admin_user.get("isAdmin"):
+                return False, "Nur ein Administrator kann neue Benutzer erstellen."
+        
         if self.get_user(username):
             return False, f"Benutzername '{username}' bereits vergeben."
+
         password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        
+        # NEU: Der erste Benutzer ist immer ein Admin
+        new_user_is_admin = is_admin if not is_first_user else True
+        
         self.users.append({
             "username": username,
             "passwordHash": password_hash.decode("utf-8"),
             "lastLogin": None,
-            "isAdmin": is_admin,
+            "isAdmin": new_user_is_admin,
             "passwordReset": False,
             "settings": {}
         })
         self.save_users()
+        
+        if is_first_user:
+            return True, f"Administrator-Konto '{username}' erfolgreich erstellt."
         return True, f"Benutzer '{username}' erfolgreich erstellt."
+
 
     def change_password(self, username: str, old_password: str, admin_username: str, admin_password: str, password_reset: bool, new_password: str) -> bool:
         user = self.get_user(username)

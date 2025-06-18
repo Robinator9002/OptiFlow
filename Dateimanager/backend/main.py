@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, status, Body
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import unquote, urlparse
 from contextlib import asynccontextmanager
-from typing import Dict, List
+from typing import Dict, List, Optional
 from fastapi.security import OAuth2PasswordBearer  # Für Security
 from datetime import timedelta
 from backend.controller.datei_controller import DateiController
@@ -12,6 +12,7 @@ from backend.api.models import (
     PDFProcessDirectoryRequest, PDFProcessFileRequest,
     User, AdminUser, Settings, LogoutRequest, EventIn,
     SetAdminStatusRequest, ChangeUsernameRequest, ShutdownRequest,
+
     OldFileInfo, OldFilesQueryParams, ChangePasswordRequest,
     DataWrapper, DuplicateGroupsResponse, SearchDuplicatesRequest,
 )
@@ -24,6 +25,13 @@ from starlette.background import BackgroundTask
 from starlette.responses import JSONResponse
 import asyncio
 import platform, string
+
+# --- Models anpassen ---
+# Wir machen die Admin-Credentials optional, damit wir sie bei der Ersteinrichtung weglassen können
+class AdminUser(AdminUser):
+    admin_username: Optional[str] = None
+    admin_password: Optional[str] = None
+
 
 # Shutdown Logic
 SHUTDOWN_FLAG_FILE = "data/_shutdown_request.flag"
@@ -47,31 +55,18 @@ def get_base_directories():
     system = platform.system() # Get the operating system name (e.g., 'Windows', 'Linux', 'Darwin')
 
     if system == "Windows":
-        # On Windows, we typically scan drives.
-        # A common starting point is the C: drive.
-        # To be more thorough, we can try to find all available drives.
         drives = []
-        # Iterate through potential drive letters from A to Z
         for letter in string.ascii_uppercase:
-            drive = f"{letter}:\\" # Windows drive format (e.g., C:\)
-            # Check if the drive path exists
+            drive = f"{letter}:\\"
             if os.path.exists(drive):
                 drives.append(drive)
-        # Return found drives, fallback to C:\ if none found (unlikely on a functional Windows system)
         return drives if drives else [os.path.join("C:", os.sep)]
 
-    elif system == "Linux" or system == "Darwin": # 'Darwin' is the system name for macOS
-        # On Linux and macOS, the root directory '/' is the base.
-        # You might want to add other common user directories like /home/user or /Users/user
-        # depending on what you want to scan by default. For a broad scan, '/' is the start.
-        # Note: Scanning the entire root on a large system can be time-consuming!
+    elif system == "Linux" or system == "Darwin":
         return ["/"]
 
     else:
-        # For any other operating system, we might not know the standard structure.
-        # Log a warning and return an empty list or a sensible default.
         print(f"Warning: Unknown operating system '{system}'. Cannot determine base directories automatically.")
-        # Return an empty list to prevent scanning unknown paths, or a default like ["."]
         return []
 
 # --- Konfiguration ---
@@ -174,14 +169,12 @@ app.add_middleware(
 # --- Security ---
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")  # Ersetze "token" ggf.
 
-# Funktion zur Erzeugung von Tokens (JWT)
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     expire = datetime.datetime.now(datetime.timezone.utc) + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     return jose_jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-# Dependency zur Validierung von Tokens
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -220,8 +213,14 @@ async def shutdown_request(
         f.write("shutdown")
     return JSONResponse({"detail": "Shutdown-Anfrage erhalten. Server wird in Kürze beendet."})
 
+# --- NEUER ENDPUNKT ---
+@app.get("/api/no_users_exist", response_model=Dict[str, bool])
+async def no_users_exist():
+    """Prüft, ob Benutzer in der Datenbank vorhanden sind."""
+    return {"no_users": not controller.account_manager.users}
+
+
 # -- Events --
-# 1. Event hinzufügen
 @app.post("/events")
 async def add_event(event: EventIn):
     try:
@@ -233,7 +232,6 @@ async def add_event(event: EventIn):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 2. Event aktualisieren
 @app.put("/events/{event_index}")
 async def update_event(event_index: int, event: EventIn):
     try:
@@ -245,7 +243,6 @@ async def update_event(event_index: int, event: EventIn):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 3. Event löschen
 @app.delete("/events/{event_index}")
 async def delete_event(event_index: int):
     try:
@@ -257,7 +254,6 @@ async def delete_event(event_index: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 4. Alle Events abrufen
 @app.get("/events", response_model=List[EventIn])
 async def get_all_events():
     try:
@@ -267,7 +263,6 @@ async def get_all_events():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 5. Event ausführen
 @app.post("/events/{event_index}/execute")
 async def execute_event(event_index: int):
     try:
@@ -279,7 +274,6 @@ async def execute_event(event_index: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 6. Event nach Index finden
 @app.get("/events/{event_index}", response_model=EventIn)
 async def find_event_by_index(event_index: int):
     try:
@@ -291,7 +285,6 @@ async def find_event_by_index(event_index: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 7. Event-Überwachung starten
 @app.post("/events/start-monitoring")
 async def start_event_monitoring():
     try:
@@ -301,7 +294,6 @@ async def start_event_monitoring():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 8. Events in die Datei speichern
 @app.post("/events/save")
 async def save_events_to_file():
     try:
@@ -311,7 +303,6 @@ async def save_events_to_file():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 9. Events aus der Datei laden
 @app.post("/events/load")
 async def load_events_from_file():
     try:
@@ -323,45 +314,38 @@ async def load_events_from_file():
 # --- DEDUPING ENDPOINTS (NEU) ---
 @app.post("/find_duplicates/")
 async def find_duplicates():
-    """Endpoint to trigger the duplicate finding process."""
     try:
         result = controller.find_duplicates()
-        # The result is stored in the controller, return a success message
-        return {"message": "Duplikatsuche gestartet und Ergebnisse gespeichert.", "result": result} # Or return the number of groups found
+        return {"message": "Duplikatsuche gestartet und Ergebnisse gespeichert.", "result": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/load_duplicates/")
 async def load_duplicates():
-    """Endpoint to load duplicate groups from file."""
     try:
         result = controller.load_duplicates()
-        # The result is loaded into the controller, return a message
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/save_duplicates/")
 async def save_duplicates():
-    """Endpoint to save current duplicate groups to file."""
     try:
         result = controller.save_duplicates()
-        return result # Returns {"message": ...}
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/search_duplicates/", response_model=DuplicateGroupsResponse)
 async def search_duplicates(request: SearchDuplicatesRequest):
-    """Endpoint to search and sort loaded duplicate groups."""
     try:
-        # Pass parameters from request body to controller
         result = controller.search_duplicates(
             query=request.query,
             sort_by=request.sort_by,
             sort_order=request.sort_order,
             length_range_filter=request.length_range_filter,
         )
-        return result # Return the dictionary of groups
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -391,35 +375,22 @@ async def actualize_index():
 def unified_search(request: SearchRequest):
     try:
         if request.file_path:
-            # Suche in einer einzelnen Datei
-            # controller.search_file sollte die Struktur von FileContentResult zurückgeben:
-            # {"file": {...}, "match_count": ..., "snippets": [...]}
-            file_content_result_data = controller.search_file( # <-- Nenne es passend
+            file_content_result_data = controller.search_file(
                 path=request.file_path,
                 query=request.query_input,
             )
-            # Verpacke das Ergebnis in das 'data' Feld des SearchResult Modells
-            # Füge eine passende Nachricht hinzu
             return SearchResult(
-                message=f"Suche in Datei '{request.file_path}' abgeschlossen.", # <-- Füge eine Nachricht hinzu
-                data=file_content_result_data # <-- Setze das Ergebnis in das 'data' Feld
+                message=f"Suche in Datei '{request.file_path}' abgeschlossen.",
+                data=file_content_result_data
             )
         else:
-            # Allgemeine Dateisuche
-            # controller.search_files sollte die Struktur {"message": "...", "data": [...]} zurückgeben
             result = controller.search_files(
                 query=request.query_input
             )
-            # Das Ergebnis von search_files hat bereits die Struktur {"message": "...", "data": [...]},
-            # die dem SearchResult Modell entspricht. Wir können es direkt zurückgeben.
-            return SearchResult(**result) # <-- Hier passt es so
-
-
+            return SearchResult(**result)
     except ValueError as ve:
-        # Fange spezifische ValueErrors vom Scanner ab und gib eine 400 Bad Request zurück
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
-        # Fange andere unerwartete Fehler ab und gib eine 500 Internal Server Error zurück
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/update/")
@@ -487,9 +458,6 @@ async def delete_file(file_path: str):
 async def get_old_files(
     params: OldFilesQueryParams = Depends(),
 ):
-    """
-    Endpoint zum Finden alter Dateien basierend auf optionalen Parametern.
-    """
     if params.max_files is not None and params.max_files < 0:
         raise HTTPException(status_code=400, detail="max_files muss >= 0 sein")
     if params.max_age_days is not None and params.max_age_days < 0:
@@ -501,7 +469,7 @@ async def get_old_files(
             sort_by=params.sort_by,
             sort_order=params.sort_order
         )
-        return old_files # FastAPI serialisiert die Liste von OldFileInfo Objekten automatisch zu JSON
+        return old_files
     except Exception as e:
         print(f"Interner Serverfehler beim Suchen alter Dateien: {e}")
         raise HTTPException(status_code=500, detail="Interner Serverfehler bei der Dateisuche")
@@ -534,11 +502,6 @@ async def process_index(overwrite: bool = False):
 
 @app.post("/file_structure/")
 async def get_file_structure(path: str = None, force_rescan: bool = False):
-    """
-    Gibt eine JSON-Struktur der Datei-Struktur zurück.
-    Optional kann ein Pfad angegeben werden, um die Struktur ab diesem Pfad zu erhalten.
-    Mit force_rescan=True wird ein Neuscan erzwungen.
-    """
     try:
         structure = controller.get_file_structure(path, force_rescan=force_rescan)
         if structure is None and path is not None:
@@ -549,19 +512,24 @@ async def get_file_structure(path: str = None, force_rescan: bool = False):
 
 @app.post("/rescan_file_structure/")
 async def rescan_file_structure(path: str = None):
-    """
-    Erzwingt einen Neuscan der Datei-Struktur und aktualisiert den Cache.
-    Optional kann ein Pfad angegeben werden, ab dem neu gescannt werden soll.
-    """
     try:
         structure = controller.rescan_file_structure(path)
         return {'message': 'Datei-Struktur erfolgreich neu gescannt und aktualisiert.', 'structure': structure}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# --- ENDPUNKT FÜR REGISTRIERUNG ANGEPASST ---
 @app.post("/register/")
 def register_user(admin_user: AdminUser):
-    success, message = controller.account_manager.create_user(admin_user.username, admin_user.password, admin_user.admin_username, admin_user.admin_password, admin_user.is_admin)
+    # Die Logik wurde in AccountManager verschoben. Wir übergeben einfach die Daten.
+    # admin_username und admin_password können None sein.
+    success, message = controller.account_manager.create_user(
+        admin_user.username,
+        admin_user.password,
+        admin_user.admin_username,
+        admin_user.admin_password,
+        admin_user.is_admin
+    )
     if success:
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
@@ -613,7 +581,6 @@ async def get_all_users(current_user: dict = Depends(get_current_user)):
 
 @app.post("/users/{target_username}/admin/")
 async def set_user_admin_status(target_username: str, request_data: SetAdminStatusRequest, current_user: dict = Depends(get_current_user)):
-    """Ändert den Admin-Status eines Benutzers."""
     if not current_user["isAdmin"]:
         raise HTTPException(status_code=403, detail="Nur für Administratoren zugänglich.")
     
@@ -630,19 +597,16 @@ async def set_user_admin_status(target_username: str, request_data: SetAdminStat
 
 @app.post('/change_username/')
 async def change_username(request_data: ChangeUsernameRequest, current_user: dict = Depends(get_current_user)):
-    # Stelle sicher, dass der User nur seinen eigenen Namen ändert
     if current_user["username"] != request_data.user.username:
          raise HTTPException(status_code=403, detail="Nicht autorisiert.")
          
     success, message = controller.change_username(request_data.user, request_data.new_username)
     if not success:
         raise HTTPException(status_code=400, detail=message)
-    # Token wird im Frontend nach Logout/Login neu geholt
     return {"message": message}
 
 @app.post("/change_password/")
 async def change_password(request_data: ChangePasswordRequest):
-    # Diese Route braucht keinen Token, da sie auch für den "Passwort-Reset"-Fall gilt
     success = controller.change_password(request_data.user, request_data.admin_user, request_data.password_reset, request_data.new_password)
     if not success:
         raise HTTPException(status_code=400, detail="Altes Passwort falsch oder Benutzer nicht gefunden.")
@@ -661,25 +625,22 @@ async def delete_user(user_to_delete: User = Body(...), current_user: dict = Dep
 # --- Einstellungen ---
 @app.get("/settings/{username}")
 async def get_user_settings(username: str, current_user: dict = Depends(get_current_user)):
-    """Ruft die Einstellungen eines Benutzers ab."""
     settings = controller.account_manager.load_settings(username)
     return {"settings": settings}
 
 @app.post("/settings/{username}")
 async def save_user_settings(username: str, settings: Settings, current_user: dict = Depends(get_current_user)):
-    """Speichert die Einstellungen eines Benutzers und wendet sie an."""
     if current_user["username"] != username:
         raise HTTPException(status_code=403, detail="Nicht autorisiert, die Einstellungen anderer Benutzer zu ändern.")
     success, message = controller.account_manager.save_settings(username, settings.model_dump())
     if not success:
-        raise HTTPException(status_code=500, detail=message)  # Oder eine andere passende Fehlerbehandlung
-    controller.apply_settings(settings)  # Hier die apply_settings aufrufen
+        raise HTTPException(status_code=500, detail=message)
+    controller.apply_settings(settings)
     return {"message": "Einstellungen erfolgreich gespeichert und angewendet"}
 
 # --- Datenbank-Operationen ---
 @app.get("/database/{database_name}")
 async def read_database(database_name: str, current_user: dict = Depends(get_current_user)):
-    """Liest den Inhalt einer Datenbankdatei (JSON)."""
     if not current_user["isAdmin"]:
         raise HTTPException(status_code=403, detail="Nur für Administratoren zugänglich.")
     database_path = controller.get_database_path_by_name(database_name)
@@ -692,34 +653,22 @@ async def read_database(database_name: str, current_user: dict = Depends(get_cur
         raise HTTPException(status_code=500, detail=f"Fehler beim Lesen der Datenbank: {e}")
 
 @app.post("/database/{database_name}")
-# === GEÄNDERT: Erwarte ein DataWrapper Modell als Body Parameter ===
-# Der Body des Requests wird nun gegen dieses Modell validiert.
 async def write_database(database_name: str, body: DataWrapper, current_user: dict = Depends(get_current_user)):
-    """
-    Überschreibt den Inhalt einer Datenbankdatei (JSON).
-    Erwartet einen Body der Form {"data": ...}, wobei ... ein Dictionary oder eine Liste ist.
-    """
     if not current_user["isAdmin"]:
         raise HTTPException(status_code=403, detail="Nur für Administratoren zugänglich.")
 
-    # Annahme: controller.get_database_path_by_name existiert und funktioniert
     database_path = controller.get_database_path_by_name(database_name)
     if not database_path:
         raise HTTPException(status_code=400, detail="Ungültiger Datenbankname.")
 
     try:
-        # === GEÄNDERT: Greife auf die eigentlichen Daten über body.data zu ===
-        # Die Validierung durch Pydantic stellt sicher, dass body.data entweder ein Dict oder eine List ist.
         controller.save_json_file(database_path, body.data)
         return {"message": f"Datenbank '{database_name}' erfolgreich aktualisiert."}
     except Exception as e:
-        # Logge den Fehler serverseitig für Debugging
         print(f"Interner Serverfehler beim Schreiben der Datenbank '{database_name}': {e}")
-        # Gib einen generischen Fehler an den Client zurück
         raise HTTPException(status_code=500, detail=f"Fehler beim Schreiben der Datenbank: {e}")
 
 @app.post("/database/{database_name}/reload/")
 async def reload_database(database_name: str):
-    """Reloadet die Datenbank."""
     controller.reload_database(database_name)
     return {"message": f"Datenbank '{database_name}' erfolgreich neu geladen."}
