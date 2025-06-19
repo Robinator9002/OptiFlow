@@ -41,67 +41,39 @@ function createWindow() {
         let pythonExecutablePath;
 
         if (isDev) {
-            // Im Entwicklungsmodus: Vom Frontend-Ordner (C:\OptiFlow\Dateimanager\frontend)
-            // zum PyInstaller-Output (C:\OptiFlow\Dateimanager\dist\OptiFlowFileManager)
             pythonExecutablePath = path.join(__dirname, '..', 'dist', 'OptiFlowFileManager', 'OptiFlowFileManager.exe');
             writeLog(`Dev path to Python executable: ${pythonExecutablePath}`);
         } else {
-            // Im Produktionsmodus (nach Electron-Build):
-            // Electron-Builder packt extraFiles in 'resources/app.asar.unpacked/ZIELPFAD'
-            // In package.json haben wir "to": "backend" gesetzt.
+            // Im Produktionsmodus: Der extrahierte Backend-Ordner liegt in app.asar.unpacked/backend/
+            // process.resourcesPath ist der Pfad zum resources-Ordner der installierten App.
             pythonExecutablePath = path.join(process.resourcesPath, 'app.asar.unpacked', 'backend', 'OptiFlowFileManager.exe');
             writeLog(`Prod path to Python executable: ${pythonExecutablePath}`);
         }
 
-        // Überprüfe, ob die Python-Executable existiert
         if (!fs.existsSync(pythonExecutablePath)) {
             writeLog(`ERROR: Python executable not found at: ${pythonExecutablePath}`);
-            // Optional: Zeige eine Fehlermeldung im Electron-Fenster
-            // mainWindow.webContents.send('backend-error', `Backend executable not found at: ${pythonExecutablePath}`);
-            return; // Backend kann nicht gestartet werden
+            // Hier könntest du eine Fehlermeldung direkt im Fenster anzeigen, z.B. eine HTML-Seite laden
+            // mainWindow.loadFile(path.join(__dirname, 'error_backend_not_found.html')); // Temporäre Fehlerseite
+            return;
         }
 
         writeLog(`Attempting to spawn Python backend: ${pythonExecutablePath}`);
 
-        // Setze den Port für FastAPI. Stelle sicher, dass dies auch im Python-Code übereinstimmt (z.B. Uvicorn-Parameter)
-        const FASTAPI_PORT = 8000; 
-
-        // Starte den Python-Prozess
         pythonProcess = spawn(pythonExecutablePath, [], {
-            stdio: 'inherit', // Standardausgabe und -fehler der Python-App in der Electron-Konsole anzeigen (nur im Dev-Modus hilfreich)
-            // Wenn du im Produktionsmodus keine Konsole hast, leite die Ausgaben um:
-            // stdio: ['pipe', 'pipe', 'pipe'], // stdin, stdout, stderr pipes
-            // env: { ...process.env, OPTIFLOW_SECRET_KEY: 'DeinSichererProdKey123' } // Für Produktion wichtig!
+            stdio: 'inherit',
         });
-
-        // Wenn du stdio: ['pipe', 'pipe', 'pipe'] verwendest, kannst du Ausgaben so loggen:
-        // pythonProcess.stdout.on('data', (data) => {
-        //     writeLog(`Python stdout: ${data}`);
-        // });
-        // pythonProcess.stderr.on('data', (data) => {
-        //     writeLog(`Python stderr: ${data}`);
-        // });
-
 
         pythonProcess.on('error', (err) => {
             writeLog(`ERROR: Failed to start Python backend process: ${err.message}`);
-            // Hier könntest du eine sichtbare Fehlermeldung im Frontend anzeigen
             // mainWindow.webContents.send('backend-error', `Failed to start backend: ${err.message}`);
         });
 
         pythonProcess.on('close', (code) => {
             writeLog(`Python backend exited with code ${code}`);
-            // Hier könntest du reagieren, wenn das Backend abstürzt
             // mainWindow.webContents.send('backend-closed', `Backend exited with code: ${code}`);
         });
 
         writeLog('Python backend spawn command sent.');
-
-        // Optional: Kurze Wartezeit für das Backend, bevor das Frontend geladen wird
-        // In einer echten App ist ein Health-Check-Endpoint im Backend besser
-        // setTimeout(() => {
-        //     writeLog('Python backend (hopefully) initialized after delay.');
-        // }, 5000); // 5 Sekunden warten
     }
 
     startPythonBackend(); // Starte das Python-Backend beim Initialisieren des Fensters

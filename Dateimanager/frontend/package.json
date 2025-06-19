@@ -64,6 +64,11 @@
 				]
 			}
 		],
+		"asarUnpack": [
+            "**/*.exe",
+            "**/*.dll",
+            "backend/**/*"
+        ],
 		"win": {
 			"target": "nsis",
 			"icon": "public/icon.ico"
