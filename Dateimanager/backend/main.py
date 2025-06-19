@@ -81,7 +81,7 @@ else:
     base_path = os.path.dirname(os.path.abspath(__file__))
 
 SYSTEM_LOWER = platform.system().lower()
-TOOLS_DIR_RELATIVE = os.path.join("backend", "tools", SYSTEM_LOWER if SYSTEM_LOWER != 'darwin' else 'macos')
+TOOLS_DIR_RELATIVE = os.path.join("tools", SYSTEM_LOWER if SYSTEM_LOWER != 'darwin' else 'macos')
 TOOLS_DIR = os.path.join(base_path, TOOLS_DIR_RELATIVE)
 BASE_DIRS = get_base_directories();
 EXTENSIONS = [".txt", ".md", ".csv", ".json", ".xml", ".py", ".html", ".css", ".js", ".pdf", ".docx"]
