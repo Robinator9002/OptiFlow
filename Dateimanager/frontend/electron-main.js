@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import isDev from "electron-is-dev";
 import { spawn } from 'child_process';
 import os from 'os'; // Importiere 'os' um TEMP-Verzeichnis zu finden
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
