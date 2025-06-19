@@ -1,86 +1,130 @@
-import { app, BrowserWindow, ipcMain } from "electron"; // ipcMain hinzugefügt, falls du später Kommunikation brauchst
+import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { fileURLToPath } from 'url';
 import isDev from "electron-is-dev";
-import { spawn } from 'child_process'; // Hinzugefügt, um Python-Prozess zu starten
+import { spawn } from 'child_process';
+import os from 'os'; // Importiere 'os' um TEMP-Verzeichnis zu finden
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let pythonProcess; // Globale Variable, um den Python-Prozess zu halten, damit wir ihn beenden können
+let pythonProcess;
+let mainWindow; // Fenster global halten für Debugging
+
+// Funktion zum Schreiben von Logs in eine Datei
+function writeLog(message) {
+    const logDir = path.join(os.tmpdir(), 'OptiFlowLogs'); // Log-Verzeichnis im System-Temp-Ordner
+    if (!fs.existsSync(logDir)) {
+        fs.mkdirSync(logDir, { recursive: true });
+    }
+    const logFile = path.join(logDir, 'electron_main.log');
+    fs.appendFileSync(logFile, `${new Date().toISOString()} - ${message}\n`);
+}
 
 function createWindow() {
-    // Erstelle das Browser-Fenster.
-    const mainWindow = new BrowserWindow({
-        width: 1440, // Etwas größer für eine typische App
+    mainWindow = new BrowserWindow({ // Fenster global zuweisen
+        width: 1440,
         height: 800,
         icon: path.join(__dirname, 'public', 'icon.png'),
         webPreferences: {
-            nodeIntegration: false, // Wichtig für Sicherheit! Standard ist false.
-            contextIsolation: true, // Wichtig für Sicherheit! Standard ist true.
-            // preload: path.join(__dirname, 'preload.js') // Optional, falls du später einen Preload-Skript brauchst
-            // Wenn du IPC zwischen Renderer und Main-Prozess nutzen willst, ist preload.js der richtige Ort.
+            nodeIntegration: false,
+            contextIsolation: true,
+            // preload: path.join(__dirname, 'preload.js') // Füge dies hinzu, wenn du einen Preload-Skript hast
         },
     });
+
+    writeLog('createWindow called.');
 
     // === START PYTHON BACKEND ===
     function startPythonBackend() {
         let pythonExecutablePath;
 
         if (isDev) {
-            // Im Entwicklungsmodus: Pfad zum PyInstaller-Ausgabeordner (relative vom Frontend-Root zum Backend/dist)
-            // Annahme: dein Python-Projekt liegt parallel zum Frontend-Projekt
-            // Dateimanager/
-            // ├── backend/
-            // │   └── dist/OptiFlowFileManager/OptiFlowFileManager.exe
-            // └── frontend/
-            //     └── electron-main.js
-            pythonExecutablePath = path.join(__dirname, '..', '..', 'backend', 'dist', 'OptiFlowFileManager', 'OptiFlowFileManager.exe');
+            // Im Entwicklungsmodus: Vom Frontend-Ordner (C:\OptiFlow\Dateimanager\frontend)
+            // zum PyInstaller-Output (C:\OptiFlow\Dateimanager\dist\OptiFlowFileManager)
+            pythonExecutablePath = path.join(__dirname, '..', 'dist', 'OptiFlowFileManager', 'OptiFlowFileManager.exe');
+            writeLog(`Dev path to Python executable: ${pythonExecutablePath}`);
         } else {
             // Im Produktionsmodus (nach Electron-Build):
-            // Electron-Builder packt extraResources in 'resources/app.asar.unpacked/DEIN_ZIELPFAD'
-            // Wir definieren unten in package.json, dass 'OptiFlowFileManager' nach 'backend' im Bundle kopiert wird.
+            // Electron-Builder packt extraFiles in 'resources/app.asar.unpacked/ZIELPFAD'
+            // In package.json haben wir "to": "backend" gesetzt.
             pythonExecutablePath = path.join(process.resourcesPath, 'app.asar.unpacked', 'backend', 'OptiFlowFileManager.exe');
+            writeLog(`Prod path to Python executable: ${pythonExecutablePath}`);
         }
 
-        console.log(`Attempting to start Python backend from: ${pythonExecutablePath}`);
+        // Überprüfe, ob die Python-Executable existiert
+        if (!fs.existsSync(pythonExecutablePath)) {
+            writeLog(`ERROR: Python executable not found at: ${pythonExecutablePath}`);
+            // Optional: Zeige eine Fehlermeldung im Electron-Fenster
+            // mainWindow.webContents.send('backend-error', `Backend executable not found at: ${pythonExecutablePath}`);
+            return; // Backend kann nicht gestartet werden
+        }
 
-        // TODO: Port für FastAPI festlegen oder dynamisch ermitteln (z.B. über ein Env-Variable oder Config-Datei)
-        // Für den Anfang nehmen wir mal Port 8000 an.
-        // Du könntest hier auch Argumente an das Python-Backend übergeben, z.B. den Port.
+        writeLog(`Attempting to spawn Python backend: ${pythonExecutablePath}`);
+
+        // Setze den Port für FastAPI. Stelle sicher, dass dies auch im Python-Code übereinstimmt (z.B. Uvicorn-Parameter)
+        const FASTAPI_PORT = 8000; 
+
+        // Starte den Python-Prozess
         pythonProcess = spawn(pythonExecutablePath, [], {
-            stdio: 'inherit', // Zeigt die Python-Konsolenausgabe in der Electron-Entwicklerkonsole an
-            // cwd: path.dirname(pythonExecutablePath), // Optional: Setzt das Arbeitsverzeichnis des Python-Prozesses
-            // env: { ...process.env, OPTIFLOW_SECRET_KEY: 'DeinGeheimerProduktionsSchluessel' } // Wichtig für Prod!
+            stdio: 'inherit', // Standardausgabe und -fehler der Python-App in der Electron-Konsole anzeigen (nur im Dev-Modus hilfreich)
+            // Wenn du im Produktionsmodus keine Konsole hast, leite die Ausgaben um:
+            // stdio: ['pipe', 'pipe', 'pipe'], // stdin, stdout, stderr pipes
+            // env: { ...process.env, OPTIFLOW_SECRET_KEY: 'DeinSichererProdKey123' } // Für Produktion wichtig!
         });
 
+        // Wenn du stdio: ['pipe', 'pipe', 'pipe'] verwendest, kannst du Ausgaben so loggen:
+        // pythonProcess.stdout.on('data', (data) => {
+        //     writeLog(`Python stdout: ${data}`);
+        // });
+        // pythonProcess.stderr.on('data', (data) => {
+        //     writeLog(`Python stderr: ${data}`);
+        // });
+
+
         pythonProcess.on('error', (err) => {
-            console.error('Failed to start Python backend:', err);
-            // Hier könntest du eine Fehlermeldung im Frontend anzeigen
-            // z.B. über mainWindow.webContents.send() oder indem du ein Dialogfenster öffnest
+            writeLog(`ERROR: Failed to start Python backend process: ${err.message}`);
+            // Hier könntest du eine sichtbare Fehlermeldung im Frontend anzeigen
+            // mainWindow.webContents.send('backend-error', `Failed to start backend: ${err.message}`);
         });
 
         pythonProcess.on('close', (code) => {
-            console.log(`Python backend exited with code ${code}`);
-            // Hier könntest du reagieren, wenn das Backend abstürzt (z.B. App beenden oder neu starten)
+            writeLog(`Python backend exited with code ${code}`);
+            // Hier könntest du reagieren, wenn das Backend abstürzt
+            // mainWindow.webContents.send('backend-closed', `Backend exited with code: ${code}`);
         });
 
-        // Optional: Warte eine kurze Zeit, damit das Backend hochfahren kann, bevor das Frontend eine Anfrage sendet.
-        // In einer echten Anwendung würdest du besser ein Health-Check-Endpoint im Backend pingen.
-        setTimeout(() => {
-            console.log('Python backend started (hopefully)!');
-        }, 5000); // 5 Sekunden warten
+        writeLog('Python backend spawn command sent.');
+
+        // Optional: Kurze Wartezeit für das Backend, bevor das Frontend geladen wird
+        // In einer echten App ist ein Health-Check-Endpoint im Backend besser
+        // setTimeout(() => {
+        //     writeLog('Python backend (hopefully) initialized after delay.');
+        // }, 5000); // 5 Sekunden warten
     }
 
     startPythonBackend(); // Starte das Python-Backend beim Initialisieren des Fensters
 
     // === LADE FRONTEND ===
     if (isDev) {
+        writeLog('Loading frontend in development mode from http://localhost:5173');
         mainWindow.loadURL("http://localhost:5173");
         mainWindow.setMenu(null); // Menü für Dev-Tools, wenn nicht gewollt, hier auskommentieren
-        // mainWindow.webContents.openDevTools(); // Zum Debuggen im Dev-Modus nützlich
+        mainWindow.webContents.openDevTools(); // Öffne DevTools im Entwicklungsmodus
     } else {
-        mainWindow.loadFile(path.join(__dirname, "dist", "index.html"));
+        // Pfad zum gebauten React-Frontend im Produktionsmodus
+        // 'dist' ist der Ordner, der von 'vite build' im 'frontend'-Verzeichnis erstellt wird.
+        const frontendPath = path.join(__dirname, "dist", "index.html");
+        writeLog(`Loading frontend in production mode from file: ${frontendPath}`);
+        
+        // Überprüfe, ob die index.html existiert
+        if (!fs.existsSync(frontendPath)) {
+            writeLog(`ERROR: Frontend index.html not found at: ${frontendPath}`);
+            mainWindow.loadFile(path.join(__dirname, 'error.html')); // Lade eine Fehlerseite
+            return;
+        }
+
+        mainWindow.loadFile(frontendPath);
     }
 }
 
