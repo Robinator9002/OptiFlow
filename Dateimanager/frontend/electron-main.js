@@ -109,9 +109,9 @@ function createWindow() {
     if (isDev) {
         writeLog('Loading frontend in development mode from http://localhost:5173');
         mainWindow.loadURL("http://localhost:5173");
-        mainWindow.setMenu(null); // Menü für Dev-Tools, wenn nicht gewollt, hier auskommentieren
         mainWindow.webContents.openDevTools(); // Öffne DevTools im Entwicklungsmodus
     } else {
+        mainWindow.webContents.openDevTools(); // Öffne DevTools im Entwicklungsmodus
         // Pfad zum gebauten React-Frontend im Produktionsmodus
         // 'dist' ist der Ordner, der von 'vite build' im 'frontend'-Verzeichnis erstellt wird.
         const frontendPath = path.join(__dirname, "dist", "index.html");
