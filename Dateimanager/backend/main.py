@@ -20,6 +20,7 @@ import datetime
 from jose import jwt as jose_jwt
 from jose.exceptions import JWTError
 import os
+import sys
 import signal
 from starlette.background import BackgroundTask
 from starlette.responses import JSONResponse
@@ -70,8 +71,18 @@ def get_base_directories():
         return []
 
 # --- Konfiguration ---
+if getattr(sys, 'frozen', False):
+    # The application is running in a PyInstaller bundle
+    # sys._MEIPASS points to the temporary folder where PyInstaller extracts everything
+    base_path = sys._MEIPASS
+else:
+    # The application is running in a normal Python environment
+    # The base_path is the directory where main.py resides
+    base_path = os.path.dirname(os.path.abspath(__file__))
+
 SYSTEM_LOWER = platform.system().lower()
-TOOLS_DIR = f"backend/tools/{SYSTEM_LOWER if SYSTEM_LOWER != 'darwin' else 'macos'}"
+TOOLS_DIR_RELATIVE = os.path.join("backend", "tools", SYSTEM_LOWER if SYSTEM_LOWER != 'darwin' else 'macos')
+TOOLS_DIR = os.path.join(base_path, TOOLS_DIR_RELATIVE)
 BASE_DIRS = get_base_directories();
 EXTENSIONS = [".txt", ".md", ".csv", ".json", ".xml", ".py", ".html", ".css", ".js", ".pdf", ".docx"]
 INDEX_FILE = "data/index.json"
