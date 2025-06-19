@@ -71,18 +71,23 @@ def get_base_directories():
         return []
 
 # --- Konfiguration ---
-if getattr(sys, 'frozen', False):
-    # The application is running in a PyInstaller bundle
-    # sys._MEIPASS points to the temporary folder where PyInstaller extracts everything
-    base_path = sys._MEIPASS
-else:
-    # The application is running in a normal Python environment
-    # The base_path is the directory where main.py resides
-    base_path = os.path.dirname(os.path.abspath(__file__))
-
+# --- Konfiguration ---
 SYSTEM_LOWER = platform.system().lower()
-TOOLS_DIR_RELATIVE = os.path.join("tools", SYSTEM_LOWER if SYSTEM_LOWER != 'darwin' else 'macos')
-TOOLS_DIR = os.path.join(base_path, TOOLS_DIR_RELATIVE)
+OS_TOOL_DIR = SYSTEM_LOWER if SYSTEM_LOWER != 'darwin' else 'macos'
+
+if getattr(sys, 'frozen', False):
+    # Wenn im PyInstaller-Bundle:
+    # Der Fehlerpfad war: C:\OptiFlow\Dateimanager\dist\OptiFlowFileManager\_internal\tools\windows
+    # Dies deutet darauf hin, dass die Tools in _internal/tools/windows RELATIV zu sys._MEIPASS liegen.
+    # sys._MEIPASS ist der Root des entpackten Bundles (z.B. `dist\OptiFlowFileManager`).
+    # Wir bilden diesen Pfad direkt nach.
+    TOOLS_DIR = os.path.join(sys._MEIPASS, '_internal', 'tools', OS_TOOL_DIR)
+else:
+    # Wenn in der normalen Python-Umgebung (Entwicklung):
+    # `__file__` ist `backend\main.py`. `os.path.dirname(os.path.abspath(__file__))` ist `backend`.
+    # Die Tools sind dann in `backend\tools\windows`.
+    TOOLS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tools', OS_TOOL_DIR)
+
 BASE_DIRS = get_base_directories();
 EXTENSIONS = [".txt", ".md", ".csv", ".json", ".xml", ".py", ".html", ".css", ".js", ".pdf", ".docx"]
 INDEX_FILE = "data/index.json"
