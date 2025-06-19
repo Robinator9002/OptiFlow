@@ -1,10 +1,10 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 import isDev from "electron-is-dev";
-import { spawn } from 'child_process';
-import os from 'os'; // Importiere 'os' um TEMP-Verzeichnis zu finden
-import fs from 'fs';
+import { spawn } from "child_process";
+import os from "os"; // Importiere 'os' um TEMP-Verzeichnis zu finden
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,19 +14,20 @@ let mainWindow; // Fenster global halten für Debugging
 
 // Funktion zum Schreiben von Logs in eine Datei
 function writeLog(message) {
-    const logDir = path.join(os.tmpdir(), 'OptiFlowLogs'); // Log-Verzeichnis im System-Temp-Ordner
+    const logDir = path.join(os.tmpdir(), "OptiFlowLogs"); // Log-Verzeichnis im System-Temp-Ordner
     if (!fs.existsSync(logDir)) {
         fs.mkdirSync(logDir, { recursive: true });
     }
-    const logFile = path.join(logDir, 'electron_main.log');
+    const logFile = path.join(logDir, "electron_main.log");
     fs.appendFileSync(logFile, `${new Date().toISOString()} - ${message}\n`);
 }
 
 function createWindow() {
-    mainWindow = new BrowserWindow({ // Fenster global zuweisen
+    mainWindow = new BrowserWindow({
+        // Fenster global zuweisen
         width: 1440,
         height: 800,
-        icon: path.join(__dirname, 'public', 'icon.png'),
+        icon: path.join(__dirname, "public", "icon.png"),
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -34,24 +35,35 @@ function createWindow() {
         },
     });
 
-    writeLog('createWindow called.');
+    writeLog("createWindow called.");
 
     // === START PYTHON BACKEND ===
     function startPythonBackend() {
         let pythonExecutablePath;
 
         if (isDev) {
-            pythonExecutablePath = path.join(__dirname, '..', 'dist', 'OptiFlowFileManager', 'OptiFlowFileManager.exe');
+            pythonExecutablePath = path.join(
+                __dirname,
+                "..",
+                "dist",
+                "OptiFlowFileManager",
+                "OptiFlowFileManager.exe"
+            );
             writeLog(`Dev path to Python executable: ${pythonExecutablePath}`);
         } else {
-            // Im Produktionsmodus: Der extrahierte Backend-Ordner liegt in app.asar.unpacked/backend/
-            // process.resourcesPath ist der Pfad zum resources-Ordner der installierten App.
-            pythonExecutablePath = path.join(process.resourcesPath, 'app.asar.unpacked', 'backend', 'OptiFlowFileManager.exe');
+            // Im Produktionsmodus: Die .exe liegt jetzt direkt in app.asar.unpacked
+            pythonExecutablePath = path.join(
+                process.resourcesPath,
+                "app.asar.unpacked",
+                "OptiFlowFileManager.exe"
+            ); // <-- ÄNDERUNG: 'backend' aus dem Pfad entfernt
             writeLog(`Prod path to Python executable: ${pythonExecutablePath}`);
         }
 
         if (!fs.existsSync(pythonExecutablePath)) {
-            writeLog(`ERROR: Python executable not found at: ${pythonExecutablePath}`);
+            writeLog(
+                `ERROR: Python executable not found at: ${pythonExecutablePath}`
+            );
             // Hier könntest du eine Fehlermeldung direkt im Fenster anzeigen, z.B. eine HTML-Seite laden
             // mainWindow.loadFile(path.join(__dirname, 'error_backend_not_found.html')); // Temporäre Fehlerseite
             return;
@@ -60,27 +72,31 @@ function createWindow() {
         writeLog(`Attempting to spawn Python backend: ${pythonExecutablePath}`);
 
         pythonProcess = spawn(pythonExecutablePath, [], {
-            stdio: 'inherit',
+            stdio: "inherit",
         });
 
-        pythonProcess.on('error', (err) => {
-            writeLog(`ERROR: Failed to start Python backend process: ${err.message}`);
+        pythonProcess.on("error", (err) => {
+            writeLog(
+                `ERROR: Failed to start Python backend process: ${err.message}`
+            );
             // mainWindow.webContents.send('backend-error', `Failed to start backend: ${err.message}`);
         });
 
-        pythonProcess.on('close', (code) => {
+        pythonProcess.on("close", (code) => {
             writeLog(`Python backend exited with code ${code}`);
             // mainWindow.webContents.send('backend-closed', `Backend exited with code: ${code}`);
         });
 
-        writeLog('Python backend spawn command sent.');
+        writeLog("Python backend spawn command sent.");
     }
 
     startPythonBackend(); // Starte das Python-Backend beim Initialisieren des Fensters
 
     // === LADE FRONTEND ===
     if (isDev) {
-        writeLog('Loading frontend in development mode from http://localhost:5173');
+        writeLog(
+            "Loading frontend in development mode from http://localhost:5173"
+        );
         mainWindow.loadURL("http://localhost:5173");
         mainWindow.webContents.openDevTools(); // Öffne DevTools im Entwicklungsmodus
     } else {
@@ -88,12 +104,16 @@ function createWindow() {
         // Pfad zum gebauten React-Frontend im Produktionsmodus
         // 'dist' ist der Ordner, der von 'vite build' im 'frontend'-Verzeichnis erstellt wird.
         const frontendPath = path.join(__dirname, "dist", "index.html");
-        writeLog(`Loading frontend in production mode from file: ${frontendPath}`);
-        
+        writeLog(
+            `Loading frontend in production mode from file: ${frontendPath}`
+        );
+
         // Überprüfe, ob die index.html existiert
         if (!fs.existsSync(frontendPath)) {
-            writeLog(`ERROR: Frontend index.html not found at: ${frontendPath}`);
-            mainWindow.loadFile(path.join(__dirname, 'error.html')); // Lade eine Fehlerseite
+            writeLog(
+                `ERROR: Frontend index.html not found at: ${frontendPath}`
+            );
+            mainWindow.loadFile(path.join(__dirname, "error.html")); // Lade eine Fehlerseite
             return;
         }
 
@@ -117,7 +137,7 @@ app.on("window-all-closed", function () {
     if (process.platform !== "darwin") app.quit();
     // Beende den Python-Prozess sauber, wenn die Electron-App geschlossen wird
     if (pythonProcess) {
-        console.log('Terminating Python backend...');
+        console.log("Terminating Python backend...");
         pythonProcess.kill(); // Sendet SIGTERM
         // Für Windows: pythonProcess.kill('SIGKILL'); falls SIGTERM nicht reicht
     }

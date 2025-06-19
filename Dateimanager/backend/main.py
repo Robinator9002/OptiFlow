@@ -33,9 +33,29 @@ class AdminUser(AdminUser):
     admin_username: Optional[str] = None
     admin_password: Optional[str] = None
 
+# --- NEUE, ROBUSTE PFAD-LOGIK ---
 
-# Shutdown Logic
-SHUTDOWN_FLAG_FILE = "data/_shutdown_request.flag"
+# 1. Bestimme den Basis-Pfad, der sowohl für die Entwicklung als auch für das PyInstaller-Bundle funktioniert.
+#    Dieser Pfad wird zum Root-Verzeichnis deines Projekts zeigen.
+if getattr(sys, 'frozen', False):
+    # Wenn die Anwendung "eingefroren" ist (als .exe läuft):
+    # Der Basis-Pfad ist das Verzeichnis, in dem die .exe-Datei liegt.
+    base_path = os.path.dirname(sys.executable)
+else:
+    # In der normalen Entwicklungsumgebung:
+    # __file__ ist 'C:\...\Dateimanager\backend\main.py'.
+    # os.path.dirname() davon ist 'C:\...\Dateimanager\backend'.
+    # Ein weiteres os.path.dirname() führt uns zum Projekt-Root: 'C:\...\Dateimanager'.
+    base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# 2. Definiere das Datenverzeichnis absolut zum Basis-Pfad und stelle sicher, dass es existiert.
+DATA_DIR = os.path.join(base_path, "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+
+
+# --- Shutdown Logic (jetzt mit absolutem Pfad) ---
+SHUTDOWN_FLAG_FILE = os.path.join(DATA_DIR, "_shutdown_request.flag")
+
 async def check_for_shutdown(interval_seconds: int = 1):
     while True:
         if os.path.exists(SHUTDOWN_FLAG_FILE):
@@ -45,6 +65,7 @@ async def check_for_shutdown(interval_seconds: int = 1):
             except OSError as e:
                 print(f"Fehler beim Löschen des Shutdown-Flags: {e}")
             await asyncio.sleep(0.5)
+            # Sende das Signal, um den Server (uvicorn) sauber zu beenden
             os.kill(os.getpid(), signal.SIGINT)
             break
         await asyncio.sleep(interval_seconds)
@@ -52,8 +73,9 @@ async def check_for_shutdown(interval_seconds: int = 1):
 def get_base_directories():
     """
     Determines the base directories for scanning based on the operating system.
+    (Diese Funktion bleibt unverändert)
     """
-    system = platform.system() # Get the operating system name (e.g., 'Windows', 'Linux', 'Darwin')
+    system = platform.system()
 
     if system == "Windows":
         drives = []
@@ -71,28 +93,31 @@ def get_base_directories():
         return []
 
 # --- Konfiguration ---
+
+# Die Logik für TOOLS_DIR ist spezifisch für die im Bundle mitgelieferten Tools
+# und muss sich auf die interne Struktur des PyInstaller-Bundles (`sys._MEIPASS`) beziehen.
+# Diese Logik war bereits korrekt und bleibt daher unverändert.
 SYSTEM_LOWER = platform.system().lower()
 OS_TOOL_DIR = SYSTEM_LOWER if SYSTEM_LOWER != 'darwin' else 'macos'
 
 if getattr(sys, 'frozen', False):
-    # Im PyInstaller-Bundle:
-    # PyInstaller legt den `backend` Ordner unter `sys._MEIPASS/_internal/backend/` ab.
-    # Die Tools sind dann darin: `sys._MEIPASS/_internal/backend/tools/windows`.
+    # Im PyInstaller-Bundle: Dein .spec File packt 'backend' als Ordner.
     bundle_base_for_backend = os.path.join(sys._MEIPASS, 'backend')
     TOOLS_DIR = os.path.join(bundle_base_for_backend, 'tools', OS_TOOL_DIR)
 else:
-    # Normale Entwicklungsumgebung: tools sind direkt in backend/tools/windows
+    # Normale Entwicklungsumgebung: tools sind direkt in backend/tools/...
     TOOLS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tools', OS_TOOL_DIR)
 
-BASE_DIRS = get_base_directories();
+# Die Pfade zu den Datendateien werden jetzt absolut und sicher gebildet.
+BASE_DIRS = get_base_directories()
 EXTENSIONS = [".txt", ".md", ".csv", ".json", ".xml", ".py", ".html", ".css", ".js", ".pdf", ".docx"]
-INDEX_FILE = "data/index.json"
+INDEX_FILE = os.path.join(DATA_DIR, "index.json")
 INDEX_CONTENT = True
 MAX_SIZE_KB = 0
 MAX_CONTENT_SIZE_LET = None
 SEARCH_LIMIT = 30
-STRUCTURE_FILE = "data/structure.json"
-USER_FILE = "data/user.json"
+STRUCTURE_FILE = os.path.join(DATA_DIR, "structure.json")
+USER_FILE = os.path.join(DATA_DIR, "user.json")
 AUTO_LOGIN_TIME = 24
 
 # Secret Key
