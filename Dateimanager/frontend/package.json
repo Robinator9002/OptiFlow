@@ -10,7 +10,8 @@
 		"lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
 		"preview": "vite preview",
 		"electron:start": "electron .",
-		"app:dev": "concurrently \"npm run dev\" \"wait-on http-get://localhost:5173 && npm run electron:start\""
+		"app:dev": "concurrently \"npm run dev\" \"wait-on http-get://localhost:5173 && npm run electron:start\"",
+		"electron:build": "npm run build && electron-builder"
 	},
 	"dependencies": {
 		"@codemirror/lang-javascript": "^6.2.4",
@@ -42,5 +43,39 @@
 		"typescript-eslint": "^8.30.1",
 		"vite": "^6.3.5",
 		"wait-on": "^8.0.3"
+	},
+	"build": {
+		"appId": "com.optiflow.filemanager",
+		"productName": "OptiFlow Dateimanager",
+		"directories": {
+			"output": "release"
+		},
+		"files": [
+			"dist/**/*",
+			"electron-main.js",
+			"package.json"
+		],
+		"extraFiles": [
+			{
+				"from": "../backend/dist/OptiFlowFileManager",
+				"to": "backend",
+				"filter": [
+					"**/*"
+				]
+			}
+		],
+		"win": {
+			"target": "nsis",
+			"icon": "public/icon.ico"
+		},
+		"mac": {
+			"category": "public.app-category.utilities",
+			"target": "dmg",
+			"icon": "public/icon.icns"
+		},
+		"linux": {
+			"target": "AppImage",
+			"icon": "public/icon.png"
+		}
 	}
 }
