@@ -57,7 +57,7 @@
 		],
 		"extraFiles": [
 			{
-				"from": "../dist",
+				"from": "../dist/OptiFlowFileManager",
 				"to": "backend",
 				"filter": [
 					"**/*"
