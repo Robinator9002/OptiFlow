@@ -716,7 +716,7 @@ async def reload_database(database_name: str):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        "main:app",
+        "backend.main:app",
         host="127.0.0.1",
         port=8000,
         reload=False,  # Im kompilierten Zustand wollen wir kein "reload"
