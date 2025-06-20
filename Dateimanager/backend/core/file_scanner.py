@@ -324,7 +324,7 @@ class FileScanner:
             for root, dirs, files_in_dir in os.walk(base_dir, topdown=True): # Renamed 'files' to 'files_in_dir'
                 dirs[:] = [d for d in dirs if d not in self.ignored_dirs and not d.startswith('.')]
                 for folder_name in dirs: 
-                    folder_path = os.path.join(root, folder_name)
+                    folder_path = os.path.normpath(os.path.join(root, folder_name))
                     self.index[folder_path] = {"type": "folder", "name": folder_name, "path": folder_path}
                     self._current_scan_seen_paths.add(folder_path)
                 
