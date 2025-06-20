@@ -40,6 +40,7 @@ export interface Settings {
     match_score?: MatchScore;
     scanner_cpu_cores?: number;
     usable_extensions?: string[];
+    ignored_dirs?: string[];
     scan_delay?: number;
     snippet_window?: number;
     proximity_window?: number;

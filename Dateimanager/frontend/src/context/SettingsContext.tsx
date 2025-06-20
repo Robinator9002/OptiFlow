@@ -1,30 +1,33 @@
 import React, { createContext, useState, useCallback, useEffect } from "react";
-import { getUserSettings, type Settings as ApiSettings } from "../api/api"; // Pfad anpassen
+import { getUserSettings, type Settings as ApiSettings } from "../api/api";
 
-// Ein vollständiger Satz an Standardwerten, falls keine Einstellungen geladen werden können
-const DEFAULT_SETTINGS: ApiSettings = {
+// NEU: Ein zentrales Objekt für alle Standardeinstellungen.
+// Dies ist jetzt die einzige Quelle der Wahrheit für die Defaults.
+export const DEFAULT_SETTINGS: ApiSettings = {
     theme_name: "default",
-    font_type: "sans-serif",
     font_size: 1.0,
-    usable_extensions: [
-        ".txt",
-        ".md",
-        ".csv",
-        ".json",
-        ".xml",
-        ".html",
-        ".css",
-        ".js",
-        ".py",
-        ".pdf",
-        ".docx",
-    ],
+    search_limit: 100,
+    snippet_limit: 5,
+    old_files_limit: 50,
+    show_relevance: true,
+    match_score: {
+        filename_exact: 5,
+        filename_partial: 3,
+        content: 1,
+    },
+    scanner_cpu_cores: 0,
+    usable_extensions: [".txt", ".md", ".csv", ".json", ".xml", ".html", ".css", ".js", ".py", ".pdf", ".docx"],
+    ignored_dirs: ['.venv', 'venv', 'node_modules', 'build', 'dist', 'release', '__pycache__', '.git', '$RECYCLE.BIN', 'System Volume Information'],
+    scan_delay: 0,
+    snippet_window: 40,
+    proximity_window: 20,
+    max_age_days: 1000,
+    sort_by: "age",
+    sort_order: "normal",
     processor_excluded_folders: "",
-    subfolder: "",
+    subfolder: "OCR",
     prefix: "",
     overwrite: false,
-    scanner_cpu_cores: 0, // Bezieht sich auf den OCR-Prozessor in diesem Kontext
-    max_age_days: 1000,
     ocr_processing: {
         ocr_force: true,
         ocr_skip_text_layer: false,
@@ -35,17 +38,27 @@ const DEFAULT_SETTINGS: ApiSettings = {
         ocr_clean_images: true,
         ocr_tesseract_config: "--oem 1 --psm 3",
     },
+    check_interval: 60,
+    max_file_size: 1000000,
+    length_range_step: 100,
+    min_category_length: 2,
+    snippet_length: 30,
+    snippet_step: 1,
+    signature_size: 300,
+    similarity_threshold: 0.8,
 };
 
-// Typdefinition für den Kontext-Wert für bessere Autovervollständigung und Sicherheit
+// Typdefinition für den Kontext-Wert
 interface SettingsContextType {
     settings: ApiSettings;
+    defaultSettings: ApiSettings;
     applySettings: (loadedSettings: ApiSettings) => void;
     loadSettings: (currentUser: string) => Promise<void>;
     isReady: boolean;
-    // Alle Einstellungs-States werden nun hier zentral verwaltet
     scannerUsableExtensions: string[];
     setScannerUsableExtensions: React.Dispatch<React.SetStateAction<string[]>>;
+    scannerIgnoredDirs: string[];
+    setScannerIgnoredDirs: React.Dispatch<React.SetStateAction<string[]>>;
     ocrExcludedDirs: string;
     setOcrExcludedDirs: React.Dispatch<React.SetStateAction<string>>;
     ocrSubfolder: string;
@@ -58,7 +71,6 @@ interface SettingsContextType {
     setOcrMaxWorkerCount: React.Dispatch<React.SetStateAction<number | null>>;
     maxAgeDays: number;
     setMaxAgeDays: React.Dispatch<React.SetStateAction<number>>;
-    // NEU: Hinzugefügte OCR-spezifische States
     forceOcr: boolean;
     setForceOcr: React.Dispatch<React.SetStateAction<boolean>>;
     skipText: boolean;
@@ -79,143 +91,66 @@ interface SettingsContextType {
     setMinCategoryLength: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const SettingsContext = createContext<SettingsContextType | undefined>(
+export const SettingsContext = createContext<SettingsContextType | undefined>(
     undefined
 );
 
-const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
+export const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
     const [settings, setSettings] = useState<ApiSettings>(DEFAULT_SETTINGS);
     const [isReady, setIsReady] = useState(false);
 
-    // Scanner Settings States
-    const [scannerUsableExtensions, setScannerUsableExtensions] = useState(
-        DEFAULT_SETTINGS.usable_extensions ?? []
-    );
-    // OCR Settings States
-    const [ocrExcludedDirs, setOcrExcludedDirs] = useState(
-        DEFAULT_SETTINGS.processor_excluded_folders ?? ""
-    );
-    const [ocrSubfolder, setOcrSubfolder] = useState(
-        DEFAULT_SETTINGS.subfolder ?? ""
-    );
+    // Initialisiere die einzelnen States ebenfalls aus den zentralen Defaults
+    const [scannerUsableExtensions, setScannerUsableExtensions] = useState(DEFAULT_SETTINGS.usable_extensions ?? []);
+    const [scannerIgnoredDirs, setScannerIgnoredDirs] = useState(DEFAULT_SETTINGS.ignored_dirs ?? []);
+    const [ocrExcludedDirs, setOcrExcludedDirs] = useState(DEFAULT_SETTINGS.processor_excluded_folders ?? "");
+    const [ocrSubfolder, setOcrSubfolder] = useState(DEFAULT_SETTINGS.subfolder ?? "");
     const [ocrPrefix, setOcrPrefix] = useState(DEFAULT_SETTINGS.prefix ?? "");
-    const [ocrOverwrite, setOcrOverwrite] = useState(
-        DEFAULT_SETTINGS.overwrite ?? false
-    );
-    // HINWEIS: `scanner_cpu_cores` aus dem Backend-Modell wird hier für die `max_workers` des OCR-Prozessors verwendet.
-    const [ocrMaxWorkerCount, setOcrMaxWorkerCount] = useState<number | null>(
-        DEFAULT_SETTINGS.scanner_cpu_cores ?? 0
-    );
-    const [maxAgeDays, setMaxAgeDays] = useState(
-        DEFAULT_SETTINGS.max_age_days ?? 1000
-    );
+    const [ocrOverwrite, setOcrOverwrite] = useState(DEFAULT_SETTINGS.overwrite ?? false);
+    const [ocrMaxWorkerCount, setOcrMaxWorkerCount] = useState<number | null>(DEFAULT_SETTINGS.scanner_cpu_cores ?? 0);
+    const [maxAgeDays, setMaxAgeDays] = useState(DEFAULT_SETTINGS.max_age_days ?? 1000);
+    const [forceOcr, setForceOcr] = useState(DEFAULT_SETTINGS.ocr_processing?.ocr_force ?? true);
+    const [skipText, setSkipText] = useState(DEFAULT_SETTINGS.ocr_processing?.ocr_skip_text_layer ?? false);
+    const [redoOcr, setRedoOcr] = useState(DEFAULT_SETTINGS.ocr_processing?.ocr_redo_text_layer ?? false);
+    const [ocrLanguage, setOcrLanguage] = useState(DEFAULT_SETTINGS.ocr_processing?.ocr_language ?? "deu");
+    const [ocrImageDpi, setOcrImageDpi] = useState(DEFAULT_SETTINGS.ocr_processing?.ocr_image_dpi ?? 300);
+    const [ocrOptimizeLevel, setOcrOptimizeLevel] = useState(DEFAULT_SETTINGS.ocr_processing?.ocr_optimize_level ?? 1);
+    const [ocrCleanImages, setOcrCleanImages] = useState(DEFAULT_SETTINGS.ocr_processing?.ocr_clean_images ?? true);
+    const [ocrTesseractConfig, setOcrTesseractConfig] = useState(DEFAULT_SETTINGS.ocr_processing?.ocr_tesseract_config ?? "--oem 1 --psm 3");
+    const [minCategoryLength, setMinCategoryLength] = useState(DEFAULT_SETTINGS.min_category_length ?? 2);
 
-    // --- NEU: Alle detaillierten OCR-Einstellungen als State ---
-    const [forceOcr, setForceOcr] = useState(
-        DEFAULT_SETTINGS.ocr_processing?.ocr_force ?? true
-    );
-    const [skipText, setSkipText] = useState(
-        DEFAULT_SETTINGS.ocr_processing?.ocr_skip_text_layer ?? false
-    );
-    const [redoOcr, setRedoOcr] = useState(
-        DEFAULT_SETTINGS.ocr_processing?.ocr_redo_text_layer ?? false
-    );
-    const [ocrLanguage, setOcrLanguage] = useState(
-        DEFAULT_SETTINGS.ocr_processing?.ocr_language ?? "deu"
-    );
-    const [ocrImageDpi, setOcrImageDpi] = useState(
-        DEFAULT_SETTINGS.ocr_processing?.ocr_image_dpi ?? 300
-    );
-    const [ocrOptimizeLevel, setOcrOptimizeLevel] = useState(
-        DEFAULT_SETTINGS.ocr_processing?.ocr_optimize_level ?? 1
-    );
-    const [ocrCleanImages, setOcrCleanImages] = useState(
-        DEFAULT_SETTINGS.ocr_processing?.ocr_clean_images ?? true
-    );
-    const [ocrTesseractConfig, setOcrTesseractConfig] = useState(
-        DEFAULT_SETTINGS.ocr_processing?.ocr_tesseract_config ??
-            "--oem 1 --psm 3"
-    );
-    const [minCategoryLength, setMinCategoryLength] = useState(
-        settings.min_category_length ?? 2
-    );
 
     const applySettings = useCallback((loadedSettings: ApiSettings) => {
-        // Theme und Font direkt anwenden
-        if (loadedSettings.theme_name) {
-            document.body.removeAttribute("data-theme");
-            if (loadedSettings.theme_name !== "default") {
-                document.body.dataset.theme = loadedSettings.theme_name;
-            }
+        const mergedSettings = { ...DEFAULT_SETTINGS, ...loadedSettings };
+        setSettings(mergedSettings);
+
+        if (mergedSettings.theme_name) {
+            document.body.dataset.theme = mergedSettings.theme_name;
         }
-        if (loadedSettings.font_type) {
-            document.body.dataset.font = loadedSettings.font_type;
-        }
-        if (loadedSettings.font_size) {
-            const numMultiplier = parseFloat(String(loadedSettings.font_size));
-            if (!isNaN(numMultiplier)) {
-                document.documentElement.style.setProperty(
-                    "--font-size-multiplier",
-                    String(numMultiplier)
-                );
-            }
+        if (mergedSettings.font_size) {
+            document.documentElement.style.setProperty("--font-size-multiplier", String(mergedSettings.font_size));
         }
 
-        // States aus den geladenen Einstellungen befüllen
-        setScannerUsableExtensions(
-            loadedSettings.usable_extensions ??
-                DEFAULT_SETTINGS.usable_extensions ??
-                []
-        );
-        setOcrExcludedDirs(
-            loadedSettings.processor_excluded_folders ??
-                DEFAULT_SETTINGS.processor_excluded_folders ??
-                ""
-        );
-        setOcrSubfolder(
-            loadedSettings.subfolder ?? DEFAULT_SETTINGS.subfolder ?? ""
-        );
-        setOcrPrefix(loadedSettings.prefix ?? DEFAULT_SETTINGS.prefix ?? "");
-        setOcrOverwrite(
-            loadedSettings.overwrite ?? DEFAULT_SETTINGS.overwrite ?? false
-        );
-        setOcrMaxWorkerCount(
-            loadedSettings.scanner_cpu_cores ??
-                DEFAULT_SETTINGS.scanner_cpu_cores ??
-                0
-        );
-        setMaxAgeDays(
-            loadedSettings.max_age_days ?? DEFAULT_SETTINGS.max_age_days ?? 1000
-        );
-
-        // --- NEU: Detailliertes OCR-Mapping ---
-        const ocr = loadedSettings.ocr_processing;
+        setScannerUsableExtensions(mergedSettings.usable_extensions ?? DEFAULT_SETTINGS.usable_extensions!);
+        setScannerIgnoredDirs(mergedSettings.ignored_dirs ?? DEFAULT_SETTINGS.ignored_dirs!);
+        setOcrExcludedDirs(mergedSettings.processor_excluded_folders ?? DEFAULT_SETTINGS.processor_excluded_folders!);
+        setOcrSubfolder(mergedSettings.subfolder ?? DEFAULT_SETTINGS.subfolder!);
+        setOcrPrefix(mergedSettings.prefix ?? DEFAULT_SETTINGS.prefix!);
+        setOcrOverwrite(mergedSettings.overwrite ?? DEFAULT_SETTINGS.overwrite!);
+        setOcrMaxWorkerCount(mergedSettings.scanner_cpu_cores ?? DEFAULT_SETTINGS.scanner_cpu_cores!);
+        setMaxAgeDays(mergedSettings.max_age_days ?? DEFAULT_SETTINGS.max_age_days!);
+        
+        const ocr = mergedSettings.ocr_processing;
         const defaultOcr = DEFAULT_SETTINGS.ocr_processing;
-        setForceOcr(ocr?.ocr_force ?? defaultOcr?.ocr_force ?? true);
-        setSkipText(
-            ocr?.ocr_skip_text_layer ?? defaultOcr?.ocr_skip_text_layer ?? false
-        );
-        setRedoOcr(
-            ocr?.ocr_redo_text_layer ?? defaultOcr?.ocr_redo_text_layer ?? false
-        );
-        setOcrLanguage(ocr?.ocr_language ?? defaultOcr?.ocr_language ?? "deu");
-        setOcrImageDpi(ocr?.ocr_image_dpi ?? defaultOcr?.ocr_image_dpi ?? 300);
-        setOcrOptimizeLevel(
-            ocr?.ocr_optimize_level ?? defaultOcr?.ocr_optimize_level ?? 1
-        );
-        setOcrCleanImages(
-            ocr?.ocr_clean_images ?? defaultOcr?.ocr_clean_images ?? true
-        );
-        setOcrTesseractConfig(
-            ocr?.ocr_tesseract_config ??
-                defaultOcr?.ocr_tesseract_config ??
-                "--oem 1 --psm 3"
-        );
-        setMinCategoryLength(
-            loadedSettings.min_category_length ?? 2
-        );
-
-        setSettings(loadedSettings);
+        setForceOcr(ocr?.ocr_force ?? defaultOcr!.ocr_force!);
+        setSkipText(ocr?.ocr_skip_text_layer ?? defaultOcr!.ocr_skip_text_layer!);
+        setRedoOcr(ocr?.ocr_redo_text_layer ?? defaultOcr!.ocr_redo_text_layer!);
+        setOcrLanguage(ocr?.ocr_language ?? defaultOcr!.ocr_language!);
+        setOcrImageDpi(ocr?.ocr_image_dpi ?? defaultOcr!.ocr_image_dpi!);
+        setOcrOptimizeLevel(ocr?.ocr_optimize_level ?? defaultOcr!.ocr_optimize_level!);
+        setOcrCleanImages(ocr?.ocr_clean_images ?? defaultOcr!.ocr_clean_images!);
+        setOcrTesseractConfig(ocr?.ocr_tesseract_config ?? defaultOcr!.ocr_tesseract_config!);
+        
+        setMinCategoryLength(mergedSettings.min_category_length ?? DEFAULT_SETTINGS.min_category_length!);
     }, []);
 
     const loadSettings = useCallback(
@@ -223,66 +158,52 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
             if (currentUser) {
                 try {
                     const response = await getUserSettings(currentUser);
-                    if (response?.settings) {
-                        applySettings(response.settings);
-                    }
+                    applySettings(response?.settings || {}); // Wende geladene über Defaults an
                 } catch (error) {
-                    console.error("Failed to load settings:", error);
-                    applySettings(DEFAULT_SETTINGS); // Fallback auf Defaults bei Fehler
+                    console.error("Failed to load settings, applying defaults:", error);
+                    applySettings({}); // Wende nur Defaults an
                 }
+            } else {
+                 applySettings({}); // Wende nur Defaults an
             }
             setIsReady(true);
         },
         [applySettings]
     );
-
+    
     useEffect(() => {
         const storedUser = localStorage.getItem("lastUsername");
         if (storedUser) {
             loadSettings(storedUser);
         } else {
-            setIsReady(true); // App ist auch "bereit", wenn kein Nutzer angemeldet ist
-            applySettings(DEFAULT_SETTINGS); // Wende Standardeinstellungen an
+            setIsReady(true);
+            applySettings({});
         }
     }, [loadSettings, applySettings]);
 
-    const contextValue: SettingsContextType = {
+    const contextValue = {
         settings,
+        defaultSettings: DEFAULT_SETTINGS,
         applySettings,
         loadSettings,
         isReady,
-        scannerUsableExtensions,
-        setScannerUsableExtensions,
-        ocrExcludedDirs,
-        setOcrExcludedDirs,
-        ocrSubfolder,
-        setOcrSubfolder,
-        ocrPrefix,
-        setOcrPrefix,
-        ocrOverwrite,
-        setOcrOverwrite,
-        ocrMaxWorkerCount,
-        setOcrMaxWorkerCount,
-        maxAgeDays,
-        setMaxAgeDays,
-        forceOcr,
-        setForceOcr,
-        skipText,
-        setSkipText,
-        redoOcr,
-        setRedoOcr,
-        ocrLanguage,
-        setOcrLanguage,
-        ocrImageDpi,
-        setOcrImageDpi,
-        ocrOptimizeLevel,
-        setOcrOptimizeLevel,
-        ocrCleanImages,
-        setOcrCleanImages,
-        ocrTesseractConfig,
-        setOcrTesseractConfig,
-        minCategoryLength,
-        setMinCategoryLength,
+        scannerUsableExtensions, setScannerUsableExtensions,
+        scannerIgnoredDirs, setScannerIgnoredDirs,
+        ocrExcludedDirs, setOcrExcludedDirs,
+        ocrSubfolder, setOcrSubfolder,
+        ocrPrefix, setOcrPrefix,
+        ocrOverwrite, setOcrOverwrite,
+        ocrMaxWorkerCount, setOcrMaxWorkerCount,
+        maxAgeDays, setMaxAgeDays,
+        forceOcr, setForceOcr,
+        skipText, setSkipText,
+        redoOcr, setRedoOcr,
+        ocrLanguage, setOcrLanguage,
+        ocrImageDpi, setOcrImageDpi,
+        ocrOptimizeLevel, setOcrOptimizeLevel,
+        ocrCleanImages, setOcrCleanImages,
+        ocrTesseractConfig, setOcrTesseractConfig,
+        minCategoryLength, setMinCategoryLength
     };
 
     return (
@@ -291,5 +212,3 @@ const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
         </SettingsContext.Provider>
     );
 };
-
-export { SettingsContext, SettingsProvider };

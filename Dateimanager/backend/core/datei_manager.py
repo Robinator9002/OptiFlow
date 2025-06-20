@@ -73,10 +73,12 @@ def reveal_in_file_manager(path: str):
 # --- DateiManager Klasse ---
 
 class DateiManager:
-    def __init__(self, structure_file="data/structure.json"):
+    def __init__(self, structure_file="data/structure.json", ignored_dirs: Optional[List[str]] = None):
         # Systemordner - erweitert für Cross-Platform (Beispiele)
         self.system_folders = self._get_platform_system_folders()
         self.structure_file = structure_file
+        self.ignored_dirs = set(ignored_dirs) if ignored_dirs else set()
+
         os.makedirs(os.path.dirname(self.structure_file), exist_ok=True)
         self.cached_structure = self._load_structure()
 
@@ -312,19 +314,17 @@ class DateiManager:
 
         dir_structure = []
         try:
-            # Verwende try-except um os.scandir für Berechtigungsprobleme etc.
             with os.scandir(path) as entries:
                 for entry in entries:
-                    # Ignoriere Systemordner und versteckte Ordner (beginnen mit .)
-                    is_hidden = entry.name.startswith('.')
-                    is_system = entry.name in self.system_folders
-                    if entry.is_dir(follow_symlinks=False) and not is_hidden and not is_system:
+                    if entry.is_dir(follow_symlinks=False):
+                        if entry.name.startswith('.') or entry.name in self.system_folders or entry.name in self.ignored_dirs:
+                            continue  # Überspringe den Ordner
+
                         try:
-                            # Rekursiver Aufruf für Unterordner
                             children = self._get_directory_structure(entry.path, depth + 1, max_depth)
                             dir_structure.append({
                                 "name": entry.name,
-                                "path": os.path.normpath(entry.path), # Normierten Pfad speichern
+                                "path": os.path.normpath(entry.path),
                                 "children": children
                             })
                         except PermissionError:

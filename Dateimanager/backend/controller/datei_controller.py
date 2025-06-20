@@ -371,6 +371,12 @@ class DateiController:
             # Assuming max_file_size in settings is in KB, matching max_size_kb
             self.file_scanner.max_size_kb = settings.max_file_size
 
+        if settings.ignored_dirs is not None:
+            # Konvertiere die Liste in ein Set für schnelle Lookups
+            ignored_set = set(settings.ignored_dirs)
+            self.datei_manager.ignored_dirs = ignored_set
+            # Stellen Sie sicher, dass Ihr FileScanner auch eine ignored_dirs Eigenschaft hat
+            self.file_scanner.ignored_dirs = ignored_set
 
         # Apply PDF/OCR Processor settings
         if settings.ocr_processing is not None:

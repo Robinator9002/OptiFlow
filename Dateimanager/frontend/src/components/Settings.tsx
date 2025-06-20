@@ -46,107 +46,90 @@ const Settings: React.FC<SettingsProps> = ({
         return <div>Loading settings context...</div>;
     }
 
+    // Hole alle benötigten Werte, Setter UND die Defaults aus dem Context
     const {
         loadSettings,
         settings,
-        scannerUsableExtensions,
-        setScannerUsableExtensions,
-        ocrExcludedDirs,
-        setOcrExcludedDirs,
-        ocrSubfolder,
-        setOcrSubfolder,
-        ocrPrefix,
-        setOcrPrefix,
-        ocrOverwrite,
-        setOcrOverwrite,
-        ocrMaxWorkerCount,
-        setOcrMaxWorkerCount,
-        maxAgeDays,
-        setMaxAgeDays,
-        forceOcr,
-        setForceOcr,
-        skipText,
-        setSkipText,
-        redoOcr,
-        setRedoOcr,
-        ocrLanguage,
-        setOcrLanguage,
-        ocrImageDpi,
-        setOcrImageDpi,
-        ocrOptimizeLevel,
-        setOcrOptimizeLevel,
-        ocrCleanImages,
-        setOcrCleanImages,
-        ocrTesseractConfig,
-        setOcrTesseractConfig,
-        minCategoryLength,
-        setMinCategoryLength,
+        defaultSettings,
+        // Scanner
+        scannerUsableExtensions, setScannerUsableExtensions,
+        scannerIgnoredDirs, setScannerIgnoredDirs,
+        // OCR
+        ocrExcludedDirs, setOcrExcludedDirs,
+        ocrSubfolder, setOcrSubfolder,
+        ocrPrefix, setOcrPrefix,
+        ocrOverwrite, setOcrOverwrite,
+        ocrMaxWorkerCount, setOcrMaxWorkerCount,
+        forceOcr, setForceOcr,
+        skipText, setSkipText,
+        redoOcr, setRedoOcr,
+        ocrLanguage, setOcrLanguage,
+        ocrImageDpi, setOcrImageDpi,
+        ocrOptimizeLevel, setOcrOptimizeLevel,
+        ocrCleanImages, setOcrCleanImages,
+        ocrTesseractConfig, setOcrTesseractConfig,
+        // Old Files
+        maxAgeDays, setMaxAgeDays,
+        // DeDuping
+        minCategoryLength, setMinCategoryLength,
     } = context;
 
     const [isBusy, setIsBusy] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
 
-    const [searchLimit, setSearchLimit] = useState(
-        settings.search_limit ?? 100
-    );
-    const [snippetLimit, setSnippetLimit] = useState(
-        settings.snippet_limit ?? 0
-    );
-    const [oldFilesLimit, setOldFilesLimit] = useState(
-        settings.old_files_limit ?? 0
-    );
-    const [filenameExactMatchScore, setFilenameExactMatchScore] = useState(
-        settings.match_score?.filename_exact ?? 5
-    );
-    const [filenamePartialMatchScore, setFilenamePartialMatchScore] = useState(
-        settings.match_score?.filename_partial ?? 3
-    );
-    const [contentMatchScore, setContentMatchScore] = useState(
-        settings.match_score?.content ?? 1
-    );
-    const [scannerCpuCoresState, setScannerCpuCoresState] = useState<
-        number | null
-    >(settings.scanner_cpu_cores ?? 0);
-    const [scanDelayState, setScanDelayState] = useState<number>(
-        settings.scan_delay ?? 0
-    );
-    const [snippetWindow, setSnippetWindow] = useState(
-        settings.snippet_window ?? 0
-    );
-    const [proximityWindow, setProximityWindow] = useState(
-        settings.proximity_window ?? 0
-    );
-    const [sortBy, setSortBy] = useState(settings.sort_by ?? "age");
-    const [sortOrder, setSortOrder] = useState(settings.sort_order ?? "normal");
-    const [themeName, setThemeName] = useState(
-        settings.theme_name ?? "default"
-    );
-    const [fontSize, setFontSize] = useState(settings.font_size ?? 1.0);
-    const [checkInterval, setCheckInterval] = useState(
-        settings.check_interval ?? 60
-    );
-    const [maxFileSize, setMaxFileSize] = useState(
-        settings.max_file_size ?? 1000000
-    );
-    const [lengthRangeStep, setLengthRangeStep] = useState(
-        settings.length_range_step ?? 100
-    );
-    const [snippetLengthDedupe, setSnippetLengthDedupe] = useState(
-        settings.snippet_length ?? 30
-    );
-    const [snippetStepDedupe, setSnippetStepDedupe] = useState(
-        settings.snippet_step ?? 1
-    );
-    const [signatureSize, setSignatureSize] = useState(
-        settings.signature_size ?? 300
-    );
-    const [similarityThreshold, setSimilarityThreshold] = useState(
-        settings.similarity_threshold ?? 0.8
-    );
+    // KORREKTUR: Initialisiere die lokalen States mit einem Fallback auf die defaultSettings.
+    // Dies garantiert, dass der Typ korrekt ist (z.B. `number` anstatt `number | undefined`).
+    const [searchLimit, setSearchLimit] = useState(settings.search_limit ?? defaultSettings.search_limit!);
+    const [snippetLimit, setSnippetLimit] = useState(settings.snippet_limit ?? defaultSettings.snippet_limit!);
+    const [oldFilesLimit, setOldFilesLimit] = useState(settings.old_files_limit ?? defaultSettings.old_files_limit!);
+    const [filenameExactMatchScore, setFilenameExactMatchScore] = useState(settings.match_score?.filename_exact ?? defaultSettings.match_score!.filename_exact!);
+    const [filenamePartialMatchScore, setFilenamePartialMatchScore] = useState(settings.match_score?.filename_partial ?? defaultSettings.match_score!.filename_partial!);
+    const [contentMatchScore, setContentMatchScore] = useState(settings.match_score?.content ?? defaultSettings.match_score!.content!);
+    const [scannerCpuCoresState, setScannerCpuCoresState] = useState<number | null>(settings.scanner_cpu_cores ?? defaultSettings.scanner_cpu_cores!);
+    const [scanDelayState, setScanDelayState] = useState<number>(settings.scan_delay ?? defaultSettings.scan_delay!);
+    const [snippetWindow, setSnippetWindow] = useState(settings.snippet_window ?? defaultSettings.snippet_window!);
+    const [proximityWindow, setProximityWindow] = useState(settings.proximity_window ?? defaultSettings.proximity_window!);
+    const [sortBy, setSortBy] = useState(settings.sort_by ?? defaultSettings.sort_by!);
+    const [sortOrder, setSortOrder] = useState(settings.sort_order ?? defaultSettings.sort_order!);
+    const [themeName, setThemeName] = useState(settings.theme_name ?? defaultSettings.theme_name!);
+    const [fontSize, setFontSize] = useState(settings.font_size ?? defaultSettings.font_size!);
+    const [checkInterval, setCheckInterval] = useState(settings.check_interval ?? defaultSettings.check_interval!);
+    const [maxFileSize, setMaxFileSize] = useState(settings.max_file_size ?? defaultSettings.max_file_size!);
+    const [lengthRangeStep, setLengthRangeStep] = useState(settings.length_range_step ?? defaultSettings.length_range_step!);
+    const [snippetLengthDedupe, setSnippetLengthDedupe] = useState(settings.snippet_length ?? defaultSettings.snippet_length!);
+    const [snippetStepDedupe, setSnippetStepDedupe] = useState(settings.snippet_step ?? defaultSettings.snippet_step!);
+    const [signatureSize, setSignatureSize] = useState(settings.signature_size ?? defaultSettings.signature_size!);
+    const [similarityThreshold, setSimilarityThreshold] = useState(settings.similarity_threshold ?? defaultSettings.similarity_threshold!);
 
     const [activeTab, setActiveTab] = useState("general");
     const [lastActiveTab, setLastActiveTab] = useState("general");
+
+    // KORREKTUR: Auch der useEffect muss die Fallbacks verwenden, um die Typ-Sicherheit zu gewährleisten.
+    useEffect(() => {
+        setSearchLimit(settings.search_limit ?? defaultSettings.search_limit!);
+        setSnippetLimit(settings.snippet_limit ?? defaultSettings.snippet_limit!);
+        setOldFilesLimit(settings.old_files_limit ?? defaultSettings.old_files_limit!);
+        setFilenameExactMatchScore(settings.match_score?.filename_exact ?? defaultSettings.match_score!.filename_exact!);
+        setFilenamePartialMatchScore(settings.match_score?.filename_partial ?? defaultSettings.match_score!.filename_partial!);
+        setContentMatchScore(settings.match_score?.content ?? defaultSettings.match_score!.content!);
+        setScannerCpuCoresState(settings.scanner_cpu_cores ?? defaultSettings.scanner_cpu_cores!);
+        setScanDelayState(settings.scan_delay ?? defaultSettings.scan_delay!);
+        setSnippetWindow(settings.snippet_window ?? defaultSettings.snippet_window!);
+        setProximityWindow(settings.proximity_window ?? defaultSettings.proximity_window!);
+        setSortBy(settings.sort_by ?? defaultSettings.sort_by!);
+        setSortOrder(settings.sort_order ?? defaultSettings.sort_order!);
+        setThemeName(settings.theme_name ?? defaultSettings.theme_name!);
+        setFontSize(settings.font_size ?? defaultSettings.font_size!);
+        setCheckInterval(settings.check_interval ?? defaultSettings.check_interval!);
+        setMaxFileSize(settings.max_file_size ?? defaultSettings.max_file_size!);
+        setLengthRangeStep(settings.length_range_step ?? defaultSettings.length_range_step!);
+        setSnippetLengthDedupe(settings.snippet_length ?? defaultSettings.snippet_length!);
+        setSnippetStepDedupe(settings.snippet_step ?? defaultSettings.snippet_step!);
+        setSignatureSize(settings.signature_size ?? defaultSettings.signature_size!);
+        setSimilarityThreshold(settings.similarity_threshold ?? defaultSettings.similarity_threshold!);
+    }, [settings, defaultSettings]);
+
 
     const tabsAdmin = [
         { id: "general", label: "Allgemein" },
@@ -184,7 +167,8 @@ const Settings: React.FC<SettingsProps> = ({
                 },
                 scanner_cpu_cores: scannerCpuCoresState ?? undefined,
                 usable_extensions: scannerUsableExtensions,
-                scan_delay: scanDelayState || undefined,
+                ignored_dirs: scannerIgnoredDirs,
+                scan_delay: scanDelayState,
                 snippet_window: snippetWindow,
                 proximity_window: proximityWindow,
                 max_age_days: maxAgeDays,
@@ -217,6 +201,8 @@ const Settings: React.FC<SettingsProps> = ({
             };
 
             try {
+                setIsSaving(true);
+                setIsBusy(true);
                 const response = await saveUserSettings(
                     currentUser,
                     settingsToSave
@@ -243,34 +229,29 @@ const Settings: React.FC<SettingsProps> = ({
     };
 
     const handleResetToDefaults = () => {
-        toast.warn(
-            "Alle Einstellungen wurden auf die Standardwerte zurückgesetzt."
-        );
-        // Logik für Reset hier einfügen...
+        if(currentUser) {
+            context.applySettings(defaultSettings);
+            toast.warn(
+                "Alle Einstellungen auf die Standardwerte zurückgesetzt. Drücken Sie 'Speichern', um die Änderung zu übernehmen."
+            );
+        }
         setIsResetting(false);
         setIsBusy(false);
     };
 
     useEffect(() => {
         const handleGlobalKeyDown = (event: KeyboardEvent) => {
-            // =================================================================
-            // DER FIX: Wir überprüfen, ob irgendein Modal aktiv ist.
-            // Wenn ja, ignorieren wir alle globalen Tastenbefehle.
-            // Das verhindert, dass dieser Listener auf "Enter" reagiert,
-            // wenn der Benutzer eigentlich in einem anderen Dialog ist.
             const isModalActive = document.querySelector(
                 ".modal-overlay, .event-form-overlay, .user-confirmation-overlay"
             );
             if (isModalActive) {
                 return;
             }
-            // =================================================================
 
             if (appActiveTab !== "settings" || isBusy) return;
 
             if (event.key === "Enter") {
-                setIsSaving(true);
-                setIsBusy(true);
+                handleSaveSettings();
             }
             if (event.key === "Escape") {
                 swapBack();
@@ -280,7 +261,7 @@ const Settings: React.FC<SettingsProps> = ({
         document.addEventListener("keydown", handleGlobalKeyDown);
         return () =>
             document.removeEventListener("keydown", handleGlobalKeyDown);
-    }, [appActiveTab, isBusy, swapBack]);
+    }, [appActiveTab, isBusy, swapBack, handleSaveSettings]);
 
     return (
         <div className="settings-container container">
@@ -333,6 +314,8 @@ const Settings: React.FC<SettingsProps> = ({
                         setUsableExtensions={setScannerUsableExtensions}
                         scanDelay={scanDelayState}
                         setScanDelay={setScanDelayState}
+                        ignoredDirs={scannerIgnoredDirs}
+                        setIgnoredDirs={setScannerIgnoredDirs}
                     />
                 )}
                 {activeTab === "ocr" && (
@@ -407,7 +390,7 @@ const Settings: React.FC<SettingsProps> = ({
                         }
                         isAdmin={isAdmin}
                         onLogout={() => {
-                            logoutUser(currentUser);
+                            if (currentUser) logoutUser(currentUser);
                             setLoggedIn(false);
                         }}
                         swapBack={() => setActiveTab(lastActiveTab)}
@@ -427,7 +410,7 @@ const Settings: React.FC<SettingsProps> = ({
                         setExecutingEvent={setExecutingEvent}
                         setIsBusy={setIsBusy}
                         onLogout={() => {
-                            logoutUser(currentUser);
+                            if (currentUser) logoutUser(currentUser);
                             setLoggedIn(false);
                         }}
                     />
@@ -464,9 +447,9 @@ const Settings: React.FC<SettingsProps> = ({
                     message={
                         isSaving
                             ? "Sind Sie sicher, dass Sie die Einstellungen speichern möchten?"
-                            : "Sind Sie sicher, dass Sie die Einstellungen zurücksetzen möchten?"
+                            : "Sind Sie sicher, dass Sie die Einstellungen zurücksetzen möchten? (Dies ist keine permanente Aktion, Sie müssen danach noch 'Speichern' klicken)"
                     }
-                    isDanger={false}
+                    isDanger={isResetting}
                     onConfirm={
                         isSaving ? handleSaveSettings : handleResetToDefaults
                     }

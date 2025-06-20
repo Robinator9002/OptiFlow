@@ -155,7 +155,7 @@ def _process_file_task(
     max_size_kb_val: int, 
     max_content_size_let_val: Optional[int],
     convert_pdf_flag: bool,
-    processor_available_flag: bool 
+    processor_available_flag: bool,
 ) -> Optional[Tuple[str, Dict[str, Any]]]:
     try:
         if not os.path.exists(file_path):
@@ -217,7 +217,7 @@ class FileScanner:
                  snippet_limit: int = 0, snippet_window: int = 40, proximity_window: int = 20, 
                  max_age_days: int = 1000, old_files_limit: int = 0, sort_by: str = 'age', sort_order: str = 'normal',
                  length_range_step: int = 10, min_category_length: int = 2, snippet_length: int = 5,      
-                 snippet_step: int = 2, signature_size: int = 100):
+                 ignored_dirs: Optional[List[str]] = None, snippet_step: int = 2, signature_size: int = 100, ):
         
         self.base_dirs = base_dirs
         self.extensions = set(ext.lower() for ext in extensions) if extensions else None
@@ -228,6 +228,7 @@ class FileScanner:
         self.dupe_file = dupe_file
         self.max_size_kb = max_size_kb
         self.max_content_size_let = max_content_size_let
+        self.ignored_dirs = set(ignored_dirs) if ignored_dirs else set()
         
         if num_processes is not None:
             self.num_processes = num_processes
@@ -320,7 +321,8 @@ class FileScanner:
             if not os.path.exists(base_dir):
                 logging.warning(f"Basisverzeichnis {base_dir} nicht gefunden.")
                 continue
-            for root, dirs, files_in_dir in os.walk(base_dir): # Renamed 'files' to 'files_in_dir'
+            for root, dirs, files_in_dir in os.walk(base_dir, topdown=True): # Renamed 'files' to 'files_in_dir'
+                dirs[:] = [d for d in dirs if d not in self.ignored_dirs and not d.startswith('.')]
                 for folder_name in dirs: 
                     folder_path = os.path.join(root, folder_name)
                     self.index[folder_path] = {"type": "folder", "name": folder_name, "path": folder_path}

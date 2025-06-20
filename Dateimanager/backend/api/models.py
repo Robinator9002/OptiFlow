@@ -180,6 +180,7 @@ class Settings(BaseModel):
     show_relevance: Optional[bool] = None
     match_score: Optional[MatchScore] = None
     scanner_cpu_cores: Optional[int] = None
+    ignored_dirs: Optional[List[str]] = None
     usable_extensions: Optional[List[str]] = None
     scan_delay: Optional[int] = None
     snippet_window: Optional[int] = None
