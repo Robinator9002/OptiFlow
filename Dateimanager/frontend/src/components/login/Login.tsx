@@ -127,26 +127,35 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
     return (
         <>
-            {/* NEU: Das Modal wird außerhalb des Formulars gerendert, wenn der State true ist */}
             {showResetModal && (
                 <div className="overlay" onClick={() => setShowResetModal(false)}>
                     <div className="modal-content modal-danger" onClick={(e) => e.stopPropagation()}>
+                        {/* START: Diesen Block ersetzen */}
                         <div className="reset-warning">
-                        <h3>Passwort-Reset</h3>
-                        <p>
-                           Um den Zugriff auf die Anwendung wiederherzustellen, müssen Sie die Datei <code>data/users.json</code> manuell löschen, die sich direkt in dem Projektverzeichnis befinden sollte.
-                        </p>
+                            <h3>Passwort-Reset</h3>
+                            <p>
+                                Um den Zugriff wiederherzustellen, müssen Sie die Datei <code>users.json</code> manuell löschen.
+                                Der Speicherort hängt von Ihrer Umgebung ab:
+                            </p>
+                            <hr />
+                            <p>
+                                <strong>In der installierten Anwendung (Produktion):</strong><br />
+                                Die Datei befindet sich im <code>backend/data</code> Ordner innerhalb des Installationsverzeichnisses Ihrer App.
+                            </p>
+                            <p>
+                                <strong>In der Entwicklungsumgebung:</strong><br />
+                                Die Datei befindet sich im <code>data</code> Ordner direkt im Hauptverzeichnis Ihres Projekts (<code>C:\OptiFlow\Dateimanager\data</code>).
+                            </p>
+                            <hr />
                             <h4>WARNUNG: DIESER VORGANG IST ENDGÜLTIG</h4>
                             <p>
-                                Durch das Löschen der Datei <code>data/users.json</code> werden <strong>alle Benutzerkonten</strong>, Passwörter und benutzerspezifische Einstellungen unwiderruflich entfernt.
+                                Durch das Löschen dieser Datei werden <strong>alle Benutzerkonten</strong>, Passwörter und benutzerspezifische Einstellungen unwiderruflich entfernt. Ihre anderen Daten (Datei-Index etc.) bleiben erhalten.
                             </p>
                             <p>
-                                Ihre indizierten Dateien, der Duplikat-Cache und geplante Events bleiben vollständig erhalten. Nur die Benutzerdatenbank wird zurückgesetzt.
-                            </p>
-                            <p>
-                               Nachdem Sie die Datei gelöscht haben, können Sie hier einen neuen Administrator-Account anlegen.
+                               Nachdem Sie die Datei gelöscht und die App neu gestartet haben, können Sie hier einen neuen Administrator-Account anlegen.
                             </p>
                         </div>
+                        {/* ENDE: Ersetzter Block */}
                         <div className="modal-buttons">
                             <button onClick={() => setShowResetModal(false)} className="confirm">
                                 Verstanden
