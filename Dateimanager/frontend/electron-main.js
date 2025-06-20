@@ -68,8 +68,6 @@ function createWindow() {
             writeLog(
                 `ERROR: Python executable not found at: ${pythonExecutablePath}`
             );
-            // Hier könntest du eine Fehlermeldung direkt im Fenster anzeigen, z.B. eine HTML-Seite laden
-            // mainWindow.loadFile(path.join(__dirname, 'error_backend_not_found.html')); // Temporäre Fehlerseite
             return;
         }
 
@@ -77,19 +75,17 @@ function createWindow() {
 
         pythonProcess = spawn(pythonExecutablePath, [], {
             stdio: "inherit",
-            cwd: path.dirname(pythonExecutablePath)
+            cwd: path.dirname(pythonExecutablePath),
         });
 
         pythonProcess.on("error", (err) => {
             writeLog(
                 `ERROR: Failed to start Python backend process: ${err.message}`
             );
-            // mainWindow.webContents.send('backend-error', `Failed to start backend: ${err.message}`);
         });
 
         pythonProcess.on("close", (code) => {
             writeLog(`Python backend exited with code ${code}`);
-            // mainWindow.webContents.send('backend-closed', `Backend exited with code: ${code}`);
         });
 
         writeLog("Python backend spawn command sent.");
@@ -105,15 +101,14 @@ function createWindow() {
         mainWindow.loadURL("http://localhost:5173");
         mainWindow.webContents.openDevTools(); // Öffne DevTools im Entwicklungsmodus
     } else {
-        mainWindow.webContents.openDevTools(); // Öffne DevTools im Entwicklungsmodus
-        // Pfad zum gebauten React-Frontend im Produktionsmodus
-        // 'dist' ist der Ordner, der von 'vite build' im 'frontend'-Verzeichnis erstellt wird.
+        // Die folgende Zeile wurde entfernt, um die DevTools in der Produktionsversion nicht automatisch zu öffnen.
+        // mainWindow.webContents.openDevTools(); 
+        
         const frontendPath = path.join(__dirname, "dist", "index.html");
         writeLog(
             `Loading frontend in production mode from file: ${frontendPath}`
         );
 
-        // Überprüfe, ob die index.html existiert
         if (!fs.existsSync(frontendPath)) {
             writeLog(
                 `ERROR: Frontend index.html not found at: ${frontendPath}`
