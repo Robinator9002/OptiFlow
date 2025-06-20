@@ -26,6 +26,8 @@ from starlette.background import BackgroundTask
 from starlette.responses import JSONResponse
 import asyncio
 import platform, string
+import uvicorn
+import multiprocessing
 
 # ================================================================= #
 #  SAUBERE LOGGING-KONFIGURATION FÜR UVICORN
@@ -79,10 +81,6 @@ LOGGING_CONFIG = {
         },
     },
 }
-
-# ================================================================= #
-#  ENDE DER Log KONFIGURATION
-# ================================================================= #
 
 # --- Models anpassen ---
 # Wir machen die Admin-Credentials optional, damit wir sie bei der Ersteinrichtung weglassen können
@@ -767,24 +765,34 @@ async def reload_database(database_name: str):
     controller.reload_database(database_name)
     return {"message": f"Datenbank '{database_name}' erfolgreich neu geladen."}
 
-# ================================================================= #
-#  Serverstart (wenn das Build ausgeführt wird!!!)
-# ================================================================= #
-if __name__ == "__main__":
-    import uvicorn
-    import multiprocessing
 
-    # Freeze Support to prevent Windows Bug for the Build Version!
-    # This Functionality is not needed for Linux and Mac, but it automatically
-    # turns itself off on these systems, it is not required to
-    # check the system manually
-    multiprocessing.freeze_support()
+# --- Serverstart-Funktion ---
+def start_server():
+    """Initialisiert und startet den uvicorn-Server."""
+    
+    # Der Controller wird jetzt außerhalb dieser Funktion global initialisiert.
+    # Dies stellt sicher, dass er im Hauptprozess existiert, bevor Worker gespawnt werden.
+
+    if "entwicklung" in SECRET_KEY:
+        print("\nWARNUNG: Es wird der Standard-Entwicklungsschlüssel verwendet. Setzen Sie die Umgebungsvariable 'OPTIFLOW_SECRET_KEY' für den produktiven Einsatz.\n")
 
     uvicorn.run(
         "backend.main:app",
         host="127.0.0.1",
         port=8000,
-        reload=False,  # Im kompilierten Zustand wollen wir kein "reload"
+        reload=False,
         workers=1,
         log_config=LOGGING_CONFIG,
     )
+
+# ================================================================= #
+#  Haupt-Ausführungspunkt des Skripts
+# ================================================================= #
+if __name__ == "__main__":
+    # KORREKTUR: Dies muss der ALLERERSTE Aufruf im __main__-Block sein.
+    # Er ist essenziell für Windows, um Kindprozesse korrekt zu erstellen.
+    # Unter Linux/macOS hat er keine Auswirkungen.
+    multiprocessing.freeze_support()
+
+    # Jetzt, nachdem freeze_support() aufgerufen wurde, können wir den Server starten.
+    start_server()
