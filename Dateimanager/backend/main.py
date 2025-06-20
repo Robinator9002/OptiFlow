@@ -777,5 +777,6 @@ if __name__ == "__main__":
         host="127.0.0.1",
         port=8000,
         reload=False,  # Im kompilierten Zustand wollen wir kein "reload"
-        workers=1
+        workers=1,
+        log_config=LOGGING_CONFIG,
     )
