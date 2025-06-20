@@ -48,7 +48,10 @@ class DateiController:
         """
         self.data_file, self.index_file, self.structure_file, self.events_file, self.dupe_file = data_file, index_file, structure_file, events_file, dupe_file # Store dupe_file path
 
-        self.event_manager = EventManager(on_event_triggered=self.on_event_triggered)  # Wenn kein EventManager übergeben wird, wird ein neuer erstellt
+        self.event_manager = EventManager(
+            on_event_triggered=self.on_event_triggered,
+            events_file=events_file
+        )  # Wenn kein EventManager übergeben wird, wird ein neuer erstellt
         self.datei_manager = DateiManager(structure_file=structure_file)
         self.pdf_ocr_processor = PDFOCRProcessor(tools_dir=tools_dir, ocr_settings={})
         self.account_manager = AccountManager(data_file=data_file, auto_login_time=auto_login_time)
