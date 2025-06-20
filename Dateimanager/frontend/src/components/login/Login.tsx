@@ -144,7 +144,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                             </p>
                             <p>
                                 <strong>In der Entwicklungsumgebung:</strong><br />
-                                Die Datei befindet sich im <code>data</code> Ordner direkt im Hauptverzeichnis Ihres Projekts (<code>C:\OptiFlow\Dateimanager\data</code>).
+                                Die Datei befindet sich im <code>data</code> Ordner direkt im Hauptverzeichnis Ihres Projekts.
                             </p>
                             <hr />
                             <h4>WARNUNG: DIESER VORGANG IST ENDGÜLTIG</h4>
