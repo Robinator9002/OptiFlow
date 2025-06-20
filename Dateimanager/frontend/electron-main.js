@@ -77,6 +77,7 @@ function createWindow() {
 
         pythonProcess = spawn(pythonExecutablePath, [], {
             stdio: "inherit",
+            cwd: path.dirname(pythonExecutablePath)
         });
 
         pythonProcess.on("error", (err) => {
