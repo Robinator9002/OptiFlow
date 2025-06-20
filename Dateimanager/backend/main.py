@@ -102,7 +102,7 @@ OS_TOOL_DIR = SYSTEM_LOWER if SYSTEM_LOWER != 'darwin' else 'macos'
 
 if getattr(sys, 'frozen', False):
     # Im PyInstaller-Bundle: Dein .spec File packt 'backend' als Ordner.
-    bundle_base_for_backend = os.path.join(sys._MEIPASS, '_internal', 'backend')
+    bundle_base_for_backend = os.path.join(sys._MEIPASS, 'backend')
     TOOLS_DIR = os.path.join(bundle_base_for_backend, 'tools', OS_TOOL_DIR)
 else:
     # Normale Entwicklungsumgebung: tools sind direkt in backend/tools/...
