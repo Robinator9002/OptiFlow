@@ -709,3 +709,16 @@ async def write_database(database_name: str, body: DataWrapper, current_user: di
 async def reload_database(database_name: str):
     controller.reload_database(database_name)
     return {"message": f"Datenbank '{database_name}' erfolgreich neu geladen."}
+
+# ================================================================= #
+#  Serverstart (wenn das Build ausgeführt wird!!!)
+# ================================================================= #
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "main:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=False,  # Im kompilierten Zustand wollen wir kein "reload"
+        workers=1
+    )
