@@ -51,13 +51,16 @@ function createWindow() {
             );
             writeLog(`Dev path to Python executable: ${pythonExecutablePath}`);
         } else {
-            // Im Produktionsmodus: Die .exe liegt jetzt direkt in app.asar.unpacked
+            // Im Produktionsmodus: Finde den Root-Pfad der Anwendung
+            const appRoot = path.dirname(app.getPath("exe"));
+
+            // Der 'backend'-Ordner liegt direkt in diesem Root, als Geschwister-Ordner
             pythonExecutablePath = path.join(
-                process.resourcesPath,
-                "app.asar.unpacked",
+                appRoot,
                 "backend",
                 "OptiFlowFileManager.exe"
-            ); // <-- ÄNDERUNG: 'backend' aus dem Pfad entfernt
+            );
+
             writeLog(`Prod path to Python executable: ${pythonExecutablePath}`);
         }
 
