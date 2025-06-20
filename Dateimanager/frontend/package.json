@@ -58,16 +58,15 @@
 		"extraFiles": [
 			{
 				"from": "../dist/OptiFlowFileManager",
-				"to": ".",
+				"to": "backend",
 				"filter": [
 					"**/*"
 				]
 			}
 		],
 		"asarUnpack": [
-            "**/*.exe",
-            "**/*.dll"
-        ],
+			"backend/**/*"
+		],
 		"win": {
 			"target": "nsis",
 			"icon": "public/icon.ico"

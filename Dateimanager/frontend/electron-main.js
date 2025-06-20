@@ -55,6 +55,7 @@ function createWindow() {
             pythonExecutablePath = path.join(
                 process.resourcesPath,
                 "app.asar.unpacked",
+                "backend",
                 "OptiFlowFileManager.exe"
             ); // <-- ÄNDERUNG: 'backend' aus dem Pfad entfernt
             writeLog(`Prod path to Python executable: ${pythonExecutablePath}`);
