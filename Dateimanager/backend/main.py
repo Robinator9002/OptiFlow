@@ -772,6 +772,14 @@ async def reload_database(database_name: str):
 # ================================================================= #
 if __name__ == "__main__":
     import uvicorn
+    import multiprocessing
+
+    # Freeze Support to prevent Windows Bug for the Build Version!
+    # This Functionality is not needed for Linux and Mac, but it automatically
+    # turns itself off on these systems, it is not required to
+    # check the system manually
+    multiprocessing.freeze_support()
+
     uvicorn.run(
         "backend.main:app",
         host="127.0.0.1",
