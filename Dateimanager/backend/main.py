@@ -27,6 +27,63 @@ from starlette.responses import JSONResponse
 import asyncio
 import platform, string
 
+# ================================================================= #
+#  SAUBERE LOGGING-KONFIGURATION FÜR UVICORN
+# ================================================================= #
+
+# Bestimme den Pfad für die Log-Datei
+if getattr(sys, 'frozen', False):
+    log_dir_base = os.path.dirname(sys.executable)
+else:
+    log_dir_base = os.path.dirname(os.path.abspath(__file__))
+
+log_dir = os.path.join(log_dir_base, 'logs')
+os.makedirs(log_dir, exist_ok=True)
+log_file_path = os.path.join(log_dir, 'backend_runtime.log')
+
+
+LOGGING_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "()": "uvicorn.logging.DefaultFormatter",
+            "fmt": "%(levelprefix)s %(asctime)s - %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+            "use_colors": False, # Explizit Farben deaktivieren
+        },
+    },
+    "handlers": {
+        "file": { # Ein Handler, der in eine Datei schreibt
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "default",
+            "filename": log_file_path,
+            "maxBytes": 1024 * 1024 * 5, # 5 MB
+            "backupCount": 3,
+        },
+    },
+    "loggers": {
+        "uvicorn": { # Uvicorn's eigenen Logger konfigurieren
+            "handlers": ["file"],
+            "level": "INFO",
+        },
+        "uvicorn.error": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "uvicorn.access": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+
+# ================================================================= #
+#  ENDE DER Log KONFIGURATION
+# ================================================================= #
+
 # --- Models anpassen ---
 # Wir machen die Admin-Credentials optional, damit wir sie bei der Ersteinrichtung weglassen können
 class AdminUser(AdminUser):
