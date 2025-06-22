@@ -59,7 +59,7 @@
             <h3>Scanner (Admin)</h3>
             <p>Hier steuern Administratoren die Details des Indexierungs-Prozesses. Dies ist eine der wichtigsten Konfigurationsseiten.</p>
              <div class="img-container">
-                <img src="https://placehold.co/800x400/3b82f6/ffffff?text=Screenshot+der+Scanner-Einstellungen" alt="Screenshot der Scanner-Einstellungen">
+                <img src="../img/settings/scanner.png" alt="Screenshot der Scanner-Einstellungen">
                 <p class="caption">Definieren Sie Zielordner, Dateitypen und weitere Scan-Parameter.</p>
             </div>
             <ul>
@@ -70,24 +70,19 @@
                 <li><strong>Weitere Optionen:</strong> Legen Sie die maximale Anzahl an CPU-Kernen für den Scan fest oder definieren Sie eine Scan-Verzögerung zur Schonung älterer Systeme.</li>
             </ul>
         </section>
-
-        <section id="ocr-einstellungen">
-            <h3>OCR (Admin)</h3>
-            <p>Passen Sie die Standardeinstellungen für den <a href="funktionen_admin.html#pdf-ocr">PDF zu OCR</a>-Prozess an. Diese Einstellungen werden als Vorauswahl im OCR-Tab geladen, können dort aber für jeden Durchlauf individuell angepasst werden.</p>
-        </section>
         
         <section id="benutzerverwaltung">
             <h3>Benutzer</h3>
             <p>Verwalten Sie Ihr eigenes Konto oder (als Admin) alle Konten im System.</p>
             <h4>Für alle Benutzer:</h4>
             <ul>
-                <li><strong>Benutzernamen ändern:</strong> Ändern Sie Ihren eigenen Anzeigenamen.</li>
-                <li><strong>Passwort ändern:</strong> Nach Bestätigung Ihres aktuellen Passworts können Sie ein neues, sicheres Passwort vergeben.</li>
-                <li><strong>Konto löschen:</strong> Löschen Sie Ihr eigenes Konto. Diese Aktion ist endgültig und erfordert eine Passwortbestätigung.</li>
+                <li><strong>Benutzernamen ändern:</strong> Passen Sie Ihren Anzeigenamen an.</li>
+                <li><strong>Passwort ändern:</strong> Aus Sicherheitsgründen sollten Sie Ihr Passwort regelmäßig ändern. Hier können Sie nach Bestätigung Ihres alten Passworts ein neues vergeben.</li>
+                <li><strong>Konto löschen:</strong> Löschen Sie Ihr eigenes Konto (erfordert Passwortbestätigung).</li>
             </ul>
             <h4>Zusätzlich für Admins:</h4>
              <div class="img-container">
-                <img src="https://placehold.co/800x400/2c3e50/ffffff?text=Screenshot+der+Benutzerverwaltung" alt="Screenshot der Benutzerverwaltung durch einen Admin">
+                <img src="../img/settings/user.png" alt="Screenshot der Benutzerverwaltung durch einen Admin">
                 <p class="caption">Admins haben die volle Kontrolle über alle Benutzerkonten.</p>
             </div>
             <ul>
@@ -99,23 +94,12 @@
             </ul>
         </section>
 
-        <section id="datenbank-einstellungen">
-            <h3>Datenbank (Admin)</h3>
-            <p>Ermöglicht den direkten Zugriff auf die Konfigurations- und Indexdateien der Anwendung. <strong>Vorsicht:</strong> Unsachgemäße Änderungen hier können die Anwendung unbrauchbar machen.</p>
-            <ul>
-                <li><strong>Datenbank auswählen:</strong> Wählen Sie eine der JSON-Dateien (z.B. <code>index.json</code>, <code>users.json</code>, <code>events.json</code>) aus.</li>
-                <li><strong>Anzeigen & Bearbeiten:</strong> Der Inhalt der Datei wird in einem Editor angezeigt und kann direkt bearbeitet werden.</li>
-                <li><strong>Backup herunterladen:</strong> Sichern Sie die ausgewählte Datenbank als JSON-Datei auf Ihrem lokalen Rechner.</li>
-                 <li><strong>Neu laden:</strong> Veranlasst den Server, die ausgewählte Konfigurationsdatei von der Festplatte neu einzulesen.</li>
-            </ul>
-        </section>
-        
         <section id="system-einstellungen">
             <h3>System (Admin)</h3>
             <p>Globale Einstellungen, die das Verhalten des Servers beeinflussen.</p>
             <ul>
                 <li><strong>Zeitgesteuerte Events:</strong> Ein mächtiges Werkzeug zur Automatisierung. Erstellen Sie Events, die zu bestimmten Zeiten (täglich, wöchentlich, stündlich) ausgeführt werden. So können Sie z.B. einen nächtlichen Index-Scan oder eine wöchentliche OCR-Konvertierung einrichten, ohne manuell eingreifen zu müssen.</li>
-                <li><strong>Server herunterfahren:</strong> Fährt den OptiFlow Backend-Server sicher herunter. Erfordert eine doppelte Bestätigung mit Ihrem Admin-Passwort. Die Anwendung ist danach nicht mehr erreichbar und muss manuell via <code>start.bat</code> neu gestartet werden.</li>
+                <li><strong>Server herunterfahren:</strong> Fährt den OptiFlow Backend-Server sicher herunter. Erfordert eine doppelte Bestätigung mit Ihrem Admin-Passwort. Die Anwendung ist danach nicht mehr erreichbar und muss manuell via Installer-Verknüpfung oder <code>start.bat</code> neu gestartet werden.</li>
             </ul>
         </section>
     </main>
