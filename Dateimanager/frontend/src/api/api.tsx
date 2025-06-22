@@ -362,6 +362,9 @@ export const changeUsername = async (
     return response.data;
 };
 
+// ========================================================================
+// ========================= KORRIGIERTER BEREICH =========================
+// ========================================================================
 export const changePassword = async (
     username: string,
     oldPassword: string,
@@ -370,15 +373,25 @@ export const changePassword = async (
     password_reset: boolean = false,
     newPassword: string
 ) => {
+    // Erstelle den Request-Body. Das admin_user-Objekt wird nur dann
+    // erstellt, wenn admin_username und admin_password nicht null sind.
+    // Andernfalls wird für admin_user `null` gesendet, was vom Backend
+    // (Pydantic: Optional[User] = None) korrekt verarbeitet wird.
     const requestBody = {
         user: { username: username, password: oldPassword },
-        admin_user: { username: admin_username, password: admin_password },
+        admin_user: (admin_username !== null && admin_password !== null)
+            ? { username: admin_username, password: admin_password }
+            : null,
         password_reset: password_reset,
         new_password: newPassword,
     };
     const response = await api.post("/change_password/", requestBody);
     return response.data;
 };
+// ========================================================================
+// ======================= ENDE KORRIGIERTER BEREICH ======================
+// ========================================================================
+
 
 // --- SETTINGS & DATABASE ---
 export const getUserSettings = async (username: string) => {

@@ -32,9 +32,9 @@ interface OCRSettingsProps {
 
 // Definition der Qualitäts-Voreinstellungen
 const PRESET_PACKS = {
-    fast: { ocrImageDpi: 150, ocrOptimizeLevel: 0, ocrCleanImages: false },
-    balanced: { ocrImageDpi: 300, ocrOptimizeLevel: 1, ocrCleanImages: true },
-    quality: { ocrImageDpi: 400, ocrOptimizeLevel: 2, ocrCleanImages: true },
+    schnell: { ocrImageDpi: 150, ocrOptimizeLevel: 0, ocrCleanImages: false },
+    ausgeglichen: { ocrImageDpi: 300, ocrOptimizeLevel: 1, ocrCleanImages: true },
+    qualität: { ocrImageDpi: 400, ocrOptimizeLevel: 2, ocrCleanImages: true },
 };
 
 type PresetName = keyof typeof PRESET_PACKS | "custom";

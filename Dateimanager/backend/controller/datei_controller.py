@@ -427,9 +427,26 @@ class DateiController:
         """Wrapper für die Namensänderung."""
         return self.account_manager.change_username(user.username, user.password, new_username)
     
-    def change_password(self, user, admin_user, password_reset, new_password):
-        """Wrapper für die Passwortänderung."""
-        return self.account_manager.change_password(user.username, user.password, admin_user.username, admin_user.password, password_reset, new_password)
+    def change_password(self, user, admin_user, password_reset: bool, new_password: str) -> bool:
+        """
+        Ändert das Passwort für einen Benutzer.
+        Kann entweder vom Benutzer selbst oder von einem Admin (mit Admin-Passwort) durchgeführt werden.
+        """
+        # Extrahiere Admin-Credentials nur, wenn admin_user auch übergeben wurde.
+        # Dies verhindert den 'NoneType' AttributeError.
+        admin_username = admin_user.username if admin_user else None
+        admin_password = admin_user.password if admin_user else None
+
+        # Rufe die eigentliche Logik im AccountManager auf.
+        # Diese Funktion muss bereits mit None-Werten für Admin-Credentials umgehen können.
+        return self.account_manager.change_password(
+            username=user.username,
+            old_password=user.password,
+            admin_username=admin_username,
+            admin_password=admin_password,
+            password_reset=password_reset,
+            new_password=new_password
+        )
                 
     def change_admin_status(self, target_username: str, admin_username: str, admin_password: str, new_status: bool):
         """Wrapper für die Änderung des Admin-Status."""

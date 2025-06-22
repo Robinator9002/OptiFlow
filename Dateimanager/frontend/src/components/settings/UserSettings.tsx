@@ -201,7 +201,7 @@ export default function UserSettings({
                         className={confirmationError ? "error-input" : ""}
                     />
                     <div className="button-group">
-                        <button onClick={swapBack} className="button secondary">
+                        <button onClick={() => {swapBack(); setIsBusy(false)}} className="button secondary">
                             Abbrechen
                         </button>
                         <button
