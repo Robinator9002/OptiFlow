@@ -1,15 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
-import {
-    verifyPassword,
-    shutdown,
-    getAllEvents,
-    addEvent,
-    updateEvent,
-    deleteEvent,
-    executeEvent,
-} from "../../api/api.tsx";
-import { ConfirmModal } from "../modals/ConfirmModal.tsx";
+import { ConfirmModal } from "../modals/ConfirmModal";
+import { verifyPassword, shutdown, getAllEvents, addEvent, updateEvent, deleteEvent, executeEvent } from "../../api/api";
 
 // --- Type Definitions ---
 interface SystemSettingsProps {
@@ -37,16 +29,16 @@ interface FrequencyOption {
     label: string;
 }
 
-// --- Constants ---
+// --- Constants (translated to German) ---
 const ALLOWED_EVENTS: AllowedEventOption[] = [
-    { value: "scanner", label: "Update Scanner" },
-    { value: "file-structure", label: "Re-read Structure" },
-    { value: "convert-index-ocr", label: "Convert Full Index to OCR" },
+    { value: "scanner", label: "Scanner aktualisieren" },
+    { value: "file-structure", label: "Struktur neu einlesen" },
+    { value: "convert-index-ocr", label: "Ganzen Index in OCR umwandeln" },
 ];
 const FREQUENCIES: FrequencyOption[] = [
-    { value: "hourly", label: "Hourly" },
-    { value: "daily", label: "Daily" },
-    { value: "weekly", label: "Weekly" },
+    { value: "hourly", label: "Stündlich" },
+    { value: "daily", label: "Täglich" },
+    { value: "weekly", label: "Wöchentlich" },
 ];
 
 const initialFormData: EventData = {
@@ -83,7 +75,7 @@ export default function SystemSettings({
             const list = await getAllEvents();
             setEvents(list);
         } catch {
-            toast.error("Error loading events.");
+            toast.error("Fehler beim Laden der Ereignisse.");
         } finally {
             setIsBusy(false);
         }
@@ -131,22 +123,22 @@ export default function SystemSettings({
     const handleFormSubmit = useCallback(async () => {
         const { event, frequency, times } = formData;
         if (!event || times.some((t) => !t)) {
-            toast.error("Please fill out all fields.");
+            toast.error("Bitte alle Felder ausfüllen.");
             return;
         }
         setIsBusy(true);
         try {
             if (editingIndex === "new") {
                 await addEvent(frequency, times, event);
-                toast.success("Event added");
+                toast.success("Ereignis hinzugefügt");
             } else if (typeof editingIndex === "number") {
                 await updateEvent(editingIndex, frequency, times, event);
-                toast.success("Event updated");
+                toast.success("Ereignis aktualisiert");
             }
             closeForm();
             await loadEvents();
         } catch {
-            toast.error("Error saving event");
+            toast.error("Fehler beim Speichern des Ereignisses");
         } finally {
             setIsBusy(false);
         }
@@ -157,10 +149,10 @@ export default function SystemSettings({
             setIsBusy(true);
             try {
                 await deleteEvent(i);
-                toast.success("Event deleted");
+                toast.success("Ereignis gelöscht");
                 await loadEvents();
             } catch {
-                toast.error("Error deleting event");
+                toast.error("Fehler beim Löschen des Ereignisses");
             } finally {
                 setIsBusy(false);
             }
@@ -174,9 +166,9 @@ export default function SystemSettings({
             setExecutingEvent(true);
             try {
                 await executeEvent(i);
-                toast.success("Event executed");
+                toast.success("Ereignis ausgeführt");
             } catch {
-                toast.error("Error executing event");
+                toast.error("Fehler beim Ausführen des Ereignisses");
             } finally {
                 setExecutingEvent(false);
                 setIsBusy(false);
@@ -194,12 +186,11 @@ export default function SystemSettings({
                 setShowShutdownConfirm(false);
                 setShowFinalShutdownConfirm(true);
             } else {
-                setShutdownError("Incorrect password!");
-                toast.error("Incorrect password!");
+                setShutdownError("Falsches Passwort!");
             }
         } catch (err) {
-            setShutdownError("Error verifying password");
-            toast.error("Error verifying password");
+            setShutdownError("Fehler bei der Passwort-Verifizierung");
+            toast.error("Fehler bei der Passwort-Verifizierung");
         } finally {
             if (shutdownError) {
                 setIsBusy(false);
@@ -212,10 +203,9 @@ export default function SystemSettings({
         setIsBusy(true);
         try {
             await shutdown(password);
-            toast.success("Server is shutting down");
             onLogout();
         } catch {
-            toast.error("Error during shutdown");
+            toast.error("Fehler während des Herunterfahrens");
         } finally {
             setLoadingShutdown(false);
             setShowFinalShutdownConfirm(false);
@@ -266,46 +256,45 @@ export default function SystemSettings({
     return (
         <div className="settings-section">
             <div className="settings-section-header">
-                <h2>System & Events</h2>
+                <h2>System & Ereignisse</h2>
             </div>
 
             <div className="setting-group">
-                <h3>Scheduled Tasks (Events)</h3>
+                <h3>Geplante Aufgaben (Ereignisse)</h3>
                 <div className="events-grid">
-                    {/* First, render all existing events */}
                     {events.map((ev, idx) => {
                         const eventOption = ALLOWED_EVENTS.find(
                             (o) => o.value === ev.event
                         );
                         const label = eventOption
                             ? eventOption.label
-                            : "Unknown Event";
+                            : "Unbekanntes Ereignis";
                         return (
-                            <div key={ev.event} className="event-card">
+                            <div key={idx} className="event-card">
                                 <div className="event-card-header">{label}</div>
                                 <div className="event-details">
-                                    <div>Frequency: {ev.frequency}</div>
-                                    <div>Times: {ev.times.join(", ")}</div>
+                                    <div>Häufigkeit: {FREQUENCIES.find(f => f.value === ev.frequency)?.label}</div>
+                                    <div>Zeiten: {ev.times.join(", ")}</div>
                                 </div>
                                 <div className="event-card-actions">
                                     <button
                                         className="button-icon"
                                         onClick={() => openForm(idx)}
-                                        title="Edit"
+                                        title="Bearbeiten"
                                     >
                                         ✏️
                                     </button>
                                     <button
                                         className="button-icon"
                                         onClick={() => handleExecute(idx)}
-                                        title="Execute Now"
+                                        title="Jetzt ausführen"
                                     >
                                         ▶️
                                     </button>
                                     <button
                                         className="button-icon button-danger"
                                         onClick={() => handleDelete(idx)}
-                                        title="Delete"
+                                        title="Löschen"
                                     >
                                         🗑️
                                     </button>
@@ -314,12 +303,11 @@ export default function SystemSettings({
                         );
                     })}
 
-                    {/* Then, if there are fewer events than allowed types, show the "add new" button */}
                     {events.length < ALLOWED_EVENTS.length && (
                         <div
                             className="event-card add-new"
                             onClick={() => openForm("new")}
-                            title="Add New Event"
+                            title="Neues Ereignis hinzufügen"
                         >
                             <span>+</span>
                         </div>
@@ -328,10 +316,10 @@ export default function SystemSettings({
             </div>
 
             <div className="setting-group">
-                <h3>Configuration</h3>
+                <h3>Konfiguration</h3>
                 <div className="setting-item">
                     <label htmlFor="checkInterval">
-                        Event Check Interval (Seconds)
+                        Ereignis-Prüfintervall (Sekunden)
                         <input
                             id="checkInterval"
                             type="number"
@@ -345,17 +333,16 @@ export default function SystemSettings({
                         />
                     </label>
                     <p className="setting-description">
-                        How often to check if a scheduled task is due (in
-                        seconds).
+                        Wie oft geprüft wird, ob eine geplante Aufgabe fällig ist (in Sekunden).
                     </p>
                 </div>
             </div>
 
             <div className="setting-group">
-                <h3>System Control</h3>
+                <h3>Systemsteuerung</h3>
                 <div className="setting-item">
                     <label>
-                        Shutdown Server
+                        Server herunterfahren
                         <button
                             onClick={() => {
                                 setIsBusy(true);
@@ -366,12 +353,11 @@ export default function SystemSettings({
                             disabled={loadingShutdown}
                             className="button-danger"
                         >
-                            {loadingShutdown ? "Please wait..." : "Shutdown"}
+                            {loadingShutdown ? "Bitte warten..." : "Herunterfahren"}
                         </button>
                     </label>
                     <p className="setting-description">
-                        Shuts down the entire application server. Requires
-                        password confirmation.
+                        Fährt den gesamten Anwendungsserver herunter. Erfordert eine Passwortbestätigung.
                     </p>
                 </div>
             </div>
@@ -387,11 +373,11 @@ export default function SystemSettings({
                         >
                             <h3>
                                 {editingIndex === "new"
-                                    ? "New Task"
-                                    : "Edit Task"}
+                                    ? "Neue Aufgabe"
+                                    : "Aufgabe bearbeiten"}
                             </h3>
                             <div className="setting-item">
-                                <label>Task Type</label>
+                                <label>Aufgabentyp</label>
                                 <select
                                     value={formData.event}
                                     onChange={(e) =>
@@ -402,7 +388,7 @@ export default function SystemSettings({
                                     }
                                     disabled={editingIndex !== "new"}
                                 >
-                                    <option value="">-- select --</option>
+                                    <option value="">-- auswählen --</option>
                                     {ALLOWED_EVENTS.filter((o) =>
                                         editingIndex === "new"
                                             ? !events.some(
@@ -417,7 +403,7 @@ export default function SystemSettings({
                                 </select>
                             </div>
                             <div className="setting-item">
-                                <label>Frequency</label>
+                                <label>Häufigkeit</label>
                                 <select
                                     value={formData.frequency}
                                     onChange={(e) =>
@@ -436,7 +422,7 @@ export default function SystemSettings({
                                 </select>
                             </div>
                             <div className="setting-item">
-                                <label>Time(s) (HH:MM)</label>
+                                <label>Zeit(en) (HH:MM)</label>
                                 {formData.times.map((t, i) => (
                                     <div key={i} className="time-input-group">
                                         <input
@@ -467,7 +453,7 @@ export default function SystemSettings({
                                     className="add-time-btn"
                                     onClick={addTimeField}
                                 >
-                                    + Add Time
+                                    + Zeit hinzufügen
                                 </button>
                             </div>
                             <div className="button-group">
@@ -476,13 +462,13 @@ export default function SystemSettings({
                                     className="button"
                                     onClick={closeForm}
                                 >
-                                    Cancel
+                                    Abbrechen
                                 </button>
                                 <button
                                     type="submit"
                                     className="button button-primary"
                                 >
-                                    Save
+                                    Speichern
                                 </button>
                             </div>
                         </form>
@@ -493,17 +479,17 @@ export default function SystemSettings({
             {showShutdownConfirm && (
                 <div className="overlay">
                     <div className="modal-content shutdown-confirm-modal">
-                        <h3>Confirm Identity</h3>
+                        <h3>Identität bestätigen</h3>
                         <p>
-                            To proceed with the shutdown, please confirm your
-                            identity with your password.
+                            Um mit dem Herunterfahren fortzufahren, bestätige bitte deine
+                            Identität mit deinem Passwort.
                         </p>
                         {shutdownError && (
                             <p className="error-message">{shutdownError}</p>
                         )}
                         <input
                             type="password"
-                            placeholder="Password"
+                            placeholder="Passwort"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className={shutdownError ? "input-error" : ""}
@@ -519,13 +505,13 @@ export default function SystemSettings({
                                 }}
                                 className="button"
                             >
-                                Cancel
+                                Abbrechen
                             </button>
                             <button
                                 onClick={confirmShutdown}
                                 className="button button-danger"
                             >
-                                Confirm
+                                Bestätigen
                             </button>
                         </div>
                     </div>
@@ -534,8 +520,8 @@ export default function SystemSettings({
 
             {showFinalShutdownConfirm && (
                 <ConfirmModal
-                    title="Confirm Shutdown"
-                    message="Are you sure you want to shut down the server? All unsaved changes will be lost."
+                    title="Herunterfahren bestätigen"
+                    message="Bist du sicher, dass du den Server herunterfahren willst? Alle nicht gespeicherten Änderungen gehen verloren."
                     onConfirm={handleShutdown}
                     onCancel={() => {
                         setShowFinalShutdownConfirm(false);
