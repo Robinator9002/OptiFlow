@@ -27,69 +27,76 @@
         <section id="installation">
             <h2>Installation und Start</h2>
             <p>
-                Die Inbetriebnahme des OptiFlow Dateimanagers ist unkompliziert und erfordert keine komplexe Server-Einrichtung. Die Anwendung ist als eigenständiges Paket konzipiert, das alle notwendigen Komponenten enthält und auf einem Windows-Server oder einer leistungsstarken Workstation ausgeführt werden kann.
+                Die Inbetriebnahme des OptiFlow Dateimanagers ist dank eines komfortablen Installationsprogramms für Windows sehr einfach. Für andere Betriebssysteme oder Entwickler steht eine manuelle Methode zur Verfügung.
             </p>
         </section>
 
-        <section id="voraussetzungen">
-            <h3>Systemanforderungen</h3>
-            <p>Bevor Sie beginnen, stellen Sie sicher, dass das vorgesehene Serversystem die folgenden Mindestanforderungen erfüllt:</p>
-            <ul>
-                <li><strong>Betriebssystem:</strong> Windows 10 oder neuer (Windows Server 2016 oder neuer empfohlen).</li>
-                <li><strong>Hardware:</strong> Ein moderner Multi-Core-Prozessor und ausreichend Arbeitsspeicher (empfohlen: 8 GB+) für eine performante Indexierung.</li>
-                <li><strong>Webbrowser (für Clients):</strong> Eine aktuelle Version von Google Chrome, Mozilla Firefox oder Microsoft Edge auf den Rechnern der Benutzer.</li>
-                <li><strong>Netzwerk:</strong> Der Server und die Client-Rechner müssen sich im selben lokalen Netzwerk (LAN) befinden und der Server-Port (standardmäßig Port 8000) muss für die Clients erreichbar sein.</li>
-            </ul>
-        </section>
-
-        <section id="herunterladen-starten">
-            <h3>1. Paket herunterladen und entpacken</h3>
+        <section id="windows-installer">
+            <h3>Methode 1: One-Click-Installer (Empfohlen für Windows)</h3>
             <p>
-                Sie erhalten die Anwendung als eine einzige ZIP-Datei. Laden Sie diese herunter und entpacken Sie sie an einem geeigneten, permanenten Ort auf dem Server (z.B. <code>C:\OptiFlow\</code>). Vermeiden Sie kurzlebige Pfade wie den Desktop oder Download-Ordner.
-            </p>
-            <p>Der entpackte Ordner enthält die gesamte Anwendungslogik, einschließlich:</p>
-            <ul>
-                <li>Backend-Server (Python/FastAPI)</li>
-                <li>Frontend-Oberfläche (React)</li>
-                <li>Notwendige Hilfsprogramme (z.B. für OCR)</li>
-                <li>Start-Skripte (<code>.bat</code> Dateien)</li>
-            </ul>
-        </section>
-
-        <section id="anwendung-starten">
-            <h3>2. Anwendung starten</h3>
-            <p>
-                Im Hauptverzeichnis der entpackten Anwendung finden Sie mehrere <code>.bat</code>-Dateien. Für den normalen Betrieb ist nur eine davon relevant.
-            </p>
-            <div class="img-container">
-                <img src="https://placehold.co/800x250/3b82f6/ffffff?text=start.bat" alt="Screenshot der start.bat Datei im Explorer">
-                <p class="caption">Doppelklicken Sie auf die Datei 'start.bat', um die Anwendung zu initialisieren.</p>
-            </div>
-            
-            <h4>Die wichtigste Datei: <code>start.bat</code></h4>
-            <p>
-                Ein einfacher Doppelklick auf die <strong><code>start.bat</code></strong>-Datei genügt. Dieses Skript führt die folgenden Aktionen aus:
+                Dies ist der einfachste und schnellste Weg, OptiFlow auf einem Windows-System (Server oder Workstation) zu installieren. Der Installer ist ca. 300 MB kleiner als das manuelle Paket und übernimmt alle Konfigurationsschritte für Sie.
             </p>
             <ol>
-                <li>Es startet den <strong>Backend-Server</strong>. Ein Konsolenfenster öffnet sich, das die Server-Logs anzeigt. <strong>Dieses Fenster muss geöffnet bleiben, solange die Anwendung läuft!</strong> Ein Schließen dieses Fensters beendet den Server.</li>
-                <li>Anschließend startet es die <strong>Webanwendung</strong> und öffnet diese automatisch im Standard-Webbrowser des Servers.</li>
+                <li><strong>Installer herunterladen:</strong> Laden Sie die bereitgestellte Installer-Datei (<code>OptiFlow-Dateimanager-Setup.exe</code>) herunter.</li>
+                <li><strong>Installer ausführen:</strong> Führen Sie die Datei mit einem Doppelklick aus. Die Windows-Benutzerkontensteuerung fragt möglicherweise um Erlaubnis, die Sie bestätigen müssen.</li>
+                <li><strong>Installation abschließen:</strong> Das Programm wird nun automatisch an den Standard-Speicherort installiert. Der Installer erledigt alles Weitere im Hintergrund.</li>
+                <li><strong>Verknüpfungen nutzen:</strong> Nach der Installation finden Sie automatisch eine Verknüpfung auf Ihrem Desktop und/oder im Startmenü.</li>
             </ol>
-            
-            <h4>Zugriff für andere Benutzer</h4>
-            <p>
-                Andere Benutzer im Netzwerk können auf OptiFlow zugreifen, indem sie die IP-Adresse oder den Hostnamen des Servers gefolgt vom Port 8000 in ihrem Browser eingeben. Beispiel: <code>http://192.168.1.10:8000</code> oder <code>http://fileserver:8000</code>.
-            </p>
-
-            <div class="info-box tech">
-                <h4>Hinweis für Administratoren</h4>
-                <p>Es wird empfohlen, das Start-Skript als geplante Aufgabe (Scheduled Task) bei Systemstart auszuführen zu lassen. Dies stellt sicher, dass OptiFlow nach einem Neustart des Servers automatisch wieder verfügbar ist.</p>
+             <div class="img-container">
+                <img src="https://placehold.co/800x300/3b82f6/ffffff?text=Installer+wird+ausgef%C3%BChrt..." alt="Symbolische Darstellung des Windows Installers">
+                <p class="caption">Der Installer automatisiert den gesamten Prozess.</p>
             </div>
+            <h4>Anwendung starten</h4>
+            <p>
+                Nutzen Sie einfach die neu erstellte Desktop- oder Startmenü-Verknüpfung, um OptiFlow zu starten. Es ist kein manueller Start von Skripten mehr notwendig. Der Server und die Applikation starten automatisch im Hintergrund.
+            </p>
         </section>
         
+        <section id="manuelle-installation">
+            <h3>Methode 2: Manuelle Installation (Für Linux & erfahrene Windows-Nutzer)</h3>
+            <p>
+                Diese Methode gibt Ihnen volle Kontrolle über den Installationsort und ist für Linux-Systeme sowie für Entwickler oder Administratoren auf Windows gedacht, die eine portable Version bevorzugen.
+            </p>
+            <h4>Schritt 1: ZIP-Paket herunterladen</h4>
+            <p>
+                 Laden Sie das ZIP-Paket (<code>OptiFlow-Source.zip</code>) herunter und entpacken Sie es an einem permanenten Ort auf Ihrem System (z.B. <code>C:\OptiFlow\</code> unter Windows oder <code>/opt/optiflow/</code> unter Linux).
+            </p>
+            
+            <h4>Schritt 2: Anwendung starten</h4>
+            <ul>
+                <li><strong>Unter Windows:</strong> Führen Sie die Datei <strong><code>start.bat</code></strong> per Doppelklick aus.</li>
+                <li><strong>Unter Linux:</strong> Öffnen Sie ein Terminal, navigieren Sie in das entpackte Verzeichnis und führen Sie das Skript mit <strong><code>./start.sh</code></strong> aus. (Möglicherweise müssen Sie es zuerst mit <code>chmod +x start.sh</code> ausführbar machen).</li>
+            </ul>
+            <p>
+                In beiden Fällen startet nun der Backend-Server in einem Konsolenfenster, das geöffnet bleiben muss. Die Anwendung selbst öffnet sich in einer eigenen Electron-Umgebung, ein separater Browser ist nicht zwingend notwendig.
+            </p>
+        </section>
+        
+        <div class="info-box tech">
+            <h4>Wo werden meine Daten gespeichert?</h4>
+            <p>
+                Der Speicherort für Ihre Daten (Benutzerprofile, Suchindex etc.) hängt von der Installationsmethode ab. Dies ist wichtig für Backups oder falls eine manuelle Bereinigung notwendig sein sollte.
+            </p>
+            
+            <h5>Bei Installation mit dem Installer:</h5>
+            <p>
+                Der Datenordner befindet sich im Anwendungsverzeichnis unter <code>backend/data</code>. Der vollständige Pfad lautet normalerweise:
+                <br>
+                <code>C:\Users\&lt;IhrBenutzername&gt;\AppData\Local\frontend\backend\data</code>
+            </p>
+            
+            <h5>Bei manueller Installation (ZIP/Source):</h5>
+            <p>
+                Der Datenordner befindet sich direkt im Hauptverzeichnis, in das Sie die Anwendung entpackt haben.
+                <br>
+                Beispiel: <code>C:\OptiFlow\data</code> oder <code>/opt/optiflow/data</code>
+            </p>
+        </div>
+
         <section id="naechster-schritt">
             <h3>Nächster Schritt</h3>
             <p>
-                Die Anwendung läuft! Nun ist es an der Zeit, sich zum ersten Mal anzumelden und das System zu konfigurieren. Da noch keine Benutzer existieren, befindet sich die Anwendung im Einrichtungsmodus.
+                Die Anwendung läuft! Nun ist es an der Zeit, sich zum ersten Mal anzumelden und das System zu konfigurieren.
             </p>
             <p>
                 Lesen Sie weiter im Kapitel <a href="erste_schritte.html"><strong>Erste Schritte</strong></a>.
