@@ -1,6 +1,7 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useContext } from "react";
 import FileSearch from "./FileSearch.tsx";
 import FilePreview from "./FilePreview.tsx";
+import { SettingsContext } from "../../context/SettingsContext.tsx";
 
 // --- Type Definitions ---
 interface FileObject {
@@ -16,7 +17,6 @@ interface SearchResultItem {
 interface FileManagementProps {
     searchingFiles: boolean;
     setSearchingFiles: React.Dispatch<React.SetStateAction<boolean>>;
-    showRelevance: boolean;
     isAdmin: boolean;
     selectedFile: FileObject | null;
     setSelectedFile: React.Dispatch<React.SetStateAction<FileObject | null>>;
@@ -26,13 +26,21 @@ interface FileManagementProps {
 const FileManagement: React.FC<FileManagementProps> = ({
     searchingFiles,
     setSearchingFiles,
-    showRelevance,
     isAdmin,
     selectedFile,
     setSelectedFile,
 }) => {
     const [deletedFile, setDeletedFile] = useState<string | null>(null);
     const [isSearchCollapsed, setIsSearchCollapsed] = useState<boolean>(false);
+
+    const context = useContext(SettingsContext);
+
+    // Check Context so TypeScript wont kill me
+    if (context === undefined) {
+        throw new Error('FileManagement must be used within a SettingsProvider');
+    }
+
+    const { showRelevance } = context;
 
     // States for keybindings
     const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);

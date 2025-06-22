@@ -21,8 +21,6 @@ interface SettingsProps {
     currentUser: string | null;
     setCurrentUser: React.Dispatch<React.SetStateAction<string | null>>;
     isAdmin: boolean;
-    showRelevance: boolean;
-    setShowRelevance: React.Dispatch<React.SetStateAction<boolean>>;
     setLoggedIn: (loggedIn: boolean) => void;
     setExecutingEvent: React.Dispatch<React.SetStateAction<boolean>>;
     appActiveTab: string;
@@ -33,8 +31,6 @@ const Settings: React.FC<SettingsProps> = ({
     currentUser,
     setCurrentUser,
     isAdmin,
-    showRelevance,
-    setShowRelevance,
     setLoggedIn,
     setExecutingEvent,
     appActiveTab,
@@ -51,6 +47,8 @@ const Settings: React.FC<SettingsProps> = ({
         loadSettings,
         settings,
         defaultSettings,
+        // Suche
+        showRelevance, setShowRelevance,
         // Scanner
         scannerUsableExtensions, setScannerUsableExtensions,
         scannerIgnoredDirs, setScannerIgnoredDirs,

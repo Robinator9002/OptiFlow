@@ -55,6 +55,8 @@ interface SettingsContextType {
     applySettings: (loadedSettings: ApiSettings) => void;
     loadSettings: (currentUser: string) => Promise<void>;
     isReady: boolean;
+    showRelevance: boolean;
+    setShowRelevance: React.Dispatch<React.SetStateAction<boolean>>;
     scannerUsableExtensions: string[];
     setScannerUsableExtensions: React.Dispatch<React.SetStateAction<string[]>>;
     scannerIgnoredDirs: string[];
@@ -100,6 +102,7 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
     const [isReady, setIsReady] = useState(false);
 
     // Initialisiere die einzelnen States ebenfalls aus den zentralen Defaults
+    const [showRelevance, setShowRelevance] = useState(DEFAULT_SETTINGS.show_relevance ?? true);
     const [scannerUsableExtensions, setScannerUsableExtensions] = useState(DEFAULT_SETTINGS.usable_extensions ?? []);
     const [scannerIgnoredDirs, setScannerIgnoredDirs] = useState(DEFAULT_SETTINGS.ignored_dirs ?? []);
     const [ocrExcludedDirs, setOcrExcludedDirs] = useState(DEFAULT_SETTINGS.processor_excluded_folders ?? "");
@@ -130,6 +133,8 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
             document.documentElement.style.setProperty("--font-size-multiplier", String(mergedSettings.font_size));
         }
 
+        setShowRelevance(mergedSettings.show_relevance ?? DEFAULT_SETTINGS.show_relevance!);
+        
         setScannerUsableExtensions(mergedSettings.usable_extensions ?? DEFAULT_SETTINGS.usable_extensions!);
         setScannerIgnoredDirs(mergedSettings.ignored_dirs ?? DEFAULT_SETTINGS.ignored_dirs!);
         setOcrExcludedDirs(mergedSettings.processor_excluded_folders ?? DEFAULT_SETTINGS.processor_excluded_folders!);
@@ -187,6 +192,7 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
         applySettings,
         loadSettings,
         isReady,
+        showRelevance, setShowRelevance,
         scannerUsableExtensions, setScannerUsableExtensions,
         scannerIgnoredDirs, setScannerIgnoredDirs,
         ocrExcludedDirs, setOcrExcludedDirs,

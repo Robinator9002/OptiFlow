@@ -53,10 +53,6 @@ function AppContent() {
     const [selectedFile, setSelectedFile] = useState<any | null>(null);
     const [showHelpModal, setShowHelpModal] = useState(false);
 
-    // showRelevance wird jetzt direkt aus dem Context bezogen.
-    // Der lokale State dafür ist nicht mehr nötig.
-    const [showRelevance, setShowRelevance] = useState(false);
-
     // Sicherstellen, dass der Kontext geladen ist, bevor auf ihn zugegriffen wird.
     if (!settingsContext) {
         return (
@@ -65,7 +61,7 @@ function AppContent() {
             </div>
         );
     }
-    const { loadSettings, settings, isReady } = settingsContext;
+    const { loadSettings, isReady } = settingsContext;
 
     const appContainerRef = useRef<HTMLDivElement>(null);
 
@@ -437,7 +433,6 @@ function AppContent() {
                             setSearchingFiles={setSearchingFiles}
                             selectedFile={selectedFile}
                             setSelectedFile={setSelectedFile}
-                            showRelevance={showRelevance}
                             isAdmin={isAdmin}
                         />
                     </div>
@@ -492,12 +487,6 @@ function AppContent() {
                         currentUser={currentUser}
                         setCurrentUser={setCurrentUser}
                         isAdmin={isAdmin}
-                        showRelevance={settings.show_relevance ?? false}
-                        setShowRelevance={(value) => {
-                            // Um `setShowRelevance` zu implementieren, müssten wir den Context erweitern.
-                            // Vorerst verwenden wir den lokalen State.
-                            setShowRelevance(value);
-                        }}
                         setLoggedIn={setLoggedIn}
                         setExecutingEvent={setExecutingEvent}
                         appActiveTab={activeTab}
