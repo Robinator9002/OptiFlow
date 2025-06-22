@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einstellungen - OptiFlow Dokumentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>OptiFlow Dateimanager - Dokumentation</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Übersicht</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="erste_schritte.html">Erste Schritte</a></li>
+                <li><a href="funktionen_benutzer.html">Funktionen (Benutzer)</a></li>
+                <li><a href="funktionen_admin.html">Funktionen (Admin)</a></li>
+                <li class="active"><a href="einstellungen.html">Einstellungen</a></li>
+                <li><a href="technik_sicherheit.html">Technik & Sicherheit</a></li>
+                <li><a href="tastenkürzel.html">Tastenkürzel</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="einstellungen-intro">
+            <h2>Die Anwendung anpassen: Ein Überblick</h2>
+            <p>
+                Der Einstellungs-Tab (erreichbar über den Button <strong>⚙️ Einstellungen</strong> oben rechts) ist die zentrale Anlaufstelle, um OptiFlow an Ihre persönlichen Vorlieben und die Anforderungen Ihres Unternehmens anzupassen. Die Einstellungen sind in verschiedene Reiter unterteilt, die wir hier im Detail erläutern.
+            </p>
+             <div class="info-box">
+                <h4>Speichern nicht vergessen!</h4>
+                <p>Nachdem Sie Änderungen vorgenommen haben, müssen Sie unten auf den <strong>"Speichern"</strong>-Button klicken, damit diese wirksam werden. Ein Verlassen der Einstellungen ohne Speichern verwirft alle Änderungen.</p>
+            </div>
+        </section>
+
+        <section id="allgemein">
+            <h3>Allgemein</h3>
+            <p>Passen Sie hier das Erscheinungsbild der Anwendung an. Diese Einstellungen sind benutzerspezifisch.</p>
+            <ul>
+                <li><strong>Erscheinungsbild (Theme):</strong> Wählen Sie zwischen einem hellen Standard-Design, einem augenschonenden Dunkelmodus und einem Modus mit hohem Kontrast für bessere Lesbarkeit.</li>
+                <li><strong>Barrierefreiheit (Schriftgröße):</strong> Skalieren Sie die Schriftgröße der gesamten Anwendung stufenlos über einen Schieberegler, um sie an Ihre Bildschirmauflösung und Sehstärke anzupassen.</li>
+            </ul>
+        </section>
+        
+        <section id="sucheinstellungen">
+            <h3>Suche (Admin)</h3>
+            <p>Konfigurieren Sie hier das Verhalten der globalen Suche für alle Benutzer.</p>
+            <ul>
+                <li><strong>Maximale Suchergebnisse:</strong> Legen Sie fest, wie viele Treffer maximal in der Ergebnisliste angezeigt werden sollen, um die Übersicht zu wahren.</li>
+                <li><strong>Relevanz-Scores anzeigen:</strong> Blenden Sie neben jedem Suchergebnis den numerischen Relevanz-Score ein, damit Benutzer die Sortierung besser nachvollziehen können.</li>
+                <li><strong>Punktesystem anpassen:</strong> Verändern Sie die Gewichtung für Suchtreffer. Sie können festlegen, wie viele Punkte ein exakter Treffer im Dateinamen, ein teilweiser Treffer oder ein Treffer im Inhalt erhält.</li>
+                <li><strong>Snippet-Größe:</strong> Passen Sie an, wie viele Zeichen vor und nach einem Treffer in der Snippet-Vorschau der In-Datei-Suche angezeigt werden.</li>
+            </ul>
+        </section>
+
+        <section id="scanner-einstellungen">
+            <h3>Scanner (Admin)</h3>
+            <p>Hier steuern Administratoren die Details des Indexierungs-Prozesses. Dies ist eine der wichtigsten Konfigurationsseiten.</p>
+             <div class="img-container">
+                <img src="https://placehold.co/800x400/3b82f6/ffffff?text=Screenshot+der+Scanner-Einstellungen" alt="Screenshot der Scanner-Einstellungen">
+                <p class="caption">Definieren Sie Zielordner, Dateitypen und weitere Scan-Parameter.</p>
+            </div>
+            <ul>
+                <li><strong>Zielordner:</strong> Legen Sie die Startverzeichnisse für den Scan fest. Über den Button "Neuer Ordner" öffnet sich der interaktive <strong>Folder Selector</strong>, mit dem Sie bequem durch die Server-Verzeichnisse navigieren und Ordner zur Liste hinzufügen können.</li>
+                <li><strong>Dateierweiterungen:</strong> Bestimmen Sie, welche Dateitypen (z.B. <code>.pdf</code>, <code>.docx</code>, <code>.txt</code>) überhaupt indexiert werden sollen. Sie können eine der vordefinierten Gruppen wählen oder eine benutzerdefinierte Auswahl treffen.</li>
+                <li><strong>Inhalt indexieren / PDF Konversion:</strong> Legen Sie fest, ob auch die Inhalte der Dateien (und nicht nur die Namen) in den Index aufgenommen werden sollen. Aktivieren Sie die PDF-Konversion, damit auch Text aus PDFs extrahiert wird.</li>
+                <li><strong>Maximale Dateigröße (KB):</strong> Schließen Sie sehr große Dateien vom Scan aus, um Ressourcen zu sparen.</li>
+                <li><strong>Weitere Optionen:</strong> Legen Sie die maximale Anzahl an CPU-Kernen für den Scan fest oder definieren Sie eine Scan-Verzögerung zur Schonung älterer Systeme.</li>
+            </ul>
+        </section>
+
+        <section id="ocr-einstellungen">
+            <h3>OCR (Admin)</h3>
+            <p>Passen Sie die Standardeinstellungen für den <a href="funktionen_admin.html#pdf-ocr">PDF zu OCR</a>-Prozess an. Diese Einstellungen werden als Vorauswahl im OCR-Tab geladen, können dort aber für jeden Durchlauf individuell angepasst werden.</p>
+        </section>
+        
+        <section id="benutzerverwaltung">
+            <h3>Benutzer</h3>
+            <p>Verwalten Sie Ihr eigenes Konto oder (als Admin) alle Konten im System.</p>
+            <h4>Für alle Benutzer:</h4>
+            <ul>
+                <li><strong>Benutzernamen ändern:</strong> Ändern Sie Ihren eigenen Anzeigenamen.</li>
+                <li><strong>Passwort ändern:</strong> Nach Bestätigung Ihres aktuellen Passworts können Sie ein neues, sicheres Passwort vergeben.</li>
+                <li><strong>Konto löschen:</strong> Löschen Sie Ihr eigenes Konto. Diese Aktion ist endgültig und erfordert eine Passwortbestätigung.</li>
+            </ul>
+            <h4>Zusätzlich für Admins:</h4>
+             <div class="img-container">
+                <img src="https://placehold.co/800x400/2c3e50/ffffff?text=Screenshot+der+Benutzerverwaltung" alt="Screenshot der Benutzerverwaltung durch einen Admin">
+                <p class="caption">Admins haben die volle Kontrolle über alle Benutzerkonten.</p>
+            </div>
+            <ul>
+                <li><strong>Benutzerliste anzeigen:</strong> Sehen Sie eine Liste aller registrierten Benutzer inklusive ihres Admin-Status und des letzten Logins.</li>
+                <li><strong>Benutzer hinzufügen:</strong> Erstellen Sie neue Benutzerkonten und legen Sie deren initiales Passwort sowie den Admin-Status fest.</li>
+                <li><strong>Passwort zurücksetzen:</strong> Setzen Sie das Passwort für einen Benutzer zurück (erfordert Ihr Admin-Passwort).</li>
+                <li><strong>Admin-Status ändern:</strong> Erteilen oder entziehen Sie anderen Benutzern Administratorrechte.</li>
+                <li><strong>Benutzer löschen:</strong> Entfernen Sie ein Benutzerkonto aus dem System (erfordert Ihr Admin-Passwort).</li>
+            </ul>
+        </section>
+
+        <section id="datenbank-einstellungen">
+            <h3>Datenbank (Admin)</h3>
+            <p>Ermöglicht den direkten Zugriff auf die Konfigurations- und Indexdateien der Anwendung. <strong>Vorsicht:</strong> Unsachgemäße Änderungen hier können die Anwendung unbrauchbar machen.</p>
+            <ul>
+                <li><strong>Datenbank auswählen:</strong> Wählen Sie eine der JSON-Dateien (z.B. <code>index.json</code>, <code>users.json</code>, <code>events.json</code>) aus.</li>
+                <li><strong>Anzeigen & Bearbeiten:</strong> Der Inhalt der Datei wird in einem Editor angezeigt und kann direkt bearbeitet werden.</li>
+                <li><strong>Backup herunterladen:</strong> Sichern Sie die ausgewählte Datenbank als JSON-Datei auf Ihrem lokalen Rechner.</li>
+                 <li><strong>Neu laden:</strong> Veranlasst den Server, die ausgewählte Konfigurationsdatei von der Festplatte neu einzulesen.</li>
+            </ul>
+        </section>
+        
+        <section id="system-einstellungen">
+            <h3>System (Admin)</h3>
+            <p>Globale Einstellungen, die das Verhalten des Servers beeinflussen.</p>
+            <ul>
+                <li><strong>Zeitgesteuerte Events:</strong> Ein mächtiges Werkzeug zur Automatisierung. Erstellen Sie Events, die zu bestimmten Zeiten (täglich, wöchentlich, stündlich) ausgeführt werden. So können Sie z.B. einen nächtlichen Index-Scan oder eine wöchentliche OCR-Konvertierung einrichten, ohne manuell eingreifen zu müssen.</li>
+                <li><strong>Server herunterfahren:</strong> Fährt den OptiFlow Backend-Server sicher herunter. Erfordert eine doppelte Bestätigung mit Ihrem Admin-Passwort. Die Anwendung ist danach nicht mehr erreichbar und muss manuell via <code>start.bat</code> neu gestartet werden.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Robin Schumacher</p>
+    </footer>
+</body>
+</html>

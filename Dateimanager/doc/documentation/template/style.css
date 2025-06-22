@@ -1,0 +1,384 @@
+/* * OptiFlow Documentation Stylesheet
+ * Inspired by the OptiFlow App Theme
+ * Version 2.0
+ */
+
+/* ==========================================================================
+   1. Theme & Color Variables (Inspired by global.css)
+   ========================================================================== */
+:root {
+    /* Base Colors from App Theme */
+    --bg-primary: #f3f6f9;
+    --bg-secondary: #e9edf2;
+    --bg-tertiary: #dee3e9;
+    --text-primary: #1f2937;
+    --text-secondary: #374151;
+    --text-muted: #6b7280;
+
+    /* Accent Colors from App Theme */
+    --accent-primary: #3b82f6;
+    --accent-primary-hover: #2563eb;
+    --accent-focus-ring: rgba(59, 130, 246, 0.45);
+
+    /* Borders & Shadows from App Theme */
+    --border-primary: #d1d5db;
+    --border-secondary: #9ca3af;
+    --border-tertiary: #e5e7eb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+
+    /* Documentation-Specific Variables */
+    --doc-bg: #ffffff;
+    --doc-width: 1024px;
+    --header-bg: rgba(255, 255, 255, 0.85); /* Slightly transparent for sticky effect */
+    --code-bg: var(--bg-secondary);
+    --code-text: #c53929;
+    --pre-bg: #2d2d2d;
+    --pre-text: #f4f4f5;
+}
+
+
+/* ==========================================================================
+   2. General Body & Typography
+   ========================================================================== */
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 17px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   3. Header & Navigation (Styled like App's .tabs)
+   ========================================================================== */
+
+header {
+    background-color: var(--header-bg);
+    padding: 1.5em 1em;
+    text-align: center;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-bottom: 1px solid var(--border-primary);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    font-size: 1.8em;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 1.25em 0 0 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+nav a {
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    text-decoration: none;
+    padding: 0.6em 1.2em;
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 0.95em;
+    font-weight: 500;
+    display: block;
+    box-shadow: var(--shadow-sm);
+}
+
+nav a:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-secondary);
+    transform: translateY(-2px);
+}
+
+nav li.active a {
+    color: #ffffff;
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary-hover);
+    font-weight: 600;
+    box-shadow: var(--shadow-md);
+}
+
+/* ==========================================================================
+   4. Main Content Area
+   ========================================================================== */
+
+main {
+    padding: 2.5em;
+    max-width: var(--doc-width);
+    margin: 2em auto;
+    background-color: var(--doc-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-primary);
+}
+
+section {
+    margin-bottom: 4em;
+    padding-bottom: 2.5em;
+    border-bottom: 1px solid var(--border-tertiary);
+}
+
+section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+h2 {
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--accent-primary);
+    padding-bottom: 0.5em;
+    margin-bottom: 1.5em;
+    font-size: 2em;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+h3 {
+    color: var(--text-primary);
+    margin-top: 2.5em;
+    margin-bottom: 1.2em;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+h4 {
+    color: var(--text-secondary);
+    margin-top: 2em;
+    margin-bottom: 1em;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+p {
+    margin-bottom: 1.2em;
+    color: var(--text-secondary);
+}
+
+a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--accent-primary-hover);
+    text-decoration: underline;
+}
+
+ul, ol {
+    padding-left: 1.5em;
+    margin-bottom: 1.5em;
+}
+
+li {
+    margin-bottom: 0.8em;
+    padding-left: 0.5em;
+    color: var(--text-secondary);
+}
+
+strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   5. Code Blocks, Tables & Images
+   ========================================================================== */
+
+code {
+    background-color: var(--code-bg);
+    padding: 0.2em 0.5em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+    color: var(--code-text);
+    border: 1px solid var(--border-tertiary);
+}
+
+pre {
+    background-color: var(--pre-bg);
+    color: var(--pre-text);
+    padding: 1.5em;
+    border-radius: 8px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+pre code {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    color: inherit;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+.img-container {
+    margin: 2.5em 0;
+    text-align: center;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-primary);
+}
+
+.img-container .caption {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    margin-top: 1em;
+    font-style: italic;
+}
+
+.image-duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5em;
+    align-items: start;
+}
+
+.key-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2em;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.key-table th,
+.key-table td {
+    border-bottom: 1px solid var(--border-primary);
+    padding: 0.9em 1.2em;
+    text-align: left;
+}
+
+.key-table th {
+    background-color: var(--bg-secondary);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.key-table tbody tr:last-child th,
+.key-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.key-table tbody tr:hover {
+    background-color: var(--bg-primary);
+}
+
+.key-table code {
+    background-color: var(--doc-bg);
+    border-color: var(--border-tertiary);
+}
+
+/* ==========================================================================
+   6. Special Elements (Info Boxes, Footer)
+   ========================================================================== */
+
+.info-box {
+    background-color: var(--bg-secondary);
+    border-left: 4px solid var(--accent-primary);
+    padding: 1.5em;
+    margin: 2em 0;
+    border-radius: 0 8px 8px 0;
+}
+
+.info-box.tech {
+    background-color: #f3eef7;
+    border-left-color: #8e44ad;
+}
+
+.info-box h4 {
+    margin-top: 0;
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.info-box.tech h4 {
+    color: #8e44ad;
+}
+
+footer {
+    background-color: var(--bg-secondary);
+    color: var(--text-muted);
+    text-align: center;
+    padding: 2.5em 1em;
+    margin-top: 4em;
+    border-top: 1px solid var(--border-primary);
+}
+
+footer p {
+    margin: 0;
+}
+
+/* ==========================================================================
+   7. Responsive Design
+   ========================================================================== */
+@media (max-width: 800px) {
+    body {
+        font-size: 16px;
+    }
+
+    header {
+        padding: 1.5em 1em;
+    }
+    
+    header h1 {
+        font-size: 1.5em;
+    }
+
+    nav ul {
+        gap: 0.3em;
+    }
+
+    nav a {
+        padding: 0.5em 1em;
+        font-size: 0.9em;
+    }
+
+    main {
+        padding: 1.5em;
+        margin: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.7em;
+    }
+
+    h3 {
+        font-size: 1.3em;
+    }
+
+    .image-duo {
+        grid-template-columns: 1fr;
+    }
+}

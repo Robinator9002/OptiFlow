@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation - OptiFlow Dokumentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>OptiFlow Dateimanager - Dokumentation</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Übersicht</a></li>
+                <li class="active"><a href="installation.html">Installation</a></li>
+                <li><a href="erste_schritte.html">Erste Schritte</a></li>
+                <li><a href="funktionen_benutzer.html">Funktionen (Benutzer)</a></li>
+                <li><a href="funktionen_admin.html">Funktionen (Admin)</a></li>
+                <li><a href="einstellungen.html">Einstellungen</a></li>
+                <li><a href="technik_sicherheit.html">Technik & Sicherheit</a></li>
+                <li><a href="tastenkürzel.html">Tastenkürzel</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="installation">
+            <h2>Installation und Start</h2>
+            <p>
+                Die Inbetriebnahme des OptiFlow Dateimanagers ist unkompliziert und erfordert keine komplexe Server-Einrichtung. Die Anwendung ist als eigenständiges Paket konzipiert, das alle notwendigen Komponenten enthält und auf einem Windows-Server oder einer leistungsstarken Workstation ausgeführt werden kann.
+            </p>
+        </section>
+
+        <section id="voraussetzungen">
+            <h3>Systemanforderungen</h3>
+            <p>Bevor Sie beginnen, stellen Sie sicher, dass das vorgesehene Serversystem die folgenden Mindestanforderungen erfüllt:</p>
+            <ul>
+                <li><strong>Betriebssystem:</strong> Windows 10 oder neuer (Windows Server 2016 oder neuer empfohlen).</li>
+                <li><strong>Hardware:</strong> Ein moderner Multi-Core-Prozessor und ausreichend Arbeitsspeicher (empfohlen: 8 GB+) für eine performante Indexierung.</li>
+                <li><strong>Webbrowser (für Clients):</strong> Eine aktuelle Version von Google Chrome, Mozilla Firefox oder Microsoft Edge auf den Rechnern der Benutzer.</li>
+                <li><strong>Netzwerk:</strong> Der Server und die Client-Rechner müssen sich im selben lokalen Netzwerk (LAN) befinden und der Server-Port (standardmäßig Port 8000) muss für die Clients erreichbar sein.</li>
+            </ul>
+        </section>
+
+        <section id="herunterladen-starten">
+            <h3>1. Paket herunterladen und entpacken</h3>
+            <p>
+                Sie erhalten die Anwendung als eine einzige ZIP-Datei. Laden Sie diese herunter und entpacken Sie sie an einem geeigneten, permanenten Ort auf dem Server (z.B. <code>C:\OptiFlow\</code>). Vermeiden Sie kurzlebige Pfade wie den Desktop oder Download-Ordner.
+            </p>
+            <p>Der entpackte Ordner enthält die gesamte Anwendungslogik, einschließlich:</p>
+            <ul>
+                <li>Backend-Server (Python/FastAPI)</li>
+                <li>Frontend-Oberfläche (React)</li>
+                <li>Notwendige Hilfsprogramme (z.B. für OCR)</li>
+                <li>Start-Skripte (<code>.bat</code> Dateien)</li>
+            </ul>
+        </section>
+
+        <section id="anwendung-starten">
+            <h3>2. Anwendung starten</h3>
+            <p>
+                Im Hauptverzeichnis der entpackten Anwendung finden Sie mehrere <code>.bat</code>-Dateien. Für den normalen Betrieb ist nur eine davon relevant.
+            </p>
+            <div class="img-container">
+                <img src="https://placehold.co/800x250/3b82f6/ffffff?text=start.bat" alt="Screenshot der start.bat Datei im Explorer">
+                <p class="caption">Doppelklicken Sie auf die Datei 'start.bat', um die Anwendung zu initialisieren.</p>
+            </div>
+            
+            <h4>Die wichtigste Datei: <code>start.bat</code></h4>
+            <p>
+                Ein einfacher Doppelklick auf die <strong><code>start.bat</code></strong>-Datei genügt. Dieses Skript führt die folgenden Aktionen aus:
+            </p>
+            <ol>
+                <li>Es startet den <strong>Backend-Server</strong>. Ein Konsolenfenster öffnet sich, das die Server-Logs anzeigt. <strong>Dieses Fenster muss geöffnet bleiben, solange die Anwendung läuft!</strong> Ein Schließen dieses Fensters beendet den Server.</li>
+                <li>Anschließend startet es die <strong>Webanwendung</strong> und öffnet diese automatisch im Standard-Webbrowser des Servers.</li>
+            </ol>
+            
+            <h4>Zugriff für andere Benutzer</h4>
+            <p>
+                Andere Benutzer im Netzwerk können auf OptiFlow zugreifen, indem sie die IP-Adresse oder den Hostnamen des Servers gefolgt vom Port 8000 in ihrem Browser eingeben. Beispiel: <code>http://192.168.1.10:8000</code> oder <code>http://fileserver:8000</code>.
+            </p>
+
+            <div class="info-box tech">
+                <h4>Hinweis für Administratoren</h4>
+                <p>Es wird empfohlen, das Start-Skript als geplante Aufgabe (Scheduled Task) bei Systemstart auszuführen zu lassen. Dies stellt sicher, dass OptiFlow nach einem Neustart des Servers automatisch wieder verfügbar ist.</p>
+            </div>
+        </section>
+        
+        <section id="naechster-schritt">
+            <h3>Nächster Schritt</h3>
+            <p>
+                Die Anwendung läuft! Nun ist es an der Zeit, sich zum ersten Mal anzumelden und das System zu konfigurieren. Da noch keine Benutzer existieren, befindet sich die Anwendung im Einrichtungsmodus.
+            </p>
+            <p>
+                Lesen Sie weiter im Kapitel <a href="erste_schritte.html"><strong>Erste Schritte</strong></a>.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Robin Schumacher</p>
+    </footer>
+</body>
+</html>

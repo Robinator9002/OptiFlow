@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erste Schritte - OptiFlow Dokumentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>OptiFlow Dateimanager - Dokumentation</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Übersicht</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li class="active"><a href="erste_schritte.html">Erste Schritte</a></li>
+                <li><a href="funktionen_benutzer.html">Funktionen (Benutzer)</a></li>
+                <li><a href="funktionen_admin.html">Funktionen (Admin)</a></li>
+                <li><a href="einstellungen.html">Einstellungen</a></li>
+                <li><a href="technik_sicherheit.html">Technik & Sicherheit</a></li>
+                <li><a href="tastenkürzel.html">Tastenkürzel</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="quickstart">
+            <h2>Erste Schritte: Ein Schnellstart-Guide</h2>
+            <p>
+                Diese Anleitung führt Sie in wenigen Minuten durch die grundlegenden Aktionen, die Sie benötigen, um mit OptiFlow produktiv zu werden: von der ersten Anmeldung über die Konfiguration des Scanners bis hin zur ersten erfolgreichen Suche.
+            </p>
+        </section>
+
+        <section id="schritt1-anmeldung">
+            <h3>Schritt 1: Die erste Anmeldung (für Administratoren)</h3>
+            <p>
+                Wenn Sie OptiFlow zum allerersten Mal starten, existiert noch kein Benutzerkonto. Die Anwendung erkennt dies und präsentiert Ihnen direkt eine Registrierungsmaske, um den ersten Administrator anzulegen.
+            </p>
+            <ol>
+                <li>Öffnen Sie die Web-Oberfläche. Sie sehen das Formular "Ersten Admin erstellen".</li>
+                <li>Vergeben Sie einen <strong>Benutzernamen</strong> (z.B. "admin") und ein <strong>sicheres Passwort</strong> (mindestens 4 Zeichen).</li>
+                <li>Klicken Sie auf "Registrieren".</li>
+            </ol>
+            <p>
+                Herzlichen Glückwunsch! Sie haben soeben das erste und einzige Administratorkonto erstellt und werden automatisch angemeldet. Alle weiteren Benutzer müssen von Ihnen über die <a href="einstellungen.html#benutzerverwaltung">Benutzerverwaltung</a> angelegt werden.
+            </p>
+            <div class="img-container">
+                <img src="https://placehold.co/800x450/3b82f6/ffffff?text=Screenshot:+Erste+Admin-Registrierung" alt="Screenshot der erstmaligen Registrierung eines Admins">
+                <p class="caption">Die Ersteinrichtung: Der erste Benutzer wird automatisch zum Admin.</p>
+            </div>
+        </section>
+
+        <section id="schritt2-scanner-konfigurieren">
+            <h3>Schritt 2: Den Scanner konfigurieren (für Administratoren)</h3>
+            <p>
+                Bevor Sie den ersten Scan starten, sollten Sie der Anwendung mitteilen, <strong>was</strong> und <strong>wo</strong> sie suchen soll.
+            </p>
+             <ol>
+                <li>Navigieren Sie zu <strong>⚙️ Einstellungen</strong> oben rechts.</li>
+                <li>Wählen Sie in der linken Leiste den Reiter <strong>"Scanner"</strong> aus.</li>
+                <li>
+                    <strong>Zielordner festlegen:</strong> Klicken Sie auf "Neuer Ordner". Es öffnet sich ein Dialog, in dem Sie die Laufwerke und Verzeichnisse des Servers sehen. Wählen Sie hier die Hauptverzeichnisse aus, die indexiert werden sollen (z.B. <code>D:\Projekte\</code>, <code>E:\Archiv\</code>). Sie können mehrere Ordner hinzufügen.
+                </li>
+                <li>
+                    <strong>Dateitypen auswählen:</strong> Wählen Sie aus der Dropdown-Liste "Dateierweiterungen" eine passende Vorauswahl (z.B. "Alle" oder "Dokumente") oder stellen Sie sich eine eigene Auswahl zusammen.
+                </li>
+                <li>Klicken Sie unten auf <strong>"Speichern"</strong>, um Ihre Konfiguration zu übernehmen.</li>
+            </ol>
+             <div class="img-container">
+                <img src="https://placehold.co/800x450/2c3e50/ffffff?text=Screenshot:+Scanner-Konfiguration" alt="Screenshot der Scanner-Konfiguration in den Einstellungen">
+                <p class="caption">Festlegen der Zielordner und Dateitypen in den Scanner-Einstellungen.</p>
+            </div>
+        </section>
+        
+        <section id="schritt3-indexierung">
+            <h3>Schritt 3: Der erste Scan (für Administratoren)</h3>
+            <p>
+                Nachdem der Scanner konfiguriert ist, kann die eigentliche Indexierung beginnen.
+            </p>
+            <ol>
+                <li>Wechseln Sie zum Reiter <strong>"Index & Scanner"</strong> in der Hauptnavigation.</li>
+                <li>Klicken Sie auf den Button <strong>"Dateien scannen & indexieren"</strong> und bestätigen Sie die Sicherheitsabfrage.</li>
+                <li>Ein Ladeindikator erscheint. Je nach Anzahl und Größe Ihrer Dateien kann dieser erste Scan einige Minuten dauern. Die Anwendung durchsucht im Hintergrund die von Ihnen festgelegten Ordner, liest die Metadaten und (optional) die Inhalte der Dateien und baut den Suchindex auf.</li>
+            </ol>
+            <p>
+                Sobald der Vorgang abgeschlossen ist, erhalten Sie eine Benachrichtigung. Ihr OptiFlow-System ist nun bereit!
+            </p>
+        </section>
+
+        <section id="schritt4-suche">
+            <h3>Schritt 4: Ihre erste Suche (für alle Benutzer)</h3>
+            <p>
+                Jetzt kommt der spannende Teil. Wechseln Sie zurück zum Reiter <strong>"Suche & Vorschau"</strong>.
+            </p>
+            <ol>
+                <li>Geben Sie einen Suchbegriff in das große Eingabefeld links ein. Das kann ein Teil eines Dateinamens, ein Projektname oder ein Wort sein, von dem Sie wissen, dass es im Inhalt eines Dokuments vorkommt.</li>
+                <li>Drücken Sie <strong>Enter</strong> oder klicken Sie auf das Such-Icon.</li>
+                <li>Die Ergebnisse erscheinen sofort in der Liste auf der linken Seite.</li>
+                <li>Klicken Sie auf ein Suchergebnis, um rechts eine detaillierte Vorschau der Datei zu sehen.</li>
+            </ol>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Robin Schumacher</p>
+    </footer>
+</body>
+</html>

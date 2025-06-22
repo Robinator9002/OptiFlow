@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benutzer-Funktionen - OptiFlow Dokumentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>OptiFlow Dateimanager - Dokumentation</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Übersicht</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="erste_schritte.html">Erste Schritte</a></li>
+                <li class="active"><a href="funktionen_benutzer.html">Funktionen (Benutzer)</a></li>
+                <li><a href="funktionen_admin.html">Funktionen (Admin)</a></li>
+                <li><a href="einstellungen.html">Einstellungen</a></li>
+                <li><a href="technik_sicherheit.html">Technik & Sicherheit</a></li>
+                <li><a href="tastenkürzel.html">Tastenkürzel</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="user-funktionen-intro">
+            <h2>Funktionen für den täglichen Gebrauch</h2>
+            <p>
+                Dieser Abschnitt beschreibt alle Funktionen, die für den täglichen Arbeitsablauf eines jeden Benutzers relevant sind. Der Fokus liegt auf dem zentralen "Suche & Vorschau"-Tab, dem Herzstück der Anwendung, sowie den persönlichen Einstellungsmöglichkeiten.
+            </p>
+        </section>
+
+        <section id="die-suche">
+            <h3>Die globale Suche: Finden statt Suchen</h3>
+            <p>
+                Die globale Suche auf der linken Seite des "Suche & Vorschau"-Tabs ist Ihr primäres Werkzeug. Sie ist so konzipiert, dass sie auch bei riesigen Datenmengen schnelle und relevante Ergebnisse liefert.
+            </p>
+            <div class="img-container">
+                <img src="https://placehold.co/800x550/3b82f6/ffffff?text=Screenshot+der+Suche+und+Ergebnisliste" alt="Screenshot der Suchleiste und der Ergebnisliste">
+                <p class="caption">Die Suchleiste links und die Vorschau rechts bilden eine Arbeitseinheit.</p>
+            </div>
+            <h4>Suchanfragen stellen</h4>
+            <ul>
+                <li><strong>Einfache Suche:</strong> Geben Sie einfach einen oder mehrere Begriffe ein und drücken Sie Enter. OptiFlow durchsucht Dateinamen und Inhalte.</li>
+                <li><strong>Mehrere Suchbegriffe (UND-Verknüpfung):</strong> Wenn Sie mehrere Wörter eingeben (z.B. <code>Rechnung 2024 Müller</code>), werden standardmäßig Dateien gefunden, die alle diese Begriffe enthalten.</li>
+                 <li><strong>Komplexe Suchen (ODER-Verknüpfung):</strong> Sie können mehrere, voneinander unabhängige Suchanfragen gleichzeitig durchführen, indem Sie diese mit einem Komma trennen. Beispiel: Die Suche nach <code>Rechnung Müller, Angebot Meier</code> findet alle Dateien, die "Rechnung" und "Müller" enthalten, sowie alle Dateien, die "Angebot" und "Meier" enthalten.</li>
+            </ul>
+
+            <h4>Ergebnisse verstehen und navigieren</h4>
+            <ul>
+                <li><strong>Relevanz-Sortierung:</strong> Die Ergebnisse sind intelligent sortiert. Dateien, bei denen der Suchbegriff exakt im Dateinamen vorkommt, stehen ganz oben.</li>
+                <li><strong>Relevanz-Anzeige:</strong> In den <a href="einstellungen.html#sucheinstellungen">Einstellungen</a> können Sie die Anzeige des "Relevanz-Scores" aktivieren, um nachzuvollziehen, warum ein Ergebnis weit oben steht.</li>
+                <li><strong>Navigation per Tastatur:</strong> Nachdem eine Suche ausgeführt wurde, können Sie mit den <strong>Pfeiltasten (↑/↓)</strong> durch die Ergebnisliste navigieren, ohne die Maus zu benutzen. Die Vorschau aktualisiert sich dabei automatisch.</li>
+                <li><strong>Suche einklappen:</strong> Mit dem Pfeil-Icon oben rechts in der Suchleiste können Sie die Ergebnisliste einklappen, um der Dateivorschau mehr Platz zu geben.</li>
+            </ul>
+        </section>
+
+        <section id="die-vorschau">
+            <h3>Die Dateivorschau: Alles auf einen Blick</h3>
+            <p>
+                Wenn Sie auf ein Suchergebnis klicken, wird rechts die Vorschau-Ansicht geöffnet. Diese gibt Ihnen alle wichtigen Informationen und Aktionen zu einer Datei.
+            </p>
+            
+            <h4>In der Datei suchen</h4>
+            <p>
+                Innerhalb einer großen Textdatei den richtigen Abschnitt zu finden, kann mühsam sein. Die "In-Datei-Suche" löst dieses Problem elegant.
+            </p>
+            <div class="img-container">
+                <img src="https://placehold.co/800x400/2c3e50/ffffff?text=Screenshot+der+In-Datei-Suche+mit+Snippets" alt="Screenshot der In-Datei-Suche mit Snippets">
+                <p class="caption">Die In-Datei-Suche (rechts) zeigt relevante "Snippets" (Textausschnitte) aus dem Dokument an.</p>
+            </div>
+            <ul>
+                <li><strong>Suche starten:</strong> Nutzen Sie das Suchfeld in der rechten Seitenleiste, um den angezeigten Inhalt zu durchsuchen.</li>
+                <li><strong>Snippets:</strong> Die Ergebnisse werden als "Snippets" aufgelistet. Jeder Snippet zeigt den Kontext rund um Ihren Suchbegriff.</li>
+                <li><strong>Interaktives Highlighting:</strong> Wenn Sie auf einen Snippet klicken, wird die entsprechende Stelle im Haupttext farblich hervorgehoben und automatisch dorthin gescrollt. Umgekehrt können Sie auch direkt auf eine Hervorhebung im Haupttext klicken, um den zugehörigen Snippet in der Liste zu aktivieren.</li>
+                <li><strong>Navigation per Tastatur:</strong> Solange die In-Datei-Suche aktiv ist, können Sie auch hier mit den <strong>Pfeiltasten (↑/↓)</strong> durch die Snippets navigieren.</li>
+            </ul>
+
+            <h4>Dateien verwalten und bearbeiten (Admin-Rechte erforderlich)</h4>
+             <p>Direkt aus der Vorschau heraus können Administratoren wichtige Aktionen ausführen.</p>
+             <div class="image-duo">
+                 <div class="img-container">
+                    <img src="https://placehold.co/600x400/3b82f6/ffffff?text=Aktions-Buttons" alt="Aktions-Buttons">
+                    <p class="caption">Buttons für Öffnen, Bearbeiten und Löschen.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://placehold.co/600x400/2c3e50/ffffff?text=CodeMirror+Editor" alt="Screenshot des Code-Editors">
+                    <p class="caption">Der integrierte Editor im Bearbeitungsmodus.</p>
+                </div>
+            </div>
+            <ul>
+                <li><strong>Öffnen:</strong> Öffnet die Datei mit dem auf Ihrem System installierten Standardprogramm (z.B. Word für <code>.docx</code>).</li>
+                <li><strong>In Explorer öffnen:</strong> Öffnet den Windows Explorer und markiert die Datei in ihrem ursprünglichen Ordner.</li>
+                <li><strong>Bearbeiten:</strong> Aktiviert den Bearbeitungsmodus. Für Textdateien öffnet sich ein leistungsfähiger <strong>Code-Editor (CodeMirror)</strong> direkt in der Vorschau.</li>
+                <li><strong>Speichern / Abbrechen:</strong> Im Bearbeitungsmodus können Sie Ihre Änderungen speichern oder verwerfen.</li>
+                <li><strong>Löschen:</strong> Entfernt die Datei endgültig von der Festplatte und aus dem Suchindex. Diese Aktion erfordert eine zusätzliche Bestätigung.</li>
+            </ul>
+        </section>
+        
+        <section id="persoenliche-einstellungen">
+            <h3>Persönliche Einstellungen</h3>
+            <p>Jeder Benutzer kann sein OptiFlow-Erlebnis personalisieren. Gehen Sie zu <strong>⚙️ Einstellungen</strong> und wählen Sie den Reiter <strong>"Benutzer"</strong>.</p>
+            <ul>
+                <li><strong>Benutzernamen ändern:</strong> Passen Sie Ihren Anzeigenamen an.</li>
+                <li><strong>Passwort ändern:</strong> Aus Sicherheitsgründen sollten Sie Ihr Passwort regelmäßig ändern. Hier können Sie nach Bestätigung Ihres alten Passworts ein neues vergeben.</li>
+            </ul>
+            <p>Im Reiter <strong>"Allgemein"</strong> können Sie zudem das visuelle Theme und die Schriftgröße der gesamten Anwendung nach Ihren Wünschen anpassen.</p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Robin Schumacher</p>
+    </footer>
+</body>
+</html>
