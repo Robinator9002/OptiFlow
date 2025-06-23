@@ -1,6 +1,5 @@
 /* * OptiFlow Documentation Stylesheet
- * Inspired by the OptiFlow App Theme
- * Version 4.1 - Interactive Info-Box Update
+ * Version 4.4 - Floating Theme Switcher
  */
 
 /* ==========================================================================
@@ -119,7 +118,7 @@ body {
 
 header {
     background-color: var(--header-bg);
-    padding: 1.5em 1.5em;
+    padding: 1.2em 1.5em; /* Padding leicht reduziert */
     text-align: center;
     backdrop-filter: blur(8px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -130,7 +129,7 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.25em;
+    gap: 0.75em; /* Gap reduziert für Kompaktheit */
 }
 
 header h1 {
@@ -139,12 +138,10 @@ header h1 {
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
-    order: 1;
 }
 
 nav {
     padding-top: 0;
-    order: 3;
     width: 100%;
 }
 
@@ -191,18 +188,31 @@ nav li.active a {
    3.5. THEME SWITCHER
    ========================================================================== */
 
-.theme-switcher {
-    order: 2;
-    display: flex;
-    gap: 0.5em;
-    background-color: var(--bg-primary);
-    padding: 0.5em;
-    border-radius: 25px;
-    border: 1px solid var(--border-primary);
-    box-shadow: var(--shadow-sm);
+/* Versteckt den alten Switcher, falls er noch im Header ist */
+header .theme-switcher {
+    display: none;
 }
 
-.theme-switcher button {
+/* NEU: Styling für den schwebenden Theme-Switcher */
+.theme-switcher-floating {
+    position: fixed;
+    top: 50%;
+    left: 5vw;
+    transform: translateY(-50%);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column; /* Vertikale Anordnung */
+    gap: 0.5rem;
+    background-color: var(--header-bg);
+    padding: 0.6rem;
+    border-radius: 9999px; /* Pillenform */
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(8px);
+    transition: right 0.3s ease;
+}
+
+.theme-switcher-floating button {
     background-color: transparent;
     border: none;
     color: var(--text-muted);
@@ -217,18 +227,15 @@ nav li.active a {
     transition: all 0.2s ease;
 }
 
-.theme-switcher button:hover {
+.theme-switcher-floating button:hover {
     color: var(--text-primary);
     background-color: var(--bg-tertiary);
 }
 
-.theme-switcher button.active {
+.theme-switcher-floating button.active {
     background-color: var(--accent-primary);
     color: white;
     box-shadow: var(--shadow-sm);
-}
-.theme-switcher-floating {
-    display: none;
 }
 
 /* ==========================================================================
@@ -480,19 +487,19 @@ img:hover {
 }
 
 /* ==========================================================================
-   6. Special Elements (Info Boxes, Footer)
+   6. Special Elements (Info Boxes, Footer, ACCORDION)
    ========================================================================== */
 
-/* NEU: Überarbeitete Info-Boxen für mehr Interaktivität */
 .info-box {
     background-color: var(--bg-secondary);
     border-left: 4px solid var(--accent-primary);
-    padding: 1.5em;
+    padding: 0;
     margin: 2em 0;
     border-radius: 0 8px 8px 0;
     position: relative;
     box-shadow: var(--shadow-sm);
     transition: all 0.3s ease-in-out;
+    overflow: hidden;
 }
 
 .info-box:hover {
@@ -506,32 +513,106 @@ img:hover {
 }
 
 .info-box h4 {
-    margin-top: 0;
+    margin: 0;
+    padding: 1.2em 1.5em;
     color: var(--accent-primary);
     font-weight: 600;
     display: flex;
     align-items: center;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
 }
 
 .info-box.tech h4 {
     color: var(--info-box-tech-border);
 }
 
-/* NEU: Interaktive Icons für die Titel der Info-Boxen */
 .info-box h4::before {
-    content: "💡"; /* Standard-Icon: Glühbirne */
-    font-size: 1.2em;
-    margin-right: 0.6em;
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    border-style: solid;
+    border-color: currentColor;
+    border-width: 0 2px 2px 0;
     display: inline-block;
+    margin-right: 0.8em;
+    transform: rotate(-45deg);
     transition: transform 0.3s ease;
 }
 
-.info-box.tech h4::before {
-    content: "⚙️"; /* Spezielles Icon für Tech-Boxen: Zahnrad */
+.info-box.active h4::before {
+    transform: rotate(45deg);
 }
 
-.info-box:hover h4::before {
-    transform: rotate(15deg) scale(1.1); /* Kleiner Wackel-Effekt beim Hover */
+.info-box-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    padding: 0 1.5em;
+}
+
+.accordion {
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-top: 2.5em;
+}
+
+.accordion-item {
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+.accordion-header {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 1.2em 1.5em;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: background-color 0.3s ease;
+    font-size: 1.2em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+}
+
+.accordion-header:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.accordion-header.active {
+    background-color: var(--accent-primary);
+    color: white;
+}
+
+.accordion-header.active .lucide {
+    color: white;
+}
+
+.accordion-header .lucide {
+    color: var(--accent-primary);
+    transition: color 0.3s ease;
+}
+
+.accordion-content {
+    background-color: var(--doc-bg);
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    max-height: 0;
+    padding: 0 1.5em;
+}
+
+.accordion-content ul {
+    margin-top: 1.5em;
 }
 
 footer {
@@ -596,5 +677,14 @@ footer p {
 
     .image-duo {
         grid-template-columns: 1fr;
+    }
+
+    .accordion-header {
+        font-size: 1.1em;
+        padding: 1em 1.2em;
+    }
+
+    .theme-switcher-floating {
+        right: 10px; /* Näher am Rand auf kleinen Bildschirmen */
     }
 }

@@ -67,16 +67,16 @@
             </nav>
         </header>
         <main>
-            <!-- CONTENT -->
             <section id="einstellungen-intro">
-                <h2>Die Anwendung anpassen: Ein Überblick</h2>
+                <h2>Das Kontrollzentrum: Alle Einstellungen im Detail</h2>
                 <p>
-                    Der Einstellungs-Tab (erreichbar über den Button
-                    <strong>⚙️ Einstellungen</strong> oben rechts) ist die
-                    zentrale Anlaufstelle, um OptiFlow an Ihre persönlichen
-                    Vorlieben und die Anforderungen Ihres Unternehmens
-                    anzupassen. Die Einstellungen sind in verschiedene Reiter
-                    unterteilt, die wir hier im Detail erläutern.
+                    Der Einstellungs-Dialog ist die zentrale Anlaufstelle, um
+                    OptiFlow an Ihre persönlichen Vorlieben und die
+                    Anforderungen Ihres Unternehmens anzupassen. Die
+                    Einstellungen sind in neun spezialisierte Bereiche
+                    unterteilt, die hier detailliert erklärt werden. Nutzen Sie
+                    dieses Akkordeon, um gezielt die Informationen zu finden,
+                    die Sie benötigen.
                 </p>
                 <div class="info-box">
                     <h4>Speichern nicht vergessen!</h4>
@@ -88,202 +88,542 @@
                     </p>
                 </div>
             </section>
-            <section id="allgemein">
-                <h3>Allgemein</h3>
-                <p>
-                    Passen Sie hier das Erscheinungsbild der Anwendung an. Diese
-                    Einstellungen sind benutzerspezifisch.
-                </p>
-                <ul>
-                    <li>
-                        <strong>Erscheinungsbild (Theme):</strong> Wählen Sie
-                        zwischen einem hellen Standard-Design, einem
-                        augenschonenden Dunkelmodus und einem Modus mit hohem
-                        Kontrast für bessere Lesbarkeit.
-                    </li>
-                    <li>
-                        <strong>Barrierefreiheit (Schriftgröße):</strong>
-                        Skalieren Sie die Schriftgröße der gesamten Anwendung
-                        stufenlos über einen Schieberegler, um sie an Ihre
-                        Bildschirmauflösung und Sehstärke anzupassen.
-                    </li>
-                </ul>
-            </section>
-            <section id="sucheinstellungen">
-                <h3>Suche (Admin)</h3>
-                <p>
-                    Konfigurieren Sie hier das Verhalten der globalen Suche für
-                    alle Benutzer.
-                </p>
-                <ul>
-                    <li>
-                        <strong>Maximale Suchergebnisse:</strong> Legen Sie
-                        fest, wie viele Treffer maximal in der Ergebnisliste
-                        angezeigt werden sollen, um die Übersicht zu wahren.
-                    </li>
-                    <li>
-                        <strong>Relevanz-Scores anzeigen:</strong> Blenden Sie
-                        neben jedem Suchergebnis den numerischen Relevanz-Score
-                        ein, damit Benutzer die Sortierung besser nachvollziehen
-                        können.
-                    </li>
-                    <li>
-                        <strong>Punktesystem anpassen:</strong> Verändern Sie
-                        die Gewichtung für Suchtreffer. Sie können festlegen,
-                        wie viele Punkte ein exakter Treffer im Dateinamen, ein
-                        teilweiser Treffer oder ein Treffer im Inhalt erhält.
-                    </li>
-                    <li>
-                        <strong>Snippet-Größe:</strong> Passen Sie an, wie viele
-                        Zeichen vor und nach einem Treffer in der
-                        Snippet-Vorschau der In-Datei-Suche angezeigt werden.
-                    </li>
-                </ul>
-            </section>
-            <section id="scanner-einstellungen">
-                <h3>Scanner (Admin)</h3>
-                <p>
-                    Hier steuern Administratoren die Details des
-                    Indexierungs-Prozesses. Dies ist eine der wichtigsten
-                    Konfigurationsseiten.
-                </p>
-                <div class="img-container">
-                    <img
-                        src="../img/settings/scanner.png"
-                        alt="Screenshot der Scanner-Einstellungen"
-                    />
-                    <p class="caption">
-                        Definieren Sie Zielordner, Dateitypen und weitere
-                        Scan-Parameter.
-                    </p>
+
+            <div class="accordion">
+                <!-- 1. General Settings -->
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <i data-lucide="sliders-horizontal"></i> Allgemein
+                    </button>
+                    <div class="accordion-content">
+                        <p>
+                            Hier passen Sie das grundlegende Erscheinungsbild
+                            der Anwendung an. Diese Einstellungen sind rein
+                            kosmetischer Natur und für jeden Benutzer
+                            individuell.
+                        </p>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/general.png"
+                                alt="Allgemeine Einstellungen"
+                            />
+                            <p class="caption">
+                                Passen Sie Theme und Schriftgröße an Ihre
+                                Vorlieben an.
+                            </p>
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Erscheinungsbild:</strong> Wählen Sie
+                                zwischen dem hellen Standard-Design, einem
+                                augenschonenden Dunkelmodus oder einem Modus mit
+                                hohem Kontrast für maximale Lesbarkeit.
+                            </li>
+                            <li>
+                                <strong>Schriftgröße:</strong> Skalieren Sie die
+                                Schriftgröße der gesamten Anwendung stufenlos
+                                über einen Schieberegler. Ideal zur Anpassung an
+                                hochauflösende Bildschirme oder zur Verbesserung
+                                der Barrierefreiheit.
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <ul>
-                    <li>
-                        <strong>Zielordner:</strong> Legen Sie die
-                        Startverzeichnisse für den Scan fest. Über den Button
-                        "Neuer Ordner" öffnet sich der interaktive
-                        <strong>Folder Selector</strong>, mit dem Sie bequem
-                        durch die Server-Verzeichnisse navigieren und Ordner zur
-                        Liste hinzufügen können.
-                    </li>
-                    <li>
-                        <strong>Dateierweiterungen:</strong> Bestimmen Sie,
-                        welche Dateitypen (z.B. <code>.pdf</code>,
-                        <code>.docx</code>, <code>.txt</code>) überhaupt
-                        indexiert werden sollen. Sie können eine der
-                        vordefinierten Gruppen wählen oder eine
-                        benutzerdefinierte Auswahl treffen.
-                    </li>
-                    <li>
-                        <strong>Inhalt indexieren / PDF Konversion:</strong>
-                        Legen Sie fest, ob auch die Inhalte der Dateien (und
-                        nicht nur die Namen) in den Index aufgenommen werden
-                        sollen. Aktivieren Sie die PDF-Konversion, damit auch
-                        Text aus PDFs extrahiert wird.
-                    </li>
-                    <li>
-                        <strong>Maximale Dateigröße (KB):</strong> Schließen Sie
-                        sehr große Dateien vom Scan aus, um Ressourcen zu
-                        sparen.
-                    </li>
-                    <li>
-                        <strong>Weitere Optionen:</strong> Legen Sie die
-                        maximale Anzahl an CPU-Kernen für den Scan fest oder
-                        definieren Sie eine Scan-Verzögerung zur Schonung
-                        älterer Systeme.
-                    </li>
-                </ul>
-            </section>
-            <section id="benutzerverwaltung">
-                <h3>Benutzer</h3>
-                <p>
-                    Verwalten Sie Ihr eigenes Konto oder (als Admin) alle Konten
-                    im System.
-                </p>
-                <h4>Für alle Benutzer:</h4>
-                <ul>
-                    <li>
-                        <strong>Benutzernamen ändern:</strong> Passen Sie Ihren
-                        Anzeigenamen an.
-                    </li>
-                    <li>
-                        <strong>Passwort ändern:</strong> Aus Sicherheitsgründen
-                        sollten Sie Ihr Passwort regelmäßig ändern. Hier können
-                        Sie nach Bestätigung Ihres alten Passworts ein neues
-                        vergeben.
-                    </li>
-                    <li>
-                        <strong>Konto löschen:</strong> Löschen Sie Ihr eigenes
-                        Konto (erfordert Passwortbestätigung).
-                    </li>
-                </ul>
-                <h4>Zusätzlich für Admins:</h4>
-                <div class="img-container">
-                    <img
-                        src="../img/settings/user.png"
-                        alt="Screenshot der Benutzerverwaltung durch einen Admin"
-                    />
-                    <p class="caption">
-                        Admins haben die volle Kontrolle über alle
-                        Benutzerkonten.
-                    </p>
+
+                <!-- 2. Search Settings -->
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <i data-lucide="search"></i> Suche
+                    </button>
+                    <div class="accordion-content">
+                        <p>
+                            Konfigurieren Sie das Herzstück von OptiFlow: die
+                            Suche. Diese Einstellungen (nur für Admins) haben
+                            direkten Einfluss auf die Suchergebnisse und deren
+                            Darstellung für alle Benutzer.
+                        </p>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/search-main.png"
+                                alt="Sucheinstellungen"
+                            />
+                            <p class="caption">
+                                Steuern Sie Relevanz, Limits und die Darstellung
+                                von Suchergebnissen.
+                            </p>
+                        </div>
+                        <h4>Ergebnisse & Anzeige</h4>
+                        <ul>
+                            <li>
+                                <strong>Maximale Suchergebnisse:</strong>
+                                Begrenzen Sie die Anzahl der angezeigten
+                                Treffer, um die Übersicht zu wahren (0 für
+                                unbegrenzt).
+                            </li>
+                            <li>
+                                <strong>Relevanz-Scores anzeigen:</strong>
+                                Blenden Sie für jeden Treffer den berechneten
+                                Score ein. Hilfreich, um die Sortierung
+                                nachzuvollziehen.
+                            </li>
+                        </ul>
+                        <h4>Relevanz-Bewertung (Punktesystem)</h4>
+                        <ul>
+                            <li>
+                                Passen Sie die Gewichtung für verschiedene
+                                Treffertypen an. Standardmäßig wird ein exakter
+                                Treffer im Dateinamen am höchsten bewertet,
+                                gefolgt von teilweisen Treffern im Namen und
+                                Treffern im Inhalt.
+                            </li>
+                        </ul>
+                        <h4>Vorschau-Snippets (In-Datei-Suche)</h4>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/search-in-file.png"
+                                alt="Einstellungen für In-Datei-Suche"
+                            />
+                            <p class="caption">
+                                Details zur Konfiguration der Snippet-Anzeige.
+                            </p>
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Maximale Snippets pro Datei:</strong>
+                                Wie viele Textausschnitte sollen in der
+                                In-Datei-Suche maximal angezeigt werden?
+                            </li>
+                            <li>
+                                <strong>Snippet-Fenster:</strong> Definiert, wie
+                                viele Zeichen vor und nach einem gefundenen Wort
+                                im Snippet angezeigt werden.
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <ul>
-                    <li>
-                        <strong>Benutzerliste anzeigen:</strong> Sehen Sie eine
-                        Liste aller registrierten Benutzer inklusive ihres
-                        Admin-Status und des letzten Logins.
-                    </li>
-                    <li>
-                        <strong>Benutzer hinzufügen:</strong> Erstellen Sie neue
-                        Benutzerkonten und legen Sie deren initiales Passwort
-                        sowie den Admin-Status fest.
-                    </li>
-                    <li>
-                        <strong>Passwort zurücksetzen:</strong> Setzen Sie das
-                        Passwort für einen Benutzer zurück (erfordert Ihr
-                        Admin-Passwort).
-                    </li>
-                    <li>
-                        <strong>Admin-Status ändern:</strong> Erteilen oder
-                        entziehen Sie anderen Benutzern Administratorrechte.
-                    </li>
-                    <li>
-                        <strong>Benutzer löschen:</strong> Entfernen Sie ein
-                        Benutzerkonto aus dem System (erfordert Ihr
-                        Admin-Passwort).
-                    </li>
-                </ul>
-            </section>
-            <section id="system-einstellungen">
-                <h3>System (Admin)</h3>
-                <p>
-                    Globale Einstellungen, die das Verhalten des Servers
-                    beeinflussen.
-                </p>
-                <ul>
-                    <li>
-                        <strong>Zeitgesteuerte Events:</strong> Ein mächtiges
-                        Werkzeug zur Automatisierung. Erstellen Sie Events, die
-                        zu bestimmten Zeiten (täglich, wöchentlich, stündlich)
-                        ausgeführt werden. So können Sie z.B. einen nächtlichen
-                        Index-Scan oder eine wöchentliche OCR-Konvertierung
-                        einrichten, ohne manuell eingreifen zu müssen.
-                    </li>
-                    <li>
-                        <strong>Server herunterfahren:</strong> Fährt den
-                        OptiFlow Backend-Server sicher herunter. Erfordert eine
-                        doppelte Bestätigung mit Ihrem Admin-Passwort. Die
-                        Anwendung ist danach nicht mehr erreichbar und muss
-                        manuell via Installer-Verknüpfung oder
-                        <code>start.bat</code> neu gestartet werden.
-                    </li>
-                </ul>
-            </section>
+
+                <!-- 3. Scanner Settings -->
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <i data-lucide="scan-line"></i> Scanner
+                    </button>
+                    <div class="accordion-content">
+                        <p>
+                            Hier wird das Verhalten des Indexierungs-Prozesses
+                            gesteuert. Diese Admin-Einstellungen sind kritisch
+                            dafür, welche Dateien überhaupt von OptiFlow erfasst
+                            werden.
+                        </p>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/scanner.png"
+                                alt="Scanner-Einstellungen"
+                            />
+                            <p class="caption">
+                                Definieren Sie Leistung, ignorierte Ordner und
+                                Zieldateitypen für den Scan.
+                            </p>
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Leistung:</strong> Legen Sie die
+                                maximale Anzahl an CPU-Kernen für den Scan fest,
+                                um die Systemlast zu steuern. Eine Verzögerung
+                                (in ms) kann auf älteren Systemen helfen, die
+                                Festplattenaktivität zu schonen.
+                            </li>
+                            <li>
+                                <strong>Ignorierte Verzeichnisse:</strong>
+                                Fügen Sie Ordnernamen wie <code>.git</code> oder
+                                <code>node_modules</code> hinzu, die vom Scan
+                                komplett ausgeschlossen werden sollen.
+                            </li>
+                            <li>
+                                <strong>Dateitypen:</strong> Wählen Sie per
+                                Checkbox aus, welche Dateiendungen (z.B.
+                                <code>.pdf</code>, <code>.docx</code>) überhaupt
+                                indexiert werden sollen.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 4. OCR Settings -->
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <i data-lucide="file-scan"></i> OCR
+                    </button>
+                    <div class="accordion-content">
+                        <p>
+                            Passen Sie die Details für die Texterkennung (OCR)
+                            an. Diese Admin-Einstellungen beeinflussen die
+                            Qualität und Geschwindigkeit der Umwandlung von
+                            Bild-PDFs in durchsuchbare Dokumente.
+                        </p>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/ocr-main.png"
+                                alt="Allgemeine OCR-Einstellungen"
+                            />
+                            <p class="caption">
+                                Qualitäts-Presets und Optionen für die
+                                Dateiausgabe.
+                            </p>
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Qualitäts-Voreinstellungen:</strong>
+                                Wählen Sie zwischen "Schnell", "Ausgeglichen"
+                                und "Qualität", um technische Parameter wie DPI
+                                und Optimierungslevel schnell zu setzen.
+                                "Benutzerdefiniert" schaltet die manuellen
+                                Regler frei.
+                            </li>
+                            <li>
+                                <strong>Ausgabe-Optionen:</strong> Legen Sie
+                                fest, ob die neuen, durchsuchbaren PDFs die
+                                Originale überschreiben oder in einen separaten
+                                Unterordner bzw. mit einem Präfix gespeichert
+                                werden.
+                            </li>
+                            <li>
+                                <strong>Standardverhalten:</strong> Bestimmen
+                                Sie, ob OCR auch bei Dateien mit vorhandener
+                                Textebene erzwungen werden soll.
+                            </li>
+                        </ul>
+                        <div class="info-box tech">
+                            <h4>Technische OCR-Einstellungen</h4>
+                            <p>
+                                Für Experten: Passen Sie Parameter wie die
+                                OCR-Sprache (z.B. <code>deu+eng</code>), die
+                                Bild-DPI, den Optimierungslevel oder zusätzliche
+                                Tesseract-Konfigurationsbefehle direkt an.
+                            </p>
+                            <div class="img-container">
+                                <img
+                                    src="../img/settings/ocr-technical.png"
+                                    alt="Technische OCR-Einstellungen"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Old Files Settings -->
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <i data-lucide="archive"></i> Alte Dateien
+                    </button>
+                    <div class="accordion-content">
+                        <p>
+                            Konfigurieren Sie als Admin die Suche nach alten und
+                            potenziell veralteten Dateien, um das Dateisystem
+                            sauber zu halten.
+                        </p>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/old-files.png"
+                                alt="Einstellungen für alte Dateien"
+                            />
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Filter & Limits:</strong> Definieren
+                                Sie, ab welchem Alter (in Tagen) eine Datei als
+                                "alt" gilt und wie viele Ergebnisse maximal
+                                angezeigt werden sollen. Dies wird als standard gewählt,
+                                lässt sich aber in dem 'Alte Dateien' Tab nochmals überarbeiten.
+                            </li>
+                            <li>
+                                <strong>Sortierung:</strong> Wählen Sie, ob die
+                                Ergebnisliste nach Alter oder Dateigröße
+                                sortiert werden soll, und ob auf- oder
+                                absteigend.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 6. De-duplication Settings -->
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <i data-lucide="copy-x"></i> Entduplizierung
+                    </button>
+                    <div class="accordion-content">
+                        <p>
+                            Feinabstimmung des Algorithmus zur Erkennung von
+                            doppelten Dateien. Diese Admin-Einstellungen sind
+                            für Experten gedacht, die die Balance zwischen
+                            Genauigkeit und Geschwindigkeit anpassen möchten.
+                        </p>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/deduplication-main.png"
+                                alt="Einstellungen für Entduplizierung"
+                            />
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Gruppierung:</strong> Legen Sie fest,
+                                wie viele Dateien eine Gruppe mindestens
+                                enthalten muss, um als Duplikat-Set angezeigt zu
+                                werden.
+                            </li>
+                            <li>
+                                <strong>Analyse-Algorithmus (MinHash):</strong>
+                                Passen Sie technische Parameter wie die
+                                <strong>Shingle-Länge</strong>, die
+                                <strong>Signaturgröße</strong> und den
+                                <strong>Ähnlichkeitsschwellenwert</strong> (0.0
+                                bis 1.0) an. Höhere Werte führen zu mehr
+                                Genauigkeit, können den Prozess aber
+                                verlangsamen.
+                            </li>
+                        </ul>
+                        <div class="info-box tech">
+                            <h4>Was ist MinHash?</h4>
+                            <p>
+                                MinHash ist ein Algorithmus, der eine Art
+                                "Fingerabdruck" (Signatur) des Inhalts einer
+                                Datei erstellt. Statt riesige Dateien komplett
+                                zu vergleichen, vergleicht OptiFlow nur diese
+                                kleinen Signaturen, was den Prozess extrem
+                                beschleunigt.
+                            </p>
+                            <div class="img-container">
+                                <img
+                                    src="../img/settings/deduplication-minhash.png"
+                                    alt="MinHash Einstellungen"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. User Settings -->
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <i data-lucide="users"></i> Benutzer
+                    </button>
+                    <div class="accordion-content">
+                        <p>
+                            Verwalten Sie Ihr eigenes Konto oder (als Admin)
+                            alle Benutzerkonten im System.
+                            <strong>Achtung:</strong> Um diese Einstellungen
+                            sehen zu können, müssen Sie zuerst Ihr eigenes
+                            Passwort zur Bestätigung eingeben.
+                        </p>
+                        <h4>Mein Konto (Für alle Benutzer)</h4>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/user-normal.png"
+                                alt="Benutzereinstellungen für normale User"
+                            />
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Benutzernamen ändern:</strong> Passen
+                                Sie Ihren Anzeigenamen an. Sie werden danach zur
+                                erneuten Anmeldung aufgefordert.
+                            </li>
+                            <li>
+                                <strong>Passwort ändern:</strong> Ändern Sie Ihr
+                                persönliches Passwort.
+                            </li>
+                            <li>
+                                <strong>Konto löschen:</strong> Entfernen Sie
+                                Ihr eigenes Konto endgültig aus dem System.
+                            </li>
+                        </ul>
+                        <h4>Benutzerverwaltung (Nur für Admins)</h4>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/user-admin.png"
+                                alt="Admin-Ansicht der Benutzerverwaltung"
+                            />
+                            <p class="caption">
+                                Admins sehen eine Liste aller Benutzer und haben
+                                erweiterte Verwaltungsoptionen.
+                            </p>
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Admin-Status ändern:</strong> Erteilen
+                                oder entziehen Sie anderen Benutzern
+                                Administratorrechte per Checkbox.
+                            </li>
+                            <li>
+                                <strong>Passwort zurücksetzen:</strong> Setzen
+                                Sie das Passwort für einen anderen Benutzer
+                                zurück.
+                            </li>
+                            <li>
+                                <strong>Benutzer löschen:</strong> Entfernen Sie
+                                andere Benutzerkonten aus dem System.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 8. Database Settings -->
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <i data-lucide="database"></i> Datenbank
+                    </button>
+                    <div class="accordion-content">
+                        <p>
+                            Ein Werkzeug für Administratoren zur direkten
+                            Interaktion mit den internen JSON-Dateien, die als
+                            Datenbank für OptiFlow dienen.
+                            <strong>Vorsicht:</strong> Änderungen hier können
+                            die Anwendung unbrauchbar machen!
+                        </p>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/database.png"
+                                alt="Datenbank-Einstellungen"
+                            />
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Datei auswählen:</strong> Wählen Sie
+                                eine der Kerndateien aus (z.B.
+                                <code>users.json</code>,
+                                <code>index.json</code>).
+                            </li>
+                            <li>
+                                <strong>Aktionen:</strong> Je nach Datei können
+                                Sie diese herunterladen, den Inhalt im Browser
+                                ansehen, den Index neu aufbauen lassen oder die
+                                Roh-JSON-Daten direkt bearbeiten.
+                            </li>
+                            <li>
+                                <strong>Vorschau-Limit:</strong> Setzen Sie ein
+                                Limit (in KB) für die Dateigröße, um zu
+                                verhindern, dass das Laden sehr großer
+                                Index-Dateien den Browser blockiert.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 9. System Settings -->
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <i data-lucide="server"></i> System
+                    </button>
+                    <div class="accordion-content">
+                        <p>
+                            Globale, serverseitige Einstellungen, die das
+                            Verhalten der gesamten OptiFlow-Instanz steuern (nur
+                            für Admins).
+                        </p>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/system.png"
+                                alt="System-Einstellungen"
+                            />
+                        </div>
+                        <h4>Geplante Aufgaben (Events)</h4>
+                        <p>
+                            Automatisieren Sie wiederkehrende Aufgaben. Sie
+                            können hier Events erstellen, die zu bestimmten
+                            Zeiten ausgeführt werden.
+                        </p>
+                        <div class="img-container">
+                            <img
+                                src="../img/settings/system-addevent.png"
+                                alt="Hinzufügen eines neuen Events"
+                            />
+                            <p class="caption">
+                                Der Dialog zum Erstellen einer neuen geplanten
+                                Aufgabe.
+                            </p>
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Aufgabentyp:</strong> Wählen Sie, was
+                                getan werden soll (z.B. "Scanner
+                                aktualisieren").
+                            </li>
+                            <li>
+                                <strong>Häufigkeit & Zeit:</strong> Legen Sie
+                                fest, ob die Aufgabe stündlich, täglich oder
+                                wöchentlich zu einer bestimmten Uhrzeit (HH:MM)
+                                ausgeführt wird.
+                            </li>
+                        </ul>
+                        <h4>Systemsteuerung</h4>
+                        <ul>
+                            <li>
+                                <strong>Server herunterfahren:</strong> Fährt
+                                den OptiFlow-Server sicher herunter. Erfordert
+                                eine doppelte Passwortbestätigung.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </main>
         <footer>
             <p>&copy; 2025 Robin Schumacher</p>
         </footer>
+        <script>
+            // Simple Accordion Logic
+            document.addEventListener("DOMContentLoaded", () => {
+                const accordionItems =
+                    document.querySelectorAll(".accordion-item");
+
+                // Open the first item by default
+                if (accordionItems.length > 0) {
+                    const firstItem = accordionItems[0];
+                    const firstButton =
+                        firstItem.querySelector(".accordion-header");
+                    const firstContent =
+                        firstItem.querySelector(".accordion-content");
+                    firstButton.classList.add("active");
+                    firstContent.style.maxHeight =
+                        firstContent.scrollHeight + "px";
+                    firstContent.style.paddingTop = "1.5em";
+                    firstContent.style.paddingBottom = "1.5em";
+                }
+
+                accordionItems.forEach((item) => {
+                    const button = item.querySelector(".accordion-header");
+                    const content = item.querySelector(".accordion-content");
+
+                    button.addEventListener("click", () => {
+                        const isActive = button.classList.contains("active");
+
+                        // Close all items
+                        accordionItems.forEach((otherItem) => {
+                            otherItem
+                                .querySelector(".accordion-header")
+                                .classList.remove("active");
+                            const otherContent =
+                                otherItem.querySelector(".accordion-content");
+                            otherContent.style.maxHeight = null;
+                            otherContent.style.paddingTop = null;
+                            otherContent.style.paddingBottom = null;
+                        });
+
+                        // If the clicked item was not active, open it
+                        if (!isActive) {
+                            button.classList.add("active");
+                            content.style.maxHeight =
+                                content.scrollHeight + "px";
+                            content.style.paddingTop = "1.5em";
+                            content.style.paddingBottom = "1.5em";
+                        }
+                    });
+                });
+
+                if (typeof lucide !== "undefined") {
+                    lucide.createIcons();
+                }
+            });
+        </script>
         <script src="theme-switcher.js" defer></script>
     </body>
 </html>
