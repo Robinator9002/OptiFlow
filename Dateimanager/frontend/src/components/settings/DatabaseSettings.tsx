@@ -98,6 +98,12 @@ export default function DataManagement({
             description: "Gespeicherte Zeitgesteuerte Events.",
             actions: ["view", "download", "edit"],
         },
+        {
+            id: "dupes",
+            name: "dupes.json",
+            description: "Gefundene Duplikate.",
+            actions: ["view", "download", "edit"],
+        }
     ];
 
     // Setzt den Zustand der Komponente zurück.

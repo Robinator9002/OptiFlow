@@ -300,7 +300,7 @@ class DateiController:
         return self.datei_manager.save_json_file(file_path, data)
     
     def get_database_path_by_name(self, database_name: str):
-        return {'users.json': self.data_file, 'structure.json': self.structure_file, 'index.json': self.index_file, 'events.json': self.events_file}.get(database_name, None)
+        return {'users.json': self.data_file, 'structure.json': self.structure_file, 'index.json': self.index_file, 'events.json': self.events_file, 'dupes.json': self.dupe_file}.get(database_name, None)
 
     def create_user(self, username, password, admin_username, admin_password, is_admin):
         return self.account_manager.create_user(username, password, admin_username, admin_password, is_admin)
