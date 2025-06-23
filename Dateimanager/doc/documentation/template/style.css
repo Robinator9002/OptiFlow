@@ -1,5 +1,5 @@
 /* * OptiFlow Documentation Stylesheet
- * Version 4.4 - Floating Theme Switcher
+ * Version 4.2 - Accordion & Settings Rework
  */
 
 /* ==========================================================================
@@ -118,7 +118,7 @@ body {
 
 header {
     background-color: var(--header-bg);
-    padding: 1.2em 1.5em; /* Padding leicht reduziert */
+    padding: 1.5em 1.5em;
     text-align: center;
     backdrop-filter: blur(8px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -129,7 +129,7 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75em; /* Gap reduziert für Kompaktheit */
+    gap: 1.25em;
 }
 
 header h1 {
@@ -138,10 +138,12 @@ header h1 {
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
+    order: 1;
 }
 
 nav {
     padding-top: 0;
+    order: 3;
     width: 100%;
 }
 
@@ -196,8 +198,8 @@ header .theme-switcher {
 /* NEU: Styling für den schwebenden Theme-Switcher */
 .theme-switcher-floating {
     position: fixed;
-    top: 50%;
-    left: 5vw;
+    top: 60%;
+    left: 10vw;
     transform: translateY(-50%);
     z-index: 1001;
     display: flex;
@@ -244,7 +246,7 @@ header .theme-switcher {
 
 main {
     padding: 2.5em;
-    max-width: 1024px;
+    max-width: 60vw;
     margin: 2em auto;
     background-color: var(--doc-bg);
     border-radius: 12px;
@@ -413,7 +415,6 @@ pre code:hover {
 img {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
     border: 2px solid var(--border-tertiary);
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease-in-out;
@@ -493,17 +494,17 @@ img:hover {
 .info-box {
     background-color: var(--bg-secondary);
     border-left: 4px solid var(--accent-primary);
-    padding: 0;
+    padding: 1.5em;
     margin: 2em 0;
     border-radius: 0 8px 8px 0;
     position: relative;
     box-shadow: var(--shadow-sm);
     transition: all 0.3s ease-in-out;
-    overflow: hidden;
 }
 
 .info-box:hover {
     transform: translateY(-5px);
+    cursor: default;
     box-shadow: var(--shadow-lg);
 }
 
@@ -513,15 +514,11 @@ img:hover {
 }
 
 .info-box h4 {
-    margin: 0;
-    padding: 1.2em 1.5em;
+    margin-top: 0;
     color: var(--accent-primary);
     font-weight: 600;
     display: flex;
     align-items: center;
-    cursor: pointer;
-    user-select: none;
-    position: relative;
 }
 
 .info-box.tech h4 {
@@ -529,29 +526,22 @@ img:hover {
 }
 
 .info-box h4::before {
-    content: "";
-    width: 0.5em;
-    height: 0.5em;
-    border-style: solid;
-    border-color: currentColor;
-    border-width: 0 2px 2px 0;
+    content: "💡";
+    font-size: 1.2em;
+    margin-right: 0.6em;
     display: inline-block;
-    margin-right: 0.8em;
-    transform: rotate(-45deg);
     transition: transform 0.3s ease;
 }
 
-.info-box.active h4::before {
-    transform: rotate(45deg);
+.info-box.tech h4::before {
+    content: "⚙️";
 }
 
-.info-box-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
-    padding: 0 1.5em;
+.info-box:hover h4::before {
+    transform: rotate(15deg) scale(1.1);
 }
 
+/* NEU: Accordion Styling */
 .accordion {
     border: 1px solid var(--border-primary);
     border-radius: 8px;
@@ -595,7 +585,7 @@ img:hover {
 }
 
 .accordion-header.active .lucide {
-    color: white;
+    color: white; /* Make icon white when active */
 }
 
 .accordion-header .lucide {
@@ -682,9 +672,5 @@ footer p {
     .accordion-header {
         font-size: 1.1em;
         padding: 1em 1.2em;
-    }
-
-    .theme-switcher-floating {
-        right: 10px; /* Näher am Rand auf kleinen Bildschirmen */
     }
 }
