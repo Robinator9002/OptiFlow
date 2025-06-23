@@ -1,73 +1,132 @@
 /* * OptiFlow Documentation Stylesheet
  * Inspired by the OptiFlow App Theme
- * Version 2.0
+ * Version 3.2 - Anti-Flicker Update
  */
 
 /* ==========================================================================
    1. Theme & Color Variables (Inspired by global.css)
    ========================================================================== */
+
+/* --- Default (Light) Theme --- */
 :root {
-    /* Base Colors from App Theme */
     --bg-primary: #f3f6f9;
     --bg-secondary: #e9edf2;
     --bg-tertiary: #dee3e9;
     --text-primary: #1f2937;
     --text-secondary: #374151;
     --text-muted: #6b7280;
-
-    /* Accent Colors from App Theme */
     --accent-primary: #3b82f6;
     --accent-primary-hover: #2563eb;
-    --accent-focus-ring: rgba(59, 130, 246, 0.45);
-
-    /* Borders & Shadows from App Theme */
     --border-primary: #d1d5db;
     --border-secondary: #9ca3af;
     --border-tertiary: #e5e7eb;
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -2px rgba(0, 0, 0, 0.1);
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 
-    /* Documentation-Specific Variables */
+    /* --- Doc-specific variables --- */
     --doc-bg: #ffffff;
-    --doc-width: 1024px;
-    --header-bg: rgba(255, 255, 255, 0.85); /* Slightly transparent for sticky effect */
+    --header-bg: rgba(255, 255, 255, 0.85);
     --code-bg: var(--bg-secondary);
     --code-text: #c53929;
     --pre-bg: #2d2d2d;
     --pre-text: #f4f4f5;
+    --info-box-tech-bg: #f3eef7;
+    --info-box-tech-border: #8e44ad;
 }
 
+/* --- Dark Theme --- */
+html[data-theme="dark"] {
+    --bg-primary: #18181b;
+    --bg-secondary: #27272a;
+    --bg-tertiary: #3f3f46;
+    --text-primary: #f4f4f5;
+    --text-secondary: #d4d4d8;
+    --text-muted: #a1a1aa;
+    --accent-primary: #60a5fa;
+    --accent-primary-hover: #3b82f6;
+    --border-primary: #52525b;
+    --border-secondary: #71717a;
+    --border-tertiary: #3f3f46;
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
+        0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+
+    /* --- Doc-specific variables --- */
+    --doc-bg: #21212a;
+    --header-bg: rgba(24, 24, 27, 0.85);
+    --code-bg: var(--bg-tertiary);
+    --code-text: #ff8b8b;
+    --pre-bg: #1e1e1e;
+    --pre-text: #d4d4d8;
+    --info-box-tech-bg: #3c2d4a;
+    --info-box-tech-border: #c084fc;
+}
+
+/* --- High Contrast Theme --- */
+html[data-theme="contrast"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #e0e0e0;
+    --bg-tertiary: #c0c0c0;
+    --text-primary: #000000;
+    --text-secondary: #000000;
+    --text-muted: #000000;
+    --accent-primary: #0000ff;
+    --accent-primary-hover: #00008b;
+    --border-primary: #000000;
+    --border-secondary: #000000;
+    --border-tertiary: #000000;
+    --shadow-md: none;
+    --shadow-sm: none;
+
+    /* --- Doc-specific variables --- */
+    --doc-bg: #ffffff;
+    --header-bg: rgba(255, 255, 255, 0.95);
+    --code-bg: #e0e0e0;
+    --code-text: #a00000;
+    --pre-bg: #000000;
+    --pre-text: #ffffff;
+    --info-box-tech-bg: #ffffff;
+    --info-box-tech-border: #0000ff;
+}
 
 /* ==========================================================================
    2. General Body & Typography
    ========================================================================== */
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-size: 17px;
     line-height: 1.75;
+    transition: background-color 0.3s ease, color 0.3s ease;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 /* ==========================================================================
-   3. Header & Navigation (Styled like App's .tabs)
+   3. Header & Navigation
    ========================================================================== */
 
 header {
     background-color: var(--header-bg);
-    padding: 1.5em 1em;
+    padding: 1.5em 1.5em;
     text-align: center;
     backdrop-filter: blur(8px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border-bottom: 1px solid var(--border-primary);
     position: sticky;
     top: 0;
     z-index: 1000;
+    /* Flexbox for alignment */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25em;
 }
 
 header h1 {
@@ -76,12 +135,19 @@ header h1 {
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
+    order: 1; /* H1 comes first */
+}
+
+nav {
+    padding-top: 0; /* Adjusted from 1.25em */
+    order: 3; /* Nav comes last */
+    width: 100%;
 }
 
 nav ul {
     list-style: none;
     padding: 0;
-    margin: 1.25em 0 0 0;
+    margin: 0;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -118,17 +184,63 @@ nav li.active a {
 }
 
 /* ==========================================================================
+   3.5. THEME SWITCHER
+   ========================================================================== */
+
+.theme-switcher {
+    order: 2; /* Switcher in the middle */
+    display: flex;
+    gap: 0.5em;
+    background-color: var(--bg-primary);
+    padding: 0.5em;
+    border-radius: 25px;
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.theme-switcher button {
+    background-color: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.4em;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.theme-switcher button:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+}
+
+.theme-switcher button.active {
+    background-color: var(--accent-primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+/* Hiding floating switcher as it's now in header */
+.theme-switcher-floating {
+    display: none;
+}
+
+/* ==========================================================================
    4. Main Content Area
    ========================================================================== */
 
 main {
     padding: 2.5em;
-    max-width: var(--doc-width);
+    max-width: 1024px;
     margin: 2em auto;
     background-color: var(--doc-bg);
     border-radius: 12px;
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-primary);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 section {
@@ -186,7 +298,8 @@ a:hover {
     text-decoration: underline;
 }
 
-ul, ol {
+ul,
+ol {
     padding-left: 1.5em;
     margin-bottom: 1.5em;
 }
@@ -211,7 +324,7 @@ code {
     padding: 0.2em 0.5em;
     border-radius: 4px;
     font-size: 0.9em;
-    font-family: 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+    font-family: "Fira Code", "JetBrains Mono", "Courier New", monospace;
     color: var(--code-text);
     border: 1px solid var(--border-tertiary);
 }
@@ -224,7 +337,7 @@ pre {
     overflow-x: auto;
     white-space: pre-wrap;
     word-wrap: break-word;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 pre code {
@@ -313,8 +426,8 @@ img {
 }
 
 .info-box.tech {
-    background-color: #f3eef7;
-    border-left-color: #8e44ad;
+    background-color: var(--info-box-tech-bg);
+    border-left-color: var(--info-box-tech-border);
 }
 
 .info-box h4 {
@@ -324,7 +437,7 @@ img {
 }
 
 .info-box.tech h4 {
-    color: #8e44ad;
+    color: var(--info-box-tech-border);
 }
 
 footer {
@@ -349,11 +462,16 @@ footer p {
     }
 
     header {
-        padding: 1.5em 1em;
+        padding: 1em 1em;
+        gap: 1em;
     }
-    
+
     header h1 {
-        font-size: 1.5em;
+        font-size: 1.4em;
+    }
+
+    nav {
+        padding-top: 0;
     }
 
     nav ul {

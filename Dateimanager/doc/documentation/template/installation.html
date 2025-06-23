@@ -1,107 +1,189 @@
+<!-- installation.html -->
 <!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Installation - OptiFlow Dokumentation</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <h1>OptiFlow Dateimanager - Dokumentation</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Übersicht</a></li>
-                <li class="active"><a href="installation.html">Installation</a></li>
-                <li><a href="erste_schritte.html">Erste Schritte</a></li>
-                <li><a href="funktionen_benutzer.html">Funktionen (Benutzer)</a></li>
-                <li><a href="funktionen_admin.html">Funktionen (Admin)</a></li>
-                <li><a href="einstellungen.html">Einstellungen</a></li>
-                <li><a href="technik_sicherheit.html">Technik & Sicherheit</a></li>
-                <li><a href="tastenkürzel.html">Tastenkürzel</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <section id="installation">
-            <h2>Installation und Start</h2>
-            <p>
-                Die Inbetriebnahme des OptiFlow Dateimanagers ist dank eines komfortablen Installationsprogramms für Windows sehr einfach. Für andere Betriebssysteme oder Entwickler steht eine manuelle Methode zur Verfügung.
-            </p>
-        </section>
-
-        <section id="windows-installer">
-            <h3>Methode 1: One-Click-Installer (Empfohlen für Windows)</h3>
-            <p>
-                Dies ist der einfachste und schnellste Weg, OptiFlow auf einem Windows-System (Server oder Workstation) zu installieren. Der Installer ist ca. 300 MB kleiner als das manuelle Paket und übernimmt alle Konfigurationsschritte für Sie.
-            </p>
-            <ol>
-                <li><strong>Installer herunterladen:</strong> Laden Sie die bereitgestellte Installer-Datei (<code>OptiFlow-Dateimanager-Setup.exe</code>) herunter.</li>
-                <li><strong>Installer ausführen:</strong> Führen Sie die Datei mit einem Doppelklick aus. Die Windows-Benutzerkontensteuerung fragt möglicherweise um Erlaubnis, die Sie bestätigen müssen.</li>
-                <li><strong>Installation abschließen:</strong> Das Programm wird nun automatisch an den Standard-Speicherort installiert. Der Installer erledigt alles Weitere im Hintergrund.</li>
-                <li><strong>Verknüpfungen nutzen:</strong> Nach der Installation finden Sie automatisch eine Verknüpfung auf Ihrem Desktop und/oder im Startmenü.</li>
-            </ol>
-            <h4>Anwendung starten</h4>
-            <p>
-                Nutzen Sie einfach die neu erstellte Desktop- oder Startmenü-Verknüpfung, um OptiFlow zu starten. Es ist kein manueller Start von Skripten mehr notwendig. Der Server und die Applikation starten automatisch im Hintergrund.
-            </p>
-        </section>
-        
-        <section id="manuelle-installation">
-            <h3>Methode 2: Manuelle Installation (Für Linux & erfahrene Windows-Nutzer)</h3>
-            <p>
-                Diese Methode gibt Ihnen volle Kontrolle über den Installationsort und ist für Linux-Systeme sowie für Entwickler oder Administratoren auf Windows gedacht, die eine portable Version bevorzugen.
-            </p>
-            <h4>Schritt 1: ZIP-Paket herunterladen</h4>
-            <p>
-                 Laden Sie das ZIP-Paket (<code>OptiFlow-Source.zip</code>) herunter und entpacken Sie es an einem permanenten Ort auf Ihrem System (z.B. <code>C:\OptiFlow\</code> unter Windows oder <code>/opt/optiflow/</code> unter Linux).
-            </p>
-            
-            <h4>Schritt 2: Anwendung starten</h4>
-            <ul>
-                <li><strong>Unter Windows:</strong> Führen Sie die Datei <strong><code>start.bat</code></strong> per Doppelklick aus.</li>
-                <li><strong>Unter Linux:</strong> Öffnen Sie ein Terminal, navigieren Sie in das entpackte Verzeichnis und führen Sie das Skript mit <strong><code>./start.sh</code></strong> aus. (Möglicherweise müssen Sie es zuerst mit <code>chmod +x start.sh</code> ausführbar machen).</li>
-            </ul>
-            <p>
-                In beiden Fällen startet nun der Backend-Server in einem Konsolenfenster, das geöffnet bleiben muss. Die Anwendung selbst öffnet sich in einer eigenen Electron-Umgebung, ein separater Browser ist nicht zwingend notwendig.
-            </p>
-        </section>
-        
-        <div class="info-box tech">
-            <h4>Wo werden meine Daten gespeichert?</h4>
-            <p>
-                Der Speicherort für Ihre Daten (Benutzerprofile, Suchindex etc.) hängt von der Installationsmethode ab. Dies ist wichtig für Backups oder falls eine manuelle Bereinigung notwendig sein sollte.
-            </p>
-            
-            <h5>Bei Installation mit dem Installer:</h5>
-            <p>
-                Der Datenordner befindet sich im Anwendungsverzeichnis unter <code>backend/data</code>. Der vollständige Pfad lautet normalerweise:
-                <br>
-                <code>C:\Users\&lt;IhrBenutzername&gt;\AppData\Local\frontend\backend\data</code>
-            </p>
-            
-            <h5>Bei manueller Installation (ZIP/Source):</h5>
-            <p>
-                Der Datenordner befindet sich direkt im Hauptverzeichnis, in das Sie die Anwendung entpackt haben.
-                <br>
-                Beispiel: <code>C:\OptiFlow\data</code> oder <code>/opt/optiflow/data</code>
-            </p>
-        </div>
-
-        <section id="naechster-schritt">
-            <h3>Nächster Schritt</h3>
-            <p>
-                Die Anwendung läuft! Nun ist es an der Zeit, sich zum ersten Mal anzumelden und das System zu konfigurieren.
-            </p>
-            <p>
-                Lesen Sie weiter im Kapitel <a href="erste_schritte.html"><strong>Erste Schritte</strong></a>.
-            </p>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 Robin Schumacher</p>
-    </footer>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Installation - OptiFlow Dokumentation</title>
+        <link rel="stylesheet" href="style.css" />
+        <script src="https://unpkg.com/lucide@latest" defer></script>
+    </head>
+    <body>
+        <header>
+            <h1>OptiFlow Dateimanager - Dokumentation</h1>
+            <div class="theme-switcher">
+                <button id="theme-default" title="Helles Theme">
+                    <i data-lucide="sun"></i>
+                </button>
+                <button id="theme-dark" title="Dunkles Theme">
+                    <i data-lucide="moon"></i>
+                </button>
+                <button id="theme-contrast" title="Hoher Kontrast">
+                    <i data-lucide="contrast"></i>
+                </button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Übersicht</a></li>
+                    <li class="active">
+                        <a href="installation.html">Installation</a>
+                    </li>
+                    <li><a href="erste_schritte.html">Erste Schritte</a></li>
+                    <li>
+                        <a href="funktionen_benutzer.html"
+                            >Funktionen (Benutzer)</a
+                        >
+                    </li>
+                    <li>
+                        <a href="funktionen_admin.html">Funktionen (Admin)</a>
+                    </li>
+                    <li><a href="einstellungen.html">Einstellungen</a></li>
+                    <li>
+                        <a href="technik_sicherheit.html"
+                            >Technik & Sicherheit</a
+                        >
+                    </li>
+                    <li><a href="tastenkürzel.html">Tastenkürzel</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <!-- CONTENT -->
+            <section id="installation">
+                <h2>Installation und Start</h2>
+                <p>
+                    Die Inbetriebnahme des OptiFlow Dateimanagers ist dank eines
+                    komfortablen Installationsprogramms für Windows sehr
+                    einfach. Für andere Betriebssysteme oder Entwickler steht
+                    eine manuelle Methode zur Verfügung.
+                </p>
+            </section>
+            <section id="windows-installer">
+                <h3>Methode 1: One-Click-Installer (Empfohlen für Windows)</h3>
+                <p>
+                    Dies ist der einfachste und schnellste Weg, OptiFlow auf
+                    einem Windows-System (Server oder Workstation) zu
+                    installieren. Der Installer ist ca. 300 MB kleiner als das
+                    manuelle Paket und übernimmt alle Konfigurationsschritte für
+                    Sie.
+                </p>
+                <ol>
+                    <li>
+                        <strong>Installer herunterladen:</strong> Laden Sie die
+                        bereitgestellte Installer-Datei
+                        (<code>OptiFlow-Dateimanager-Setup.exe</code>) herunter.
+                    </li>
+                    <li>
+                        <strong>Installer ausführen:</strong> Führen Sie die
+                        Datei mit einem Doppelklick aus. Die
+                        Windows-Benutzerkontensteuerung fragt möglicherweise um
+                        Erlaubnis, die Sie bestätigen müssen.
+                    </li>
+                    <li>
+                        <strong>Installation abschließen:</strong> Das Programm
+                        wird nun automatisch an den Standard-Speicherort
+                        installiert. Der Installer erledigt alles Weitere im
+                        Hintergrund.
+                    </li>
+                    <li>
+                        <strong>Verknüpfungen nutzen:</strong> Nach der
+                        Installation finden Sie automatisch eine Verknüpfung auf
+                        Ihrem Desktop und/oder im Startmenü.
+                    </li>
+                </ol>
+                <h4>Anwendung starten</h4>
+                <p>
+                    Nutzen Sie einfach die neu erstellte Desktop- oder
+                    Startmenü-Verknüpfung, um OptiFlow zu starten. Es ist kein
+                    manueller Start von Skripten mehr notwendig. Der Server und
+                    die Applikation starten automatisch im Hintergrund.
+                </p>
+            </section>
+            <section id="manuelle-installation">
+                <h3>
+                    Methode 2: Manuelle Installation (Für Linux & erfahrene
+                    Windows-Nutzer)
+                </h3>
+                <p>
+                    Diese Methode gibt Ihnen volle Kontrolle über den
+                    Installationsort und ist für Linux-Systeme sowie für
+                    Entwickler oder Administratoren auf Windows gedacht, die
+                    eine portable Version bevorzugen.
+                </p>
+                <h4>Schritt 1: ZIP-Paket herunterladen</h4>
+                <p>
+                    Laden Sie das ZIP-Paket (<code>OptiFlow-Source.zip</code>)
+                    herunter und entpacken Sie es an einem permanenten Ort auf
+                    Ihrem System (z.B. <code>C:\OptiFlow\</code> unter Windows
+                    oder <code>/opt/optiflow/</code> unter Linux).
+                </p>
+                <h4>Schritt 2: Anwendung starten</h4>
+                <ul>
+                    <li>
+                        <strong>Unter Windows:</strong> Führen Sie die Datei
+                        <strong><code>start.bat</code></strong> per Doppelklick
+                        aus.
+                    </li>
+                    <li>
+                        <strong>Unter Linux:</strong> Öffnen Sie ein Terminal,
+                        navigieren Sie in das entpackte Verzeichnis und führen
+                        Sie das Skript mit
+                        <strong><code>./start.sh</code></strong> aus.
+                        (Möglicherweise müssen Sie es zuerst mit
+                        <code>chmod +x start.sh</code> ausführbar machen).
+                    </li>
+                </ul>
+                <p>
+                    In beiden Fällen startet nun der Backend-Server in einem
+                    Konsolenfenster, das geöffnet bleiben muss. Die Anwendung
+                    selbst öffnet sich in einer eigenen Electron-Umgebung, ein
+                    separater Browser ist nicht zwingend notwendig.
+                </p>
+            </section>
+            <div class="info-box tech">
+                <h4>Wo werden meine Daten gespeichert?</h4>
+                <p>
+                    Der Speicherort für Ihre Daten (Benutzerprofile, Suchindex
+                    etc.) hängt von der Installationsmethode ab. Dies ist
+                    wichtig für Backups oder falls eine manuelle Bereinigung
+                    notwendig sein sollte.
+                </p>
+                <h5>Bei Installation mit dem Installer:</h5>
+                <p>
+                    Der Datenordner befindet sich im Anwendungsverzeichnis unter
+                    <code>backend/data</code>. Der vollständige Pfad lautet
+                    normalerweise:
+                    <br />
+                    <code
+                        >C:\Users\&lt;IhrBenutzername&gt;\AppData\Local\frontend\backend\data</code
+                    >
+                </p>
+                <h5>Bei manueller Installation (ZIP/Source):</h5>
+                <p>
+                    Der Datenordner befindet sich direkt im Hauptverzeichnis, in
+                    das Sie die Anwendung entpackt haben.
+                    <br />
+                    Beispiel: <code>C:\OptiFlow\data</code> oder
+                    <code>/opt/optiflow/data</code>
+                </p>
+            </div>
+            <section id="naechster-schritt">
+                <h3>Nächster Schritt</h3>
+                <p>
+                    Die Anwendung läuft! Nun ist es an der Zeit, sich zum ersten
+                    Mal anzumelden und das System zu konfigurieren.
+                </p>
+                <p>
+                    Lesen Sie weiter im Kapitel
+                    <a href="erste_schritte.html"
+                        ><strong>Erste Schritte</strong></a
+                    >.
+                </p>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2025 Robin Schumacher</p>
+        </footer>
+        <script src="theme-switcher.js" defer></script>
+    </body>
 </html>

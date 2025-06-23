@@ -1,112 +1,251 @@
+<!-- technik_sicherheit.html -->
 <!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technik & Sicherheit - OptiFlow Dokumentation</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <h1>OptiFlow Dateimanager - Dokumentation</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Übersicht</a></li>
-                <li><a href="installation.html">Installation</a></li>
-                <li><a href="erste_schritte.html">Erste Schritte</a></li>
-                <li><a href="funktionen_benutzer.html">Funktionen (Benutzer)</a></li>
-                <li><a href="funktionen_admin.html">Funktionen (Admin)</a></li>
-                <li><a href="einstellungen.html">Einstellungen</a></li>
-                <li class="active"><a href="technik_sicherheit.html">Technik & Sicherheit</a></li>
-                <li><a href="tastenkürzel.html">Tastenkürzel</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <section id="technik-intro">
-            <h2>Ein Blick unter die Haube: Technik & Sicherheit</h2>
-            <p>
-                Dieser Abschnitt richtet sich an technisch interessierte Benutzer, Entwickler und IT-Administratoren. Er beleuchtet die Architektur, die verwendeten Technologien und die implementierten Sicherheitsmechanismen, die OptiFlow zu einer leistungsstarken und sicheren Anwendung machen.
-            </p>
-        </section>
-
-        <section id="architektur">
-            <h3>Architektur: Modern, entkoppelt und skalierbar</h3>
-            <p>
-                OptiFlow basiert auf einer klassischen und bewährten <strong>Client-Server-Architektur</strong>, die für eine klare Trennung der Verantwortlichkeiten sorgt.
-            </p>
-            <ul>
-                <li>
-                    <strong>Frontend (Client):</strong> Die Benutzeroberfläche, die Sie in der Anwendung sehen. Sie wurde mit <strong>React</strong> und <strong>TypeScript</strong> entwickelt. React ermöglicht eine dynamische und reaktionsschnelle Single-Page-Application (SPA), während TypeScript die Codequalität und Wartbarkeit durch statische Typisierung erhöht. Der Zustand wird zentral über React Context verwaltet.
-                </li>
-                <li>
-                    <strong>Backend (Server):</strong> Das Gehirn der Anwendung. Es läuft auf einem zentralen Server und wurde mit <strong>Python</strong> und dem hochperformanten Web-Framework <strong>FastAPI</strong> realisiert. FastAPI ist für seine Geschwindigkeit, die asynchrone Verarbeitung und die automatische Validierung von Datenmodellen (mittels Pydantic) bekannt. Als Server dient <strong>Uvicorn</strong>, ein blitzschneller ASGI-Server.
-                </li>
-                 <li>
-                    <strong>Controller-Schicht:</strong> Zwischen der API-Schicht (<code>main.py</code>) und der Kernlogik (z.B. <code>file_scanner.py</code>) agiert eine Controller-Klasse (<code>datei_controller.py</code>). Sie bündelt die Geschäftslogik und sorgt für eine saubere Kapselung, was die Testbarkeit und Wartbarkeit verbessert.
-                </li>
-                <li>
-                    <strong>Kommunikation:</strong> Frontend und Backend kommunizieren ausschließlich über eine <strong>RESTful API</strong>. Das Frontend sendet HTTP-Anfragen (z.B. "Suche nach 'Rechnung'") an das Backend, welches die Anfrage verarbeitet und die Ergebnisse im JSON-Format zurücksendet.
-                </li>
-            </ul>
-        </section>
-        
-        <section id="suchtechnologie">
-            <h3>Die Magie der Suche: Invertierter Index & Relevanz</h3>
-            <h4>Invertierter Index</h4>
-            <p>
-                Das Herzstück der schnellen Suche ist der <strong>invertierte Index</strong>. Anstatt bei jeder Suche alle Dateien nacheinander zu durchsuchen (was extrem langsam wäre), erstellt OptiFlow eine Art riesiges Register, ähnlich dem Stichwortverzeichnis in einem Buch.
-            </p>
-            <p>
-                Dieser Index, gespeichert als <code>index.json</code>, speichert für jedes relevante Wort (Token) eine Liste aller Dateipfade, in denen dieses Wort vorkommt. Eine Suche nach "Müller" schlägt also direkt im Index unter "Müller" nach und erhält sofort die Liste aller relevanten Dokumente, ohne eine einzige Datei live durchsuchen zu müssen.
-            </p>
-            
-            <h4>Relevanz-Scoring (TF-IDF-Prinzip)</h4>
-            <p>
-                Um die besten Ergebnisse zuerst anzuzeigen, nutzt OptiFlow ein anpassbares Punktesystem, das auf dem Prinzip von <strong>TF-IDF (Term Frequency-Inverse Document Frequency)</strong> basiert. Einfach ausgedrückt:
-            </p>
-            <ul>
-                <li><strong>Term Frequency (TF):</strong> Wie oft kommt ein Suchbegriff in einer Datei vor? Häufigere Vorkommen deuten auf eine höhere Relevanz hin.</li>
-                <li><strong>Treffer-Typ:</strong> Ein Treffer im Dateinamen wird höher bewertet als ein Treffer im Inhalt.</li>
-            </ul>
-            <p>
-                Diese Faktoren werden zu einem <strong>Relevanz-Score</strong> kombiniert, nach dem die Ergebnisse absteigend sortiert werden.
-            </p>
-        </section>
-        
-        <section id="minhash">
-            <h3>Effiziente Duplikaterkennung mit MinHash</h3>
-             <div class="info-box tech">
-                <h4>Für technisch Interessierte: Der Algorithmus</h4>
-                <p>
-                    Die Duplikaterkennung in OptiFlow verwendet <strong>MinHash</strong>, einen Algorithmus zur schnellen Schätzung der Ähnlichkeit zweier Mengen (in diesem Fall der Mengen von Wörtern in zwei Dokumenten).
-                </p>
-                <ol>
-                    <li>Der Inhalt jeder Datei wird in kurze, überlappende Zeichenketten zerlegt (<strong>Shingles</strong>).</li>
-                    <li>Auf diese Shingles werden mehrere verschiedene Hash-Funktionen angewendet.</li>
-                    <li>Für jede Hash-Funktion wird nur der kleinste erzeugte Hash-Wert ("Min-Hash") behalten. Die Sammlung dieser Min-Hash-Werte bildet die kompakte <strong>Signatur</strong> der Datei.</li>
-                    <li>Um zwei Dateien zu vergleichen, müssen nun nicht mehr die kompletten Inhalte, sondern nur noch ihre viel kleineren Signaturen verglichen werden. Die prozentuale Übereinstimmung der Signaturen ist ein sehr guter Schätzwert für die tatsächliche Ähnlichkeit der Dokumente.</li>
-                </ol>
-                 <p>Dieser Ansatz, kombiniert mit Multiprocessing, ist extrem performant und ermöglicht den Vergleich von tausenden Dateien in kurzer Zeit.</p>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Technik & Sicherheit - OptiFlow Dokumentation</title>
+        <link rel="stylesheet" href="style.css" />
+        <script src="https://unpkg.com/lucide@latest" defer></script>
+    </head>
+    <body>
+        <header>
+            <h1>OptiFlow Dateimanager - Dokumentation</h1>
+            <div class="theme-switcher">
+                <button id="theme-default" title="Helles Theme">
+                    <i data-lucide="sun"></i>
+                </button>
+                <button id="theme-dark" title="Dunkles Theme">
+                    <i data-lucide="moon"></i>
+                </button>
+                <button id="theme-contrast" title="Hoher Kontrast">
+                    <i data-lucide="contrast"></i>
+                </button>
             </div>
-        </section>
-
-        <section id="sicherheit">
-            <h3>Sicherheit als Priorität</h3>
-            <p>Die Sicherheit Ihrer Daten war ein zentrales Anliegen bei der Entwicklung von OptiFlow. Folgende Maßnahmen wurden implementiert:</p>
-            <ul>
-                <li><strong>Lokale Datenhaltung:</strong> Die gesamte Anwendung und alle Daten (Index, Benutzerdaten) werden ausschließlich auf Ihrem lokalen Server gespeichert. Es findet keine Kommunikation mit externen Cloud-Diensten statt.</li>
-                <li><strong>Passwort-Sicherheit:</strong> Passwörter werden niemals im Klartext gespeichert. Stattdessen wird ein starker, gesalzener Hash mit dem bewährten <strong>bcrypt</strong>-Algorithmus erzeugt und in der <code>user.json</code> gespeichert. Ein Rückrechnen des Passworts aus dem Hash ist praktisch unmöglich.</li>
-                <li><strong>Token-basierte Authentifizierung:</strong> Nach einem erfolgreichen Login erhält der Benutzer ein zeitlich begrenztes <strong>JSON Web Token (JWT)</strong>. Nur dieses Token – und nicht Benutzername/Passwort – wird bei nachfolgenden Anfragen zur Authentifizierung verwendet. Das minimiert das Risiko, dass Anmeldedaten abgefangen werden.</li>
-                <li><strong>Rollenbasiertes Berechtigungssystem:</strong> Die Anwendung unterscheidet klar zwischen normalen Benutzern und Administratoren. Kritische API-Endpunkte sind im Backend geschützt und prüfen vor der Ausführung die Rolle des anfragenden Benutzers.</li>
-                <li><strong>Intelligente Erst-Einrichtung:</strong> Die Anwendung prüft beim Start, ob überhaupt Benutzer existieren. Wenn nicht, wird der erste registrierte Benutzer automatisch zum Administrator, was eine sichere und einfache Inbetriebnahme ohne Standardpasswörter ermöglicht.</li>
-            </ul>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 Robin Schumacher</p>
-    </footer>
-</body>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Übersicht</a></li>
+                    <li><a href="installation.html">Installation</a></li>
+                    <li><a href="erste_schritte.html">Erste Schritte</a></li>
+                    <li>
+                        <a href="funktionen_benutzer.html"
+                            >Funktionen (Benutzer)</a
+                        >
+                    </li>
+                    <li>
+                        <a href="funktionen_admin.html">Funktionen (Admin)</a>
+                    </li>
+                    <li><a href="einstellungen.html">Einstellungen</a></li>
+                    <li class="active">
+                        <a href="technik_sicherheit.html"
+                            >Technik & Sicherheit</a
+                        >
+                    </li>
+                    <li><a href="tastenkürzel.html">Tastenkürzel</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <!-- CONTENT -->
+            <section id="technik-intro">
+                <h2>Ein Blick unter die Haube: Technik & Sicherheit</h2>
+                <p>
+                    Dieser Abschnitt richtet sich an technisch interessierte
+                    Benutzer, Entwickler und IT-Administratoren. Er beleuchtet
+                    die Architektur, die verwendeten Technologien und die
+                    implementierten Sicherheitsmechanismen, die OptiFlow zu
+                    einer leistungsstarken und sicheren Anwendung machen.
+                </p>
+            </section>
+            <section id="architektur">
+                <h3>Architektur: Modern, entkoppelt und skalierbar</h3>
+                <p>
+                    OptiFlow basiert auf einer klassischen und bewährten
+                    <strong>Client-Server-Architektur</strong>, die für eine
+                    klare Trennung der Verantwortlichkeiten sorgt.
+                </p>
+                <ul>
+                    <li>
+                        <strong>Frontend (Client):</strong> Die
+                        Benutzeroberfläche, die Sie in der Anwendung sehen. Sie
+                        wurde mit <strong>React</strong> und
+                        <strong>TypeScript</strong> entwickelt. React ermöglicht
+                        eine dynamische und reaktionsschnelle
+                        Single-Page-Application (SPA), während TypeScript die
+                        Codequalität und Wartbarkeit durch statische Typisierung
+                        erhöht. Der Zustand wird zentral über React Context
+                        verwaltet.
+                    </li>
+                    <li>
+                        <strong>Backend (Server):</strong> Das Gehirn der
+                        Anwendung. Es läuft auf einem zentralen Server und wurde
+                        mit <strong>Python</strong> und dem hochperformanten
+                        Web-Framework <strong>FastAPI</strong> realisiert.
+                        FastAPI ist für seine Geschwindigkeit, die asynchrone
+                        Verarbeitung und die automatische Validierung von
+                        Datenmodellen (mittels Pydantic) bekannt. Als Server
+                        dient <strong>Uvicorn</strong>, ein blitzschneller
+                        ASGI-Server.
+                    </li>
+                    <li>
+                        <strong>Controller-Schicht:</strong> Zwischen der
+                        API-Schicht (<code>main.py</code>) und der Kernlogik
+                        (z.B. <code>file_scanner.py</code>) agiert eine
+                        Controller-Klasse (<code>datei_controller.py</code>).
+                        Sie bündelt die Geschäftslogik und sorgt für eine
+                        saubere Kapselung, was die Testbarkeit und Wartbarkeit
+                        verbessert.
+                    </li>
+                    <li>
+                        <strong>Kommunikation:</strong> Frontend und Backend
+                        kommunizieren ausschließlich über eine
+                        <strong>RESTful API</strong>. Das Frontend sendet
+                        HTTP-Anfragen (z.B. "Suche nach 'Rechnung'") an das
+                        Backend, welches die Anfrage verarbeitet und die
+                        Ergebnisse im JSON-Format zurücksendet.
+                    </li>
+                </ul>
+            </section>
+            <section id="suchtechnologie">
+                <h3>Die Magie der Suche: Invertierter Index & Relevanz</h3>
+                <h4>Invertierter Index</h4>
+                <p>
+                    Das Herzstück der schnellen Suche ist der
+                    <strong>invertierte Index</strong>. Anstatt bei jeder Suche
+                    alle Dateien nacheinander zu durchsuchen (was extrem langsam
+                    wäre), erstellt OptiFlow eine Art riesiges Register, ähnlich
+                    dem Stichwortverzeichnis in einem Buch.
+                </p>
+                <p>
+                    Dieser Index, gespeichert als <code>index.json</code>,
+                    speichert für jedes relevante Wort (Token) eine Liste aller
+                    Dateipfade, in denen dieses Wort vorkommt. Eine Suche nach
+                    "Müller" schlägt also direkt im Index unter "Müller" nach
+                    und erhält sofort die Liste aller relevanten Dokumente, ohne
+                    eine einzige Datei live durchsuchen zu müssen.
+                </p>
+                <h4>Relevanz-Scoring (TF-IDF-Prinzip)</h4>
+                <p>
+                    Um die besten Ergebnisse zuerst anzuzeigen, nutzt OptiFlow
+                    ein anpassbares Punktesystem, das auf dem Prinzip von
+                    <strong
+                        >TF-IDF (Term Frequency-Inverse Document
+                        Frequency)</strong
+                    >
+                    basiert. Einfach ausgedrückt:
+                </p>
+                <ul>
+                    <li>
+                        <strong>Term Frequency (TF):</strong> Wie oft kommt ein
+                        Suchbegriff in einer Datei vor? Häufigere Vorkommen
+                        deuten auf eine höhere Relevanz hin.
+                    </li>
+                    <li>
+                        <strong>Treffer-Typ:</strong> Ein Treffer im Dateinamen
+                        wird höher bewertet als ein Treffer im Inhalt.
+                    </li>
+                </ul>
+                <p>
+                    Diese Faktoren werden zu einem
+                    <strong>Relevanz-Score</strong> kombiniert, nach dem die
+                    Ergebnisse absteigend sortiert werden.
+                </p>
+            </section>
+            <section id="minhash">
+                <h3>Effiziente Duplikaterkennung mit MinHash</h3>
+                <div class="info-box tech">
+                    <h4>Für technisch Interessierte: Der Algorithmus</h4>
+                    <p>
+                        Die Duplikaterkennung in OptiFlow verwendet
+                        <strong>MinHash</strong>, einen Algorithmus zur
+                        schnellen Schätzung der Ähnlichkeit zweier Mengen (in
+                        diesem Fall der Mengen von Wörtern in zwei Dokumenten).
+                    </p>
+                    <ol>
+                        <li>
+                            Der Inhalt jeder Datei wird in kurze, überlappende
+                            Zeichenketten zerlegt (<strong>Shingles</strong>).
+                        </li>
+                        <li>
+                            Auf diese Shingles werden mehrere verschiedene
+                            Hash-Funktionen angewendet.
+                        </li>
+                        <li>
+                            Für jede Hash-Funktion wird nur der kleinste
+                            erzeugte Hash-Wert ("Min-Hash") behalten. Die
+                            Sammlung dieser Min-Hash-Werte bildet die kompakte
+                            <strong>Signatur</strong> der Datei.
+                        </li>
+                        <li>
+                            Um zwei Dateien zu vergleichen, müssen nun nicht
+                            mehr die kompletten Inhalte, sondern nur noch ihre
+                            viel kleineren Signaturen verglichen werden. Die
+                            prozentuale Übereinstimmung der Signaturen ist ein
+                            sehr guter Schätzwert für die tatsächliche
+                            Ähnlichkeit der Dokumente.
+                        </li>
+                    </ol>
+                    <p>
+                        Dieser Ansatz, kombiniert mit Multiprocessing, ist
+                        extrem performant und ermöglicht den Vergleich von
+                        tausenden Dateien in kurzer Zeit.
+                    </p>
+                </div>
+            </section>
+            <section id="sicherheit">
+                <h3>Sicherheit als Priorität</h3>
+                <p>
+                    Die Sicherheit Ihrer Daten war ein zentrales Anliegen bei
+                    der Entwicklung von OptiFlow. Folgende Maßnahmen wurden
+                    implementiert:
+                </p>
+                <ul>
+                    <li>
+                        <strong>Lokale Datenhaltung:</strong> Die gesamte
+                        Anwendung und alle Daten (Index, Benutzerdaten) werden
+                        ausschließlich auf Ihrem lokalen Server gespeichert. Es
+                        findet keine Kommunikation mit externen Cloud-Diensten
+                        statt.
+                    </li>
+                    <li>
+                        <strong>Passwort-Sicherheit:</strong> Passwörter werden
+                        niemals im Klartext gespeichert. Stattdessen wird ein
+                        starker, gesalzener Hash mit dem bewährten
+                        <strong>bcrypt</strong>-Algorithmus erzeugt und in der
+                        <code>user.json</code> gespeichert. Ein Rückrechnen des
+                        Passworts aus dem Hash ist praktisch unmöglich.
+                    </li>
+                    <li>
+                        <strong>Token-basierte Authentifizierung:</strong> Nach
+                        einem erfolgreichen Login erhält der Benutzer ein
+                        zeitlich begrenztes
+                        <strong>JSON Web Token (JWT)</strong>. Nur dieses Token
+                        – und nicht Benutzername/Passwort – wird bei
+                        nachfolgenden Anfragen zur Authentifizierung verwendet.
+                        Das minimiert das Risiko, dass Anmeldedaten abgefangen
+                        werden.
+                    </li>
+                    <li>
+                        <strong>Rollenbasiertes Berechtigungssystem:</strong>
+                        Die Anwendung unterscheidet klar zwischen normalen
+                        Benutzern und Administratoren. Kritische API-Endpunkte
+                        sind im Backend geschützt und prüfen vor der Ausführung
+                        die Rolle des anfragenden Benutzers.
+                    </li>
+                    <li>
+                        <strong>Intelligente Erst-Einrichtung:</strong> Die
+                        Anwendung prüft beim Start, ob überhaupt Benutzer
+                        existieren. Wenn nicht, wird der erste registrierte
+                        Benutzer automatisch zum Administrator, was eine sichere
+                        und einfache Inbetriebnahme ohne Standardpasswörter
+                        ermöglicht.
+                    </li>
+                </ul>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2025 Robin Schumacher</p>
+        </footer>
+        <script src="theme-switcher.js" defer></script>
+    </body>
 </html>
