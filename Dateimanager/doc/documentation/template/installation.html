@@ -6,6 +6,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Installation - OptiFlow Dokumentation</title>
         <link rel="stylesheet" href="style.css" />
+
+        <!-- Anti-Flicker Theme Loader -->
+        <script>
+            (function () {
+                try {
+                    const theme =
+                        localStorage.getItem("doc_theme") || "default";
+                    if (theme !== "default") {
+                        document.documentElement.setAttribute(
+                            "data-theme",
+                            theme
+                        );
+                    }
+                } catch (e) {
+                    /* localStorage is not available */
+                }
+            })();
+        </script>
+
         <script src="https://unpkg.com/lucide@latest" defer></script>
     </head>
     <body>

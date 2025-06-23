@@ -1,6 +1,6 @@
 /* * OptiFlow Documentation Stylesheet
  * Inspired by the OptiFlow App Theme
- * Version 3.2 - Anti-Flicker Update
+ * Version 4.1 - Interactive Info-Box Update
  */
 
 /* ==========================================================================
@@ -22,6 +22,8 @@
     --border-tertiary: #e5e7eb;
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -4px rgba(0, 0, 0, 0.1);
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
     /* --- Doc-specific variables --- */
@@ -50,6 +52,8 @@ html[data-theme="dark"] {
     --border-tertiary: #3f3f46;
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
         0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3),
+        0 4px 6px -4px rgba(0, 0, 0, 0.3);
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 
     /* --- Doc-specific variables --- */
@@ -77,6 +81,7 @@ html[data-theme="contrast"] {
     --border-secondary: #000000;
     --border-tertiary: #000000;
     --shadow-md: none;
+    --shadow-lg: none;
     --shadow-sm: none;
 
     /* --- Doc-specific variables --- */
@@ -122,7 +127,6 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
-    /* Flexbox for alignment */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -135,12 +139,12 @@ header h1 {
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
-    order: 1; /* H1 comes first */
+    order: 1;
 }
 
 nav {
-    padding-top: 0; /* Adjusted from 1.25em */
-    order: 3; /* Nav comes last */
+    padding-top: 0;
+    order: 3;
     width: 100%;
 }
 
@@ -188,7 +192,7 @@ nav li.active a {
    ========================================================================== */
 
 .theme-switcher {
-    order: 2; /* Switcher in the middle */
+    order: 2;
     display: flex;
     gap: 0.5em;
     background-color: var(--bg-primary);
@@ -223,7 +227,6 @@ nav li.active a {
     color: white;
     box-shadow: var(--shadow-sm);
 }
-/* Hiding floating switcher as it's now in header */
 .theme-switcher-floating {
     display: none;
 }
@@ -263,6 +266,29 @@ h2 {
     font-size: 2em;
     font-weight: 700;
     letter-spacing: -0.025em;
+    position: relative;
+    transition: border-color 0.3s ease;
+}
+
+h2:hover {
+    border-color: var(--accent-primary-hover);
+}
+
+h2::after {
+    content: "#";
+    position: absolute;
+    left: -1.2em;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+h2:hover::after {
+    opacity: 1;
 }
 
 h3 {
@@ -290,12 +316,20 @@ a {
     color: var(--accent-primary);
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.2s ease;
+    background-image: linear-gradient(
+        var(--accent-primary),
+        var(--accent-primary)
+    );
+    background-position: 0% 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 2px;
+    transition: background-size 0.3s ease, color 0.2s ease;
 }
 
-a:hover {
+a:hover,
+a:focus {
     color: var(--accent-primary-hover);
-    text-decoration: underline;
+    background-size: 100% 2px;
 }
 
 ul,
@@ -327,6 +361,14 @@ code {
     font-family: "Fira Code", "JetBrains Mono", "Courier New", monospace;
     color: var(--code-text);
     border: 1px solid var(--border-tertiary);
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+}
+
+code:hover {
+    transform: translateY(-2px);
+    background-color: var(--bg-tertiary);
+    cursor: pointer;
 }
 
 pre {
@@ -347,6 +389,13 @@ pre code {
     color: inherit;
     font-size: 0.95em;
     line-height: 1.6;
+    display: inline;
+}
+
+pre code:hover {
+    transform: none;
+    background-color: transparent;
+    cursor: text;
 }
 
 .img-container {
@@ -358,8 +407,16 @@ img {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
+    border: 2px solid var(--border-tertiary);
     box-shadow: var(--shadow-md);
-    border: 1px solid var(--border-primary);
+    transition: all 0.3s ease-in-out;
+}
+
+img:hover {
+    transform: scale(1.03);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-primary);
+    cursor: pointer;
 }
 
 .img-container .caption {
@@ -367,6 +424,11 @@ img {
     color: var(--text-muted);
     margin-top: 1em;
     font-style: italic;
+    transition: color 0.3s ease;
+}
+
+.img-container:hover .caption {
+    color: var(--text-secondary);
 }
 
 .image-duo {
@@ -404,6 +466,10 @@ img {
     border-bottom: none;
 }
 
+.key-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
 .key-table tbody tr:hover {
     background-color: var(--bg-primary);
 }
@@ -417,12 +483,21 @@ img {
    6. Special Elements (Info Boxes, Footer)
    ========================================================================== */
 
+/* NEU: Überarbeitete Info-Boxen für mehr Interaktivität */
 .info-box {
     background-color: var(--bg-secondary);
     border-left: 4px solid var(--accent-primary);
     padding: 1.5em;
     margin: 2em 0;
     border-radius: 0 8px 8px 0;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease-in-out;
+}
+
+.info-box:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
 }
 
 .info-box.tech {
@@ -434,10 +509,29 @@ img {
     margin-top: 0;
     color: var(--accent-primary);
     font-weight: 600;
+    display: flex;
+    align-items: center;
 }
 
 .info-box.tech h4 {
     color: var(--info-box-tech-border);
+}
+
+/* NEU: Interaktive Icons für die Titel der Info-Boxen */
+.info-box h4::before {
+    content: "💡"; /* Standard-Icon: Glühbirne */
+    font-size: 1.2em;
+    margin-right: 0.6em;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.info-box.tech h4::before {
+    content: "⚙️"; /* Spezielles Icon für Tech-Boxen: Zahnrad */
+}
+
+.info-box:hover h4::before {
+    transform: rotate(15deg) scale(1.1); /* Kleiner Wackel-Effekt beim Hover */
 }
 
 footer {
@@ -490,6 +584,10 @@ footer p {
 
     h2 {
         font-size: 1.7em;
+    }
+
+    h2::after {
+        display: none;
     }
 
     h3 {
