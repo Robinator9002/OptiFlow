@@ -140,7 +140,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                             <hr />
                             <p>
                                 <strong>In der installierten Anwendung (Produktion):</strong><br />
-                                Die Datei befindet sich im <code>backend/data</code> Ordner innerhalb des Installationsverzeichnisses Ihrer App.
+                                Die Datei befindet sich im <code>backend/data</code> Ordner innerhalb des Installationsverzeichnisses Ihrer App (oft C:\Users\IhrBenutzername\AppData\Local\Programs\optiflow-filemanager\backend\data).
                             </p>
                             <p>
                                 <strong>In der Entwicklungsumgebung:</strong><br />
