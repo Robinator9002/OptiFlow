@@ -1,0 +1,15 @@
+{
+  "name": "optiflow-build-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build-Skripte für OptiFlow",
+  "scripts": {
+    "install:frontend": "npm install --prefix frontend",
+    "build:frontend": "npm run build --prefix frontend",
+    "package:app": "electron-builder --projectDir frontend"
+  },
+  "devDependencies": {
+    "electron": "^36.2.1",
+    "electron-builder": "^26.0.12"
+  }
+}
