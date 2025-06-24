@@ -1,0 +1,254 @@
+[
+  {
+    "id": 100,
+    "title": "Willkommen bei OptiFlow",
+    "content": "Willkommen zur offiziellen und vollständigen Dokumentation des OptiFlow Dateimanagers. Diese Anwendung wurde von Grund auf entwickelt, um ein zentrales Problem in vielen Arbeitsumgebungen zu lösen: das mühsame und zeitaufwändige Suchen nach Dateien.",
+    "path": "index.html#uebersicht"
+  },
+  {
+    "id": 101,
+    "title": "Was macht OptiFlow besonders?",
+    "content": "Blitzschnelle Suche, Tiefgehende Inhaltsanalyse, Intelligente Relevanzbewertung, Effiziente Datenbereinigung, Sicherheit und Kontrolle.",
+    "path": "index.html#kernfunktionen"
+  },
+  {
+    "id": 102,
+    "title": "Navigation durch die Dokumentation",
+    "content": "Nutzen Sie die Navigationsleiste oben, um zu den verschiedenen Abschnitten zu gelangen: Grundlagen, Anwendung im Detail, Konfiguration, Wartung, Hilfe.",
+    "path": "index.html#doku-navigation"
+  },
+  {
+    "id": 200,
+    "title": "Installation und Start",
+    "content": "Die Inbetriebnahme des OptiFlow Dateimanagers. Methode 1: One-Click-Installer für Windows. Methode 2: Manuelle Installation für Linux & Experten.",
+    "path": "installation.html#installation-start"
+  },
+  {
+    "id": 201,
+    "title": "Methode 1: One-Click-Installer (Windows)",
+    "content": "Der einfachste und schnellste Weg, OptiFlow auf einem Windows-System zu installieren. Installer herunterladen, ausführen, Verknüpfungen nutzen.",
+    "path": "installation.html#windows-installer"
+  },
+  {
+    "id": 202,
+    "title": "Methode 2: Manuelle Installation (Linux & Experten)",
+    "content": "Volle Kontrolle über den Installationsort. ZIP-Paket herunterladen, entpacken, start.bat oder start.sh ausführen.",
+    "path": "installation.html#manuelle-installation"
+  },
+  {
+    "id": 203,
+    "title": "Wo werden meine Daten gespeichert?",
+    "content": "Speicherort für Benutzerprofile, Suchindex. Wichtig für Backups. Abhängig von Installationsmethode: AppData oder direkt im entpackten Ordner.",
+    "path": "installation.html#daten-speicherort"
+  },
+  {
+    "id": 300,
+    "title": "Erste Schritte: Ein Schnellstart-Guide",
+    "content": "Anleitung durch die grundlegenden Aktionen: erste Anmeldung, Scanner konfigurieren, erste Suche.",
+    "path": "erste_schritte.html#quickstart-guide"
+  },
+  {
+    "id": 301,
+    "title": "Schritt 1: Die erste Anmeldung (Admins)",
+    "content": "Beim allerersten Start einen Administrator anlegen. Registrierungsformular ausfüllen. Dieser Benutzer kann dann weitere Benutzer anlegen.",
+    "path": "erste_schritte.html#schritt-1-anmeldung"
+  },
+  {
+    "id": 302,
+    "title": "Schritt 2: Den Scanner konfigurieren (Admins)",
+    "content": "Der Anwendung mitteilen, was und wo sie suchen soll. Zielordner festlegen und Dateitypen auswählen. Konfiguration speichern.",
+    "path": "erste_schritte.html#schritt-2-scanner-konfigurieren"
+  },
+  {
+    "id": 303,
+    "title": "Schritt 3: Der erste Scan (Admins)",
+    "content": "Nach der Konfiguration die Indexierung starten. Auf 'Dateien scannen' klicken. Der Vorgang kann einige Minuten dauern.",
+    "path": "erste_schritte.html#schritt-3-indexierung"
+  },
+  {
+    "id": 304,
+    "title": "Schritt 4: Ihre erste Suche (Alle Benutzer)",
+    "content": "Zum 'Suche & Vorschau'-Tab wechseln. Suchbegriff eingeben und Enter drücken. Ergebnisse erscheinen links, Vorschau rechts.",
+    "path": "erste_schritte.html#schritt-4-suche"
+  },
+  {
+    "id": 400,
+    "title": "Funktionen für den täglichen Gebrauch",
+    "content": "Funktionen, die für den täglichen Arbeitsablauf eines jeden Benutzers relevant sind. Fokus auf Suche & Vorschau und persönliche Einstellungen.",
+    "path": "funktionen_benutzer.html#intro-benutzer"
+  },
+  {
+    "id": 401,
+    "title": "Die globale Suche: Finden statt Suchen",
+    "content": "Primäres Werkzeug. Einfache Suche, UND-Verknüpfung, ODER-Verknüpfung mit Komma. Relevanz-Sortierung und Tastatur-Navigation.",
+    "path": "funktionen_benutzer.html#globale-suche"
+  },
+  {
+    "id": 402,
+    "title": "Die Dateivorschau und In-Datei-Suche",
+    "content": "Alles auf einen Blick. Innerhalb einer großen Textdatei den richtigen Abschnitt finden. Snippets und interaktives Highlighting.",
+    "path": "funktionen_benutzer.html#dateivorschau"
+  },
+  {
+    "id": 403,
+    "title": "Persönliche Einstellungen anpassen",
+    "content": "Jeder Benutzer kann sein Erlebnis personalisieren. Benutzernamen ändern, Passwort ändern. Visuelles Theme und Schriftgröße anpassen.",
+    "path": "funktionen_benutzer.html#persoenliche-einstellungen"
+  },
+  {
+    "id": 500,
+    "title": "Werkzeuge für Administratoren",
+    "content": "Erweiterte Funktionen, die ausschließlich Benutzern mit Administratorrechten zur Verfügung stehen. Verwaltung des Suchindex, Datenbereinigung.",
+    "path": "funktionen_admin.html#intro-admin"
+  },
+  {
+    "id": 501,
+    "title": "Dateiverwaltung direkt aus der Vorschau",
+    "content": "Admins können direkt Aktionen ausführen: Öffnen, im Explorer öffnen, Bearbeiten mit Code-Editor, Speichern, Löschen.",
+    "path": "funktionen_admin.html#vorschau-aktionen"
+  },
+  {
+    "id": 502,
+    "title": "Tab: Index & Scanner",
+    "content": "Kommandozentrale für den Suchindex. Index aktualisieren, komplett neu scannen, Index laden oder löschen.",
+    "path": "funktionen_admin.html#tab-index-scanner"
+  },
+  {
+    "id": 503,
+    "title": "Tab: Entduplizierung",
+    "content": "Findet Duplikate basierend auf Inhaltsanalyse (MinHash). Ergebnisse werden gruppiert angezeigt. Gezieltes Löschen möglich.",
+    "path": "funktionen_admin.html#tab-entduplizierung"
+  },
+  {
+    "id": 504,
+    "title": "Tab: Alte Dateien",
+    "content": "Spürt Dateien auf, die lange nicht verändert wurden. Alter definieren, Analyse starten, Ergebnisse prüfen und löschen.",
+    "path": "funktionen_admin.html#tab-alte-dateien"
+  },
+  {
+    "id": 505,
+    "title": "Tab: PDF zu OCR",
+    "content": "Wandelt bildbasierte PDFs in durchsuchbare Dokumente um. Ordner auswählen, Optionen festlegen, Verarbeitung starten.",
+    "path": "funktionen_admin.html#tab-pdf-ocr"
+  },
+  {
+    "id": 600,
+    "title": "Das Kontrollzentrum: Alle Einstellungen im Detail",
+    "content": "Zentrale Anlaufstelle, um OptiFlow anzupassen. Unterteilt in neun spezialisierte Bereiche.",
+    "path": "einstellungen.html#einstellungen-intro"
+  },
+  {
+    "id": 601,
+    "title": "Einstellung: Allgemein, Suche, Scanner, OCR",
+    "content": "Erscheinungsbild anpassen. Suche konfigurieren. Verhalten des Indexers steuern. Details für Texterkennung anpassen.",
+    "path": "einstellungen.html#accordion-einstellungen"
+  },
+  {
+    "id": 602,
+    "title": "Einstellung: Alte Dateien, Entduplizierung, Benutzer",
+    "content": "Suche nach alten Dateien. Algorithmus für Duplikate. Eigenes Konto oder alle Konten verwalten.",
+    "path": "einstellungen.html#accordion-einstellungen"
+  },
+  {
+    "id": 603,
+    "title": "Einstellung: Datenbank, System",
+    "content": "Direkte Interaktion mit den internen JSON-Dateien. Globale, serverseitige Einstellungen wie geplante Aufgaben.",
+    "path": "einstellungen.html#accordion-einstellungen"
+  },
+  {
+    "id": 700,
+    "title": "Datenmanagement: Backup, Restore & Reset",
+    "content": "Anleitung für Sicherung, Wiederherstellung und Notfall-Zurücksetzung der Kerndaten. Der data-Ordner ist das Herz.",
+    "path": "datenmanagement.html#datenmanagement-intro"
+  },
+  {
+    "id": 701,
+    "title": "Backup, Restore und Reset Workflow",
+    "content": "Backup erstellen: Dateien herunterladen. System wiederherstellen: Dateien ersetzen. Notfall-Reset: users.json löschen.",
+    "path": "datenmanagement.html#workflow"
+  },
+  {
+    "id": 702,
+    "title": "Achtung: Der Passwort-Reset ist destruktiv!",
+    "content": "Durch das Löschen der users.json gehen alle Benutzerkonten, Passwörter und benutzerspezifischen Einstellungen verloren.",
+    "path": "datenmanagement.html#reset-warnung"
+  },
+  {
+    "id": 800,
+    "title": "Fehlerbehebung & Häufige Probleme",
+    "content": "Ihre erste Anlaufstelle, wenn OptiFlow sich nicht wie erwartet verhält. Lösungswege für die häufigsten Szenarien.",
+    "path": "troubleshooting.html#troubleshooting-intro"
+  },
+  {
+    "id": 801,
+    "title": "Problem: 'Network Error' beim Login",
+    "content": "Frontend kann Backend nicht erreichen. Lösung: Warten, App neu starten, oder data-Ordner zur Isolation umbenennen.",
+    "path": "troubleshooting.html#problem-network-error"
+  },
+  {
+    "id": 802,
+    "title": "Problem: Der Login-Bildschirm friert ein",
+    "content": "Backend ist mit einer intensiven Aufgabe ausgelastet (Scan, OCR). Lösung: Warten, mit anderen Admins sprechen, geplante Events prüfen.",
+    "path": "troubleshooting.html#problem-login-freeze"
+  },
+  {
+    "id": 803,
+    "title": "Problem: Passwörter & Zugriff",
+    "content": "Alle Admin-Passwörter vergessen? Hard Reset der users.json durchführen. Fehler 'Ungültige Anmeldedaten' nach Reset ist ein harmloser Anzeigefehler.",
+    "path": "troubleshooting.html#problem-passwoerter"
+  },
+  {
+    "id": 900,
+    "title": "Ein Blick unter die Haube: Technik & Sicherheit",
+    "content": "Richtet sich an technisch interessierte Benutzer, Entwickler und IT-Administratoren. Beleuchtet Architektur, Technologien und Sicherheitsmechanismen.",
+    "path": "technik_sicherheit.html#technik-intro"
+  },
+  {
+    "id": 901,
+    "title": "Architektur: Modern, entkoppelt und skalierbar",
+    "content": "Client-Server-Architektur. Frontend mit React und TypeScript. Backend mit Python und FastAPI. Kommunikation über RESTful API.",
+    "path": "technik_sicherheit.html#architektur"
+  },
+  {
+    "id": 902,
+    "title": "Suchtechnologie: Invertierter Index & Relevanz",
+    "content": "Herzstück der schnellen Suche. Invertierter Index für sofortige Ergebnisse. Relevanz-Scoring nach TF-IDF-Prinzip.",
+    "path": "technik_sicherheit.html#suchtechnologie"
+  },
+  {
+    "id": 903,
+    "title": "Effiziente Duplikaterkennung mit MinHash",
+    "content": "Algorithmus zur schnellen Schätzung der Ähnlichkeit von Dokumenten durch Vergleich kompakter Signaturen (Fingerabdrücke).",
+    "path": "technik_sicherheit.html#minhash"
+  },
+  {
+    "id": 904,
+    "title": "Sicherheit als Priorität",
+    "content": "Lokale Datenhaltung, Passwort-Hashing mit bcrypt, Token-basierte Authentifizierung mit JWT, Rollenbasiertes Berechtigungssystem.",
+    "path": "technik_sicherheit.html#sicherheit"
+  },
+  {
+    "id": 1000,
+    "title": "Arbeiten wie ein Profi: Tastenkürzel",
+    "content": "Steigern Sie Ihre Effizienz durch eine Reihe von Tastenkürzeln für Navigation und Aktionen.",
+    "path": "tastenkürzel.html#shortcuts-intro"
+  },
+  {
+    "id": 1001,
+    "title": "Globale Tastenkürzel",
+    "content": "Funktionieren in der gesamten Anwendung. F1 für Hilfe, Strg+1-5 für Tabs, Strg+, für Einstellungen.",
+    "path": "tastenkürzel.html#globale-shortcuts"
+  },
+  {
+    "id": 1002,
+    "title": "Tastenkürzel in 'Suche & Vorschau'",
+    "content": "Spezifisch für den Haupt-Arbeitsbereich. Enter zum Suchen, Pfeiltasten zur Navigation durch Ergebnisse und Snippets.",
+    "path": "tastenkürzel.html#suche-shortcuts"
+  },
+  {
+    "id": 1003,
+    "title": "Tastenkürzel in Dialogfenstern",
+    "content": "Vereinfachen Sie die Bedienung von Dialogen. Enter für Bestätigen, Escape für Abbrechen.",
+    "path": "tastenkürzel.html#dialog-shortcuts"
+  }
+]

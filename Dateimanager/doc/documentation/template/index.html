@@ -25,10 +25,12 @@
             })();
         </script>
 
-        <script src="https://unpkg.com/lucide@latest" defer></script>
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <!-- The main script is now deferred to load after the DOM is parsed -->
+        <script src="doc-script.js" defer></script>
     </head>
     <body>
-        <div class="theme-switcher-floating">
+        <div class="theme-switcher theme-switcher-floating">
             <button id="theme-default" title="Helles Theme">
                 <i data-lucide="sun"></i>
             </button>
@@ -39,16 +41,30 @@
                 <i data-lucide="contrast"></i>
             </button>
         </div>
+
+        <!-- ==========================================================================
+           NEW HEADER STRUCTURE - COPY THIS TO ALL HTML FILES
+           ========================================================================== -->
         <header>
-            <div class="header-title-wrapper">
+            <div class="header-top-row">
                 <h1>OptiFlow Dateimanager - Dokumentation</h1>
+                <div class="search-wrapper">
+                    <input
+                        type="search"
+                        id="doc-search-input"
+                        placeholder="Dokumentation durchsuchen..."
+                    />
+                    <i data-lucide="search" class="lucide-search"></i>
+                    <div id="search-results"></div>
+                </div>
                 <button id="pin-header-toggle" title="Kopfzeile fixieren">
                     <i data-lucide="pin"></i>
                 </button>
             </div>
             <nav>
                 <ul>
-                    <li class="active"><a href="index.html">Übersicht</a></li>
+                    <!-- The 'active' class is now set by doc-script.js -->
+                    <li><a href="index.html">Übersicht</a></li>
                     <li><a href="installation.html">Installation</a></li>
                     <li><a href="erste_schritte.html">Erste Schritte</a></li>
                     <li>
@@ -71,6 +87,7 @@
                 </ul>
             </nav>
         </header>
+
         <main>
             <!-- CONTENT -->
             <section id="uebersicht">
@@ -166,12 +183,9 @@
                 <ol>
                     <li>
                         <strong>Grundlagen:</strong> Beginnen Sie mit der
-                        <a href="installation.html"
-                            >Installation</a
-                        >
+                        <a href="installation.html">Installation</a>
                         und folgen Sie der
-                        <a href="erste_schritte.html"
-                            >Erste Schritte</a
+                        <a href="erste_schritte.html">Erste Schritte</a
                         >-Anleitung für einen schnellen Einstieg.
                     </li>
                     <li>
@@ -186,18 +200,14 @@
                     </li>
                     <li>
                         <strong>Konfiguration & Anpassung:</strong> Im Kapitel
-                        <a href="einstellungen.html"
-                            >Einstellungen</a
-                        >
+                        <a href="einstellungen.html">Einstellungen</a>
                         lernen Sie, wie Sie jeden Aspekt der Anwendung an Ihre
                         Bedürfnisse anpassen können.
                     </li>
                     <li>
                         <strong>Wartung & Sicherheit:</strong> Als Admin sind
                         die Kapitel
-                        <a href="datenmanagement.html"
-                            >Datenmanagement</a
-                        >
+                        <a href="datenmanagement.html">Datenmanagement</a>
                         (für Backups & Wiederherstellung) und
                         <a href="technik_sicherheit.html"
                             >Technik & Sicherheit</a
@@ -208,14 +218,10 @@
                     <li>
                         <strong>Hilfe & Referenz:</strong> Wenn Probleme
                         auftreten, ist die
-                        <a href="troubleshooting.html"
-                            >Fehlerbehebung</a
-                        >
+                        <a href="troubleshooting.html">Fehlerbehebung</a>
                         Ihre erste Anlaufstelle. Eine Übersicht aller
                         Tastenkombinationen finden Sie unter
-                        <a href="tastenkürzel.html"
-                            >Tastenkürzel</a
-                        >.
+                        <a href="tastenkürzel.html">Tastenkürzel</a>.
                     </li>
                 </ol>
             </section>
@@ -223,6 +229,5 @@
         <footer>
             <p>&copy; 2025 Robin Schumacher</p>
         </footer>
-        <script src="doc-script.js" defer></script>
     </body>
 </html>

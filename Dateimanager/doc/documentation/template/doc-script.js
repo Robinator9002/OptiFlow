@@ -1,9 +1,18 @@
 /**
  * OptiFlow Documentation Main Script
- * Version 3.0 - Delayed Smart Header with Pin-Toggle & Theme Switcher
+ * Version 4.0 - Search Implementation, Active Nav Highlighting
  */
 document.addEventListener("DOMContentLoaded", () => {
-    // --- 1. THEME SWITCHER LOGIC (unverändert) ---
+    // --- 1. DYNAMICALLY SET ACTIVE NAVIGATION LINK ---
+    const currentPage = window.location.pathname.split("/").pop();
+    const navLinks = document.querySelectorAll("nav a");
+    navLinks.forEach((link) => {
+        if (link.getAttribute("href") === currentPage) {
+            link.parentElement.classList.add("active");
+        }
+    });
+
+    // --- 2. THEME SWITCHER LOGIC ---
     if (typeof lucide !== "undefined") {
         lucide.createIcons();
     }
@@ -48,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         applyTheme(savedTheme);
     }
 
-    // --- 2. ADVANCED SMART-HIDING HEADER LOGIC ---
+    // --- 3. ADVANCED SMART-HIDING HEADER LOGIC ---
     const header = document.querySelector("header");
     const pinToggle = document.getElementById("pin-header-toggle");
 
@@ -56,9 +65,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let lastScrollY = window.scrollY;
         let isTicking = false;
         let scrollUpDistance = 0;
-        const showThreshold = 1500; // Pixel, die man nach oben scrollen muss
+        const showThreshold = 150; // Pixel, die man nach oben scrollen muss
 
-        // Function to set the pin state
         const setPinState = (isPinned) => {
             header.classList.toggle("is-pinned", isPinned);
             pinToggle.innerHTML = isPinned
@@ -72,18 +80,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     nodes: [pinToggle],
                 });
             }
-            // If we pin it, make sure it's visible
             if (isPinned) {
                 header.classList.remove("header-hidden");
             }
         };
 
-        // Check localStorage for saved pin state
         const savedPinState =
             localStorage.getItem("doc_header_pinned") === "true";
         setPinState(savedPinState);
 
-        // Event listener for the pin button
         pinToggle.addEventListener("click", () => {
             const isCurrentlyPinned = header.classList.contains("is-pinned");
             localStorage.setItem("doc_header_pinned", !isCurrentlyPinned);
@@ -91,33 +96,22 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const updateHeader = () => {
-            // Do nothing if the header is pinned
             if (header.classList.contains("is-pinned")) {
                 isTicking = false;
                 return;
             }
-
             const currentScrollY = window.scrollY;
-
-            // Show header if we are near the top
             if (currentScrollY < 150) {
                 header.classList.remove("header-hidden");
-                isTicking = false;
-                return;
-            }
-
-            if (currentScrollY < lastScrollY) {
-                // Scrolling Up
+            } else if (currentScrollY > lastScrollY) {
+                header.classList.add("header-hidden");
+                scrollUpDistance = 0;
+            } else {
                 scrollUpDistance += lastScrollY - currentScrollY;
                 if (scrollUpDistance > showThreshold) {
                     header.classList.remove("header-hidden");
                 }
-            } else if (currentScrollY > lastScrollY) {
-                // Scrolling Down
-                header.classList.add("header-hidden");
-                scrollUpDistance = 0; // Reset distance when scrolling down
             }
-
             lastScrollY = currentScrollY;
             isTicking = false;
         };
@@ -136,8 +130,176 @@ document.addEventListener("DOMContentLoaded", () => {
                 `${headerHeight}px`
             );
         };
-
         setHeaderHeight();
         window.addEventListener("resize", setHeaderHeight);
+    }
+
+    // --- 4. ACCORDION LOGIC ---
+    const accordionItems = document.querySelectorAll(".accordion-item");
+    if (accordionItems.length > 0) {
+        // Open the first item by default if it exists on the page
+        const firstItem = accordionItems[0];
+        if (firstItem) {
+            const firstButton = firstItem.querySelector(".accordion-header");
+            const firstContent = firstItem.querySelector(".accordion-content");
+            if (firstButton && firstContent) {
+                firstButton.classList.add("active");
+                firstContent.style.maxHeight = firstContent.scrollHeight + "px";
+                firstContent.style.paddingTop = "1.5em";
+                firstContent.style.paddingBottom = "1.5em";
+            }
+        }
+
+        accordionItems.forEach((item) => {
+            const button = item.querySelector(".accordion-header");
+            const content = item.querySelector(".accordion-content");
+
+            if (button && content) {
+                button.addEventListener("click", () => {
+                    const isActive = button.classList.contains("active");
+
+                    // Close all items
+                    accordionItems.forEach((otherItem) => {
+                        otherItem
+                            .querySelector(".accordion-header")
+                            .classList.remove("active");
+                        const otherContent =
+                            otherItem.querySelector(".accordion-content");
+                        otherContent.style.maxHeight = null;
+                        otherContent.style.paddingTop = null;
+                        otherContent.style.paddingBottom = null;
+                    });
+
+                    // If the clicked item was not active, open it
+                    if (!isActive) {
+                        button.classList.add("active");
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        content.style.paddingTop = "1.5em";
+                        content.style.paddingBottom = "1.5em";
+                    }
+                });
+            }
+        });
+    }
+
+    // --- 5. SEARCH IMPLEMENTATION ---
+    const searchInput = document.getElementById("doc-search-input");
+    const searchResultsContainer = document.getElementById("search-results");
+    let searchIndex = [];
+    let activeResultIndex = -1;
+
+    // Fetch the search index
+    if (searchInput && searchResultsContainer) {
+        fetch("search-index.json")
+            .then((response) => response.json())
+            .then((data) => {
+                searchIndex = data;
+            })
+            .catch((error) =>
+                console.error("Error loading search index:", error)
+            );
+
+        // Function to perform search and render results
+        const performSearch = () => {
+            const query = searchInput.value.trim().toLowerCase();
+            if (query.length < 2) {
+                hideResults();
+                return;
+            }
+
+            const results = searchIndex.filter(
+                (item) =>
+                    item.title.toLowerCase().includes(query) ||
+                    item.content.toLowerCase().includes(query)
+            );
+
+            renderResults(results, query);
+        };
+
+        // Function to render results
+        const renderResults = (results, query) => {
+            searchResultsContainer.innerHTML = "";
+            if (results.length === 0) {
+                searchResultsContainer.innerHTML =
+                    '<div class="search-no-results">Keine Ergebnisse gefunden</div>';
+            } else {
+                const regex = new RegExp(`(${query})`, "gi");
+                results.slice(0, 10).forEach((result) => {
+                    // Limit to 10 results
+                    const title = result.title.replace(
+                        regex,
+                        "<mark>$1</mark>"
+                    );
+                    const pathParts = result.path.split("#");
+                    const cleanPath = pathParts[0];
+
+                    const link = document.createElement("a");
+                    link.href = result.path;
+                    link.innerHTML = `
+                        <span class="result-title">${title}</span>
+                        <span class="result-path">${cleanPath}</span>
+                    `;
+                    searchResultsContainer.appendChild(link);
+                });
+            }
+            showResults();
+            activeResultIndex = -1; // Reset active index
+        };
+
+        const showResults = () =>
+            searchResultsContainer.classList.add("visible");
+        const hideResults = () =>
+            searchResultsContainer.classList.remove("visible");
+
+        // Event Listeners
+        searchInput.addEventListener("input", performSearch);
+        searchInput.addEventListener("focus", performSearch);
+
+        // Hide results when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!header.contains(e.target)) {
+                hideResults();
+            }
+        });
+
+        // Keyboard navigation
+        searchInput.addEventListener("keydown", (e) => {
+            const results = searchResultsContainer.querySelectorAll("a");
+            if (results.length === 0) return;
+
+            switch (e.key) {
+                case "ArrowDown":
+                    e.preventDefault();
+                    activeResultIndex =
+                        (activeResultIndex + 1) % results.length;
+                    updateActiveResult(results);
+                    break;
+                case "ArrowUp":
+                    e.preventDefault();
+                    activeResultIndex =
+                        (activeResultIndex - 1 + results.length) %
+                        results.length;
+                    updateActiveResult(results);
+                    break;
+                case "Enter":
+                    e.preventDefault();
+                    if (activeResultIndex > -1) {
+                        results[activeResultIndex].click();
+                    }
+                    break;
+                case "Escape":
+                    hideResults();
+                    break;
+            }
+        });
+
+        const updateActiveResult = (results) => {
+            results.forEach((res) => res.classList.remove("result-active"));
+            if (activeResultIndex > -1) {
+                const activeResult = results[activeResultIndex];
+                activeResult.classList.add("result-active");
+                activeResult.scrollIntoView({ block: "nearest" });
+            }
+        };
     }
 });
