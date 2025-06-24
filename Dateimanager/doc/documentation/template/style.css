@@ -103,6 +103,7 @@ body {
         Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
+    padding-top: var(--header-height);
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-size: 17px;
@@ -123,14 +124,31 @@ header {
     backdrop-filter: blur(8px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border-bottom: 1px solid var(--border-primary);
-    position: sticky;
+    
+    /* NEU: Geänderte Positionierung für den Auto-Hide-Effekt */
+    position: fixed; /* Geändert von sticky zu fixed */
     top: 0;
+    left: 0;
+    right: 0;
+    width: 100%; /* Stellt sicher, dass der Header die volle Breite hat */
+    
     z-index: 1000;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.25em;
+
+    /* NEU: Transition für sanftes Ein-/Ausblenden */
+    transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1);
+    transform: translateY(0);
 }
+
+/* NEU: Klasse, die den Header versteckt */
+header.header-hidden {
+    transform: translateY(-100%);
+    box-shadow: none;
+}
+
 
 header h1 {
     font-size: 1.8em;
@@ -701,6 +719,8 @@ footer p {
 @media (max-width: 800px) {
     body {
         font-size: 16px;
+        /* Wichtig: Höhe für Mobile anpassen */
+        --header-height: 130px; 
     }
 
     header {
