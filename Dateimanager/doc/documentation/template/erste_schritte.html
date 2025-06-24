@@ -25,7 +25,10 @@
             })();
         </script>
 
-        <script src="https://unpkg.com/lucide@latest" defer></script>
+        <!-- Core Scripts -->
+        <script src="https://unpkg.com/lucide@latest"></script>
+ 
+        <script src="doc-script.js" defer></script>
     </head>
     <body>
         <div class="theme-switcher-floating">
@@ -40,11 +43,20 @@
             </button>
         </div>
         <header>
-            <div class="header-title-wrapper">
-                <h1>OptiFlow Dateimanager - Dokumentation</h1>
+            <div class="header-top-row">
                 <button id="pin-header-toggle" title="Kopfzeile fixieren">
                     <i data-lucide="pin"></i>
                 </button>
+                <h1>OptiFlow Dateimanager - Dokumentation</h1>
+                <div class="search-wrapper">
+                    <input
+                        type="search"
+                        id="doc-search-input"
+                        placeholder="Dokumentation durchsuchen..."
+                    />
+                    <i data-lucide="search" class="lucide-search"></i>
+                    <div id="search-results"></div>
+                </div>
             </div>
             <nav>
                 <ul>
@@ -74,7 +86,6 @@
             </nav>
         </header>
         <main>
-            <!-- CONTENT -->
             <section id="quickstart">
                 <h2>Erste Schritte: Ein Schnellstart-Guide</h2>
                 <p>
@@ -168,11 +179,17 @@
                         Sie sich eine eigene Auswahl zusammen.
                     </li>
                     <li>
-                        Klicken Sie rechts auf <strong>"Konfiguration Speichern"</strong>, um
-                        Ihre Konfiguration zu übernehmen.
+                        Klicken Sie rechts auf
+                        <strong>"Konfiguration Speichern"</strong>, um Ihre
+                        Konfiguration zu übernehmen.
                     </li>
                     <li>
-                        Wenn sie dauerhafte Standard-Einstellungen festlegen wollen, dann sollten sie in den Tab <strong>⚙️ Einstellungen</strong> wechseln und in dem Tab 'Scanner' dauerhafte Standardeinstellungen festlegen. Mehr dazu finden sie in den <a href="einstellungen.html">Einstellungen</a>.
+                        Wenn sie dauerhafte Standard-Einstellungen festlegen
+                        wollen, dann sollten sie in den Tab
+                        <strong>⚙️ Einstellungen</strong> wechseln und in dem
+                        Tab 'Scanner' dauerhafte Standardeinstellungen
+                        festlegen. Mehr dazu finden sie in den
+                        <a href="einstellungen.html">Einstellungen</a>.
                     </li>
                 </ol>
                 <div class="img-container">
@@ -196,12 +213,13 @@
                     <li>
                         Wechseln Sie zum Reiter
                         <strong>"Index & Scanner"</strong> in der
-                        Hauptnavigation (wenn sie das noch nicht getan haben, richten sie den Scan ein, wie oben beschrieben).
+                        Hauptnavigation (wenn sie das noch nicht getan haben,
+                        richten sie den Scan ein, wie oben beschrieben).
                     </li>
                     <li>
                         Klicken Sie auf den Button
-                        <strong>"Dateien scannen"</strong> und
-                        bestätigen Sie die Sicherheitsabfrage.
+                        <strong>"Dateien scannen"</strong> und bestätigen Sie
+                        die Sicherheitsabfrage.
                     </li>
                     <li>
                         Ein Ladeindikator erscheint. Je nach Anzahl und Größe
@@ -242,13 +260,14 @@
                         Klicken Sie auf ein Suchergebnis, um rechts eine
                         detaillierte Vorschau der Datei zu sehen.
                     </li>
-                    Wenn Sie mehr über die Suche lesen wollen, sehen Sie in <a href="funktionen_benutzer.html">Funktionen (Benutzer)</a> nach.
+                    Wenn Sie mehr über die Suche lesen wollen, sehen Sie in
+                    <a href="funktionen_benutzer.html">Funktionen (Benutzer)</a>
+                    nach.
                 </ol>
             </section>
         </main>
         <footer>
             <p>&copy; 2025 Robin Schumacher</p>
         </footer>
-        <script src="doc-script.js" defer></script>
     </body>
 </html>

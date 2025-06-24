@@ -1,5 +1,5 @@
 /* * OptiFlow Documentation Stylesheet
- * Version 4.3 - Search Implementation
+ * Version 5.0 - Always-Visible Search Bar
  */
 
 /* ==========================================================================
@@ -148,20 +148,19 @@ header {
     background-color: var(--header-bg);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border-primary);
-    transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1);
-    transform: translateY(0);
+    /* REMOVED: No longer transforming the whole header */
+    /* transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1); */
+    /* transform: translateY(0); */
 }
 
-/* Klasse, die den Header versteckt */
+/* REPLACED: Old header-hidden rule is gone. */
+/* This class now only affects the shadow when pinned */
 header.header-hidden {
-    transform: translateY(-100%);
     box-shadow: none;
 }
 
-/* Styling für den fixierten Zustand */
 header.is-pinned {
-    /* Wichtig: Überschreibt die 'header-hidden' Transformation */
-    transform: translateY(0) !important;
+    /* No change needed here, it just prevents hiding */
 }
 
 .header-top-row {
@@ -169,7 +168,7 @@ header.is-pinned {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    gap: 1em;
+    gap: 1.5em; /* Increased gap for better spacing */
     padding: 0 1em;
 }
 
@@ -180,10 +179,13 @@ header h1 {
     color: var(--text-primary);
     margin: 0;
     text-align: left;
-    flex-grow: 1;
+    white-space: nowrap; /* Prevent title from wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ... if title is too long */
+    flex-shrink: 1; /* Allow title to shrink */
+    min-width: 200px; /* Give it a minimum width */
 }
 
-/* Pin-Button Styling */
 #pin-header-toggle {
     background: transparent;
     border: 1px solid var(--border-primary);
@@ -196,7 +198,7 @@ header h1 {
     justify-content: center;
     align-items: center;
     transition: all 0.2s ease;
-    flex-shrink: 0; /* Prevents shrinking */
+    flex-shrink: 0;
 }
 
 #pin-header-toggle:hover {
@@ -212,8 +214,20 @@ header.is-pinned #pin-header-toggle {
 
 nav {
     padding-top: 0;
-    order: 3;
-    width: 80%; /* Increased width */
+    width: 100%;
+    /* ADDED: Transition for smooth hide/show */
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out,
+        margin-top 0.4s ease-in-out;
+    max-height: 300px; /* A safe large value */
+    overflow: hidden;
+    opacity: 1;
+}
+
+/* ADDED: This rule now hides the nav element */
+header.header-hidden nav {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
 }
 
 nav ul {
@@ -260,10 +274,11 @@ nav li.active a {
    ========================================================================== */
 .search-wrapper {
     position: relative;
-    width: 40%;
-    max-width: 500px;
-    min-width: 250px;
-    order: 2; /* Center element */
+    width: 100%; /* Allow it to take full width within its flex container */
+    max-width: 600px; /* But cap it at a max width */
+    flex-grow: 1; /* Allow it to grow to fill space */
+    flex-shrink: 1; /* Allow it to shrink */
+    right: 4rem;
 }
 
 #doc-search-input {
@@ -365,13 +380,6 @@ nav li.active a {
 /* ==========================================================================
    3.6. THEME SWITCHER
    ========================================================================== */
-
-/* Versteckt den alten Switcher, falls er noch im Header ist */
-header .theme-switcher {
-    display: none;
-}
-
-/* Styling für den schwebenden Theme-Switcher */
 .theme-switcher-floating {
     position: fixed;
     top: 50%;
@@ -379,11 +387,11 @@ header .theme-switcher {
     transform: translateY(-50%);
     z-index: 1001;
     display: flex;
-    flex-direction: column; /* Vertikale Anordnung */
+    flex-direction: column;
     gap: 0.5rem;
     background-color: var(--header-bg);
     padding: 0.6rem;
-    border-radius: 9999px; /* Pillenform */
+    border-radius: 9999px;
     border: 1px solid var(--border-primary);
     box-shadow: var(--shadow-lg);
     backdrop-filter: blur(8px);
@@ -701,7 +709,7 @@ img:hover {
 }
 
 .info-box h4::before {
-    content: "💡";
+    content: "�";
     font-size: 1.2em;
     margin-right: 0.6em;
     display: inline-block;
@@ -970,26 +978,23 @@ footer p {
 
 @media (max-width: 992px) {
     header {
-        flex-direction: column;
         gap: 1em;
     }
     .header-top-row {
-        flex-direction: column;
-        gap: 1em;
+        flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+        justify-content: center;
     }
     header h1 {
-        order: 1;
+        width: 100%; /* Full width for the title */
+        text-align: center;
+        order: -1; /* Move title to the top */
+        margin-bottom: 0.5em;
     }
     .search-wrapper {
-        order: 2;
         width: 80%;
-    }
-    #pin-header-toggle {
-        order: 3;
-        position: static; /* Unset absolute positioning */
+        min-width: 300px;
     }
     nav {
-        order: 4;
         width: 100%;
     }
     main {
@@ -1000,7 +1005,6 @@ footer p {
 @media (max-width: 768px) {
     body {
         font-size: 16px;
-        /* Wichtig: Höhe für Mobile anpassen, wird von JS gesetzt */
     }
 
     header {
@@ -1022,8 +1026,8 @@ footer p {
 
     main {
         padding: 1.5em;
-        margin: 1.5em;
-        max-width: none;
+        margin: 1.5em auto;
+        max-width: calc(100% - 3em);
     }
 
     h2 {

@@ -25,7 +25,10 @@
             })();
         </script>
 
-        <script src="https://unpkg.com/lucide@latest" defer></script>
+        <!-- Core Scripts -->
+        <script src="https://unpkg.com/lucide@latest"></script>
+
+        <script src="doc-script.js" defer></script>
     </head>
     <body>
         <div class="theme-switcher-floating">
@@ -40,11 +43,20 @@
             </button>
         </div>
         <header>
-            <div class="header-title-wrapper">
-                <h1>OptiFlow Dateimanager - Dokumentation</h1>
+            <div class="header-top-row">
                 <button id="pin-header-toggle" title="Kopfzeile fixieren">
                     <i data-lucide="pin"></i>
                 </button>
+                <h1>OptiFlow Dateimanager - Dokumentation</h1>
+                <div class="search-wrapper">
+                    <input
+                        type="search"
+                        id="doc-search-input"
+                        placeholder="Dokumentation durchsuchen..."
+                    />
+                    <i data-lucide="search" class="lucide-search"></i>
+                    <div id="search-results"></div>
+                </div>
             </div>
             <nav>
                 <ul>
@@ -80,10 +92,9 @@
                     Der Einstellungs-Dialog ist die zentrale Anlaufstelle, um
                     OptiFlow an Ihre persönlichen Vorlieben und die
                     Anforderungen Ihres Unternehmens anzupassen. Die
-                    Einstellungen sind in neun spezialisierte Bereiche
-                    unterteilt, die hier detailliert erklärt werden. Nutzen Sie
-                    dieses Akkordeon, um gezielt die Informationen zu finden,
-                    die Sie benötigen.
+                    Einstellungen sind in logische Bereiche unterteilt, die hier
+                    detailliert erklärt werden. Nutzen Sie dieses Akkordeon, um
+                    gezielt die Informationen zu finden, die Sie benötigen.
                 </p>
                 <div class="info-box">
                     <h4>Speichern nicht vergessen!</h4>
@@ -97,10 +108,10 @@
             </section>
 
             <div class="accordion">
-                <!-- 1. General Settings -->
-                <div class="accordion-item">
+                <div class="accordion-item" id="einstellungen-erscheinungsbild">
                     <button class="accordion-header">
-                        <i data-lucide="sliders-horizontal"></i> Allgemein
+                        <i data-lucide="sliders-horizontal"></i>
+                        Erscheinungsbild & Bedienung
                     </button>
                     <div class="accordion-content">
                         <p>
@@ -137,10 +148,10 @@
                     </div>
                 </div>
 
-                <!-- 2. Search Settings -->
-                <div class="accordion-item">
+                <div class="accordion-item" id="einstellungen-suche">
                     <button class="accordion-header">
-                        <i data-lucide="search"></i> Suche
+                        <i data-lucide="search"></i> Such- &
+                        Relevanzeinstellungen
                     </button>
                     <div class="accordion-content">
                         <p>
@@ -209,10 +220,9 @@
                     </div>
                 </div>
 
-                <!-- 3. Scanner Settings -->
-                <div class="accordion-item">
+                <div class="accordion-item" id="einstellungen-scanner">
                     <button class="accordion-header">
-                        <i data-lucide="scan-line"></i> Scanner
+                        <i data-lucide="scan-line"></i> Scanner & Indexierung
                     </button>
                     <div class="accordion-content">
                         <p>
@@ -237,11 +247,12 @@
                                 maximale Anzahl an CPU-Kernen für den Scan fest,
                                 um die Systemlast zu steuern. Eine Verzögerung
                                 (in ms) kann auf älteren Systemen helfen, die
-                                Festplattenaktivität zu schonen. <strong>Aber Vorsicht:</strong>
-                                Wenn diese zu hoch eingestellt ist, dann kann es zu extremen
-                                Verzögerungen in der App führen. Es wird empfohlen,
-                                stattdessen die Anzahl der Kerne zu reduzieren,
-                                um Rechenleistung zu sparen.
+                                Festplattenaktivität zu schonen.
+                                <strong>Aber Vorsicht:</strong>
+                                Wenn diese zu hoch eingestellt ist, dann kann es
+                                zu extremen Verzögerungen in der App führen. Es
+                                wird empfohlen, stattdessen die Anzahl der Kerne
+                                zu reduzieren, um Rechenleistung zu sparen.
                             </li>
                             <li>
                                 <strong>Ignorierte Verzeichnisse:</strong>
@@ -259,10 +270,9 @@
                     </div>
                 </div>
 
-                <!-- 4. OCR Settings -->
-                <div class="accordion-item">
+                <div class="accordion-item" id="einstellungen-ocr">
                     <button class="accordion-header">
-                        <i data-lucide="file-scan"></i> OCR
+                        <i data-lucide="file-scan"></i> OCR-Texterkennung
                     </button>
                     <div class="accordion-content">
                         <p>
@@ -321,10 +331,9 @@
                     </div>
                 </div>
 
-                <!-- 5. Old Files Settings -->
-                <div class="accordion-item">
+                <div class="accordion-item" id="einstellungen-alte-dateien">
                     <button class="accordion-header">
-                        <i data-lucide="archive"></i> Alte Dateien
+                        <i data-lucide="archive"></i> Analyse: Veraltete Dateien
                     </button>
                     <div class="accordion-content">
                         <p>
@@ -357,10 +366,9 @@
                     </div>
                 </div>
 
-                <!-- 6. De-duplication Settings -->
-                <div class="accordion-item">
+                <div class="accordion-item" id="einstellungen-duplikate">
                     <button class="accordion-header">
-                        <i data-lucide="copy-x"></i> Entduplizierung
+                        <i data-lucide="copy-x"></i> Analyse: Dateiduplikate
                     </button>
                     <div class="accordion-content">
                         <p>
@@ -413,10 +421,9 @@
                     </div>
                 </div>
 
-                <!-- 7. User Settings -->
-                <div class="accordion-item">
+                <div class="accordion-item" id="einstellungen-benutzer">
                     <button class="accordion-header">
-                        <i data-lucide="users"></i> Benutzer
+                        <i data-lucide="users"></i> Konten & Benutzerverwaltung
                     </button>
                     <div class="accordion-content">
                         <p>
@@ -478,10 +485,9 @@
                     </div>
                 </div>
 
-                <!-- 8. Database Settings -->
-                <div class="accordion-item">
+                <div class="accordion-item" id="einstellungen-datenbank">
                     <button class="accordion-header">
-                        <i data-lucide="database"></i> Datenbank
+                        <i data-lucide="database"></i> Datenbank & Backup
                     </button>
                     <div class="accordion-content">
                         <p>
@@ -532,10 +538,9 @@
                     </div>
                 </div>
 
-                <!-- 9. System Settings -->
-                <div class="accordion-item">
+                <div class="accordion-item" id="einstellungen-server">
                     <button class="accordion-header">
-                        <i data-lucide="server"></i> System
+                        <i data-lucide="server"></i> Server & Geplante Aufgaben
                     </button>
                     <div class="accordion-content">
                         <p>
@@ -593,61 +598,5 @@
         <footer>
             <p>&copy; 2025 Robin Schumacher</p>
         </footer>
-        <script>
-            // Simple Accordion Logic
-            document.addEventListener("DOMContentLoaded", () => {
-                const accordionItems =
-                    document.querySelectorAll(".accordion-item");
-
-                // Open the first item by default
-                if (accordionItems.length > 0) {
-                    const firstItem = accordionItems[0];
-                    const firstButton =
-                        firstItem.querySelector(".accordion-header");
-                    const firstContent =
-                        firstItem.querySelector(".accordion-content");
-                    firstButton.classList.add("active");
-                    firstContent.style.maxHeight =
-                        firstContent.scrollHeight + "px";
-                    firstContent.style.paddingTop = "1.5em";
-                    firstContent.style.paddingBottom = "1.5em";
-                }
-
-                accordionItems.forEach((item) => {
-                    const button = item.querySelector(".accordion-header");
-                    const content = item.querySelector(".accordion-content");
-
-                    button.addEventListener("click", () => {
-                        const isActive = button.classList.contains("active");
-
-                        // Close all items
-                        accordionItems.forEach((otherItem) => {
-                            otherItem
-                                .querySelector(".accordion-header")
-                                .classList.remove("active");
-                            const otherContent =
-                                otherItem.querySelector(".accordion-content");
-                            otherContent.style.maxHeight = null;
-                            otherContent.style.paddingTop = null;
-                            otherContent.style.paddingBottom = null;
-                        });
-
-                        // If the clicked item was not active, open it
-                        if (!isActive) {
-                            button.classList.add("active");
-                            content.style.maxHeight =
-                                content.scrollHeight + "px";
-                            content.style.paddingTop = "1.5em";
-                            content.style.paddingBottom = "1.5em";
-                        }
-                    });
-                });
-
-                if (typeof lucide !== "undefined") {
-                    lucide.createIcons();
-                }
-            });
-        </script>
-        <script src="doc-script.js" defer></script>
     </body>
 </html>

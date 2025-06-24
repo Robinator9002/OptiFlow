@@ -25,10 +25,13 @@
             })();
         </script>
 
-        <script src="https://unpkg.com/lucide@latest" defer></script>
+        <!-- Core Scripts -->
+        <script src="https://unpkg.com/lucide@latest"></script>
+ 
+        <script src="doc-script.js" defer></script>
     </head>
     <body>
-        <div class="theme-switcher theme-switcher-floating">
+        <div class="theme-switcher-floating">
             <button id="theme-default" title="Helles Theme">
                 <i data-lucide="sun"></i>
             </button>
@@ -40,18 +43,25 @@
             </button>
         </div>
         <header>
-            <div class="header-title-wrapper">
-                <h1>OptiFlow Dateimanager - Dokumentation</h1>
+            <div class="header-top-row">
                 <button id="pin-header-toggle" title="Kopfzeile fixieren">
                     <i data-lucide="pin"></i>
                 </button>
+                <h1>OptiFlow Dateimanager - Dokumentation</h1>
+                <div class="search-wrapper">
+                    <input
+                        type="search"
+                        id="doc-search-input"
+                        placeholder="Dokumentation durchsuchen..."
+                    />
+                    <i data-lucide="search" class="lucide-search"></i>
+                    <div id="search-results"></div>
+                </div>
             </div>
             <nav>
                 <ul>
                     <li><a href="index.html">Übersicht</a></li>
-                    <li>
-                        <a href="installation.html">Installation</a>
-                    </li>
+                    <li><a href="installation.html">Installation</a></li>
                     <li><a href="erste_schritte.html">Erste Schritte</a></li>
                     <li>
                         <a href="funktionen_benutzer.html"
@@ -104,7 +114,6 @@
 
             <section id="workflow-cards">
                 <div class="workflow-grid">
-                    <!-- Workflow Card: Backup -->
                     <div class="workflow-card">
                         <div class="workflow-icon">
                             <i data-lucide="download-cloud"></i>
@@ -118,7 +127,7 @@
                             <li>
                                 Gehen Sie zu
                                 <a href="einstellungen.html">Einstellungen</a>
-                                &rarr; <strong>Datenbank</strong>.
+                                &rarr; <strong>Datenbank & Backup</strong>.
                             </li>
                             <li>
                                 Wählen Sie nacheinander jede wichtige Datei aus
@@ -137,7 +146,6 @@
                         </ol>
                     </div>
 
-                    <!-- Workflow Card: Restore -->
                     <div class="workflow-card">
                         <div class="workflow-icon">
                             <i data-lucide="upload-cloud"></i>
@@ -174,7 +182,6 @@
                         </ol>
                     </div>
 
-                    <!-- Workflow Card: Reset -->
                     <div class="workflow-card">
                         <div class="workflow-icon">
                             <i data-lucide="hard-drive-reset"></i>
@@ -235,8 +242,9 @@
                         nicht gewünscht ist.
                     </p>
                     <p>
-                        Sollten hierbei oder bei einem der anderen hier gezeigten
-                        Vorgängen Fehler auftreten, sollten Sie sich die
+                        Sollten hierbei oder bei einem der anderen hier
+                        gezeigten Vorgängen Fehler auftreten, sollten Sie sich
+                        die
                         <a href="troubleshooting.html">Fehlerbehebung</a>
                         ansehen.
                     </p>
@@ -246,14 +254,5 @@
         <footer>
             <p>&copy; 2025 Robin Schumacher</p>
         </footer>
-        <script>
-            // Skript für Lucide Icons
-            document.addEventListener("DOMContentLoaded", () => {
-                if (typeof lucide !== "undefined") {
-                    lucide.createIcons();
-                }
-            });
-        </script>
-        <script src="doc-script.js" defer></script>
     </body>
 </html>

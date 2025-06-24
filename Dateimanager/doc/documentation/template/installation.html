@@ -25,7 +25,10 @@
             })();
         </script>
 
-        <script src="https://unpkg.com/lucide@latest" defer></script>
+        <!-- Core Scripts -->
+        <script src="https://unpkg.com/lucide@latest"></script>
+ 
+        <script src="doc-script.js" defer></script>
     </head>
     <body>
         <div class="theme-switcher-floating">
@@ -40,11 +43,20 @@
             </button>
         </div>
         <header>
-            <div class="header-title-wrapper">
-                <h1>OptiFlow Dateimanager - Dokumentation</h1>
+            <div class="header-top-row">
                 <button id="pin-header-toggle" title="Kopfzeile fixieren">
                     <i data-lucide="pin"></i>
                 </button>
+                <h1>OptiFlow Dateimanager - Dokumentation</h1>
+                <div class="search-wrapper">
+                    <input
+                        type="search"
+                        id="doc-search-input"
+                        placeholder="Dokumentation durchsuchen..."
+                    />
+                    <i data-lucide="search" class="lucide-search"></i>
+                    <div id="search-results"></div>
+                </div>
             </div>
             <nav>
                 <ul>
@@ -74,7 +86,6 @@
             </nav>
         </header>
         <main>
-            <!-- CONTENT -->
             <section id="installation">
                 <h2>Installation und Start</h2>
                 <p>
@@ -173,8 +184,7 @@
                     etc.) hängt von der Installationsmethode ab. Dies ist
                     wichtig für Backups oder falls eine manuelle Bereinigung
                     notwendig sein sollte. Mehr dazu im Kapitel
-                    <a href="datenmanagement.html"
-                        >Datenmanagement</a>.
+                    <a href="datenmanagement.html">Datenmanagement</a>.
                 </p>
                 <h5>Bei Installation mit dem Installer:</h5>
                 <p>
@@ -203,15 +213,12 @@
                 </p>
                 <p>
                     Lesen Sie weiter im Kapitel
-                    <a href="erste_schritte.html"
-                        >Erste Schritte</a
-                    >.
+                    <a href="erste_schritte.html">Erste Schritte</a>.
                 </p>
             </section>
         </main>
         <footer>
             <p>&copy; 2025 Robin Schumacher</p>
         </footer>
-        <script src="doc-script.js" defer></script>
     </body>
 </html>

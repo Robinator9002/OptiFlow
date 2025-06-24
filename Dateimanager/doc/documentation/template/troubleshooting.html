@@ -1,3 +1,4 @@
+<!-- troubleshooting.html -->
 <!DOCTYPE html>
 <html lang="de">
     <head>
@@ -22,7 +23,10 @@
             })();
         </script>
 
-        <script src="https://unpkg.com/lucide@latest" defer></script>
+        <!-- Core Scripts -->
+        <script src="https://unpkg.com/lucide@latest"></script>
+ 
+        <script src="doc-script.js" defer></script>
     </head>
     <body>
         <div class="theme-switcher-floating">
@@ -38,11 +42,20 @@
         </div>
 
         <header>
-            <div class="header-title-wrapper">
-                <h1>OptiFlow Dateimanager - Dokumentation</h1>
+            <div class="header-top-row">
                 <button id="pin-header-toggle" title="Kopfzeile fixieren">
                     <i data-lucide="pin"></i>
                 </button>
+                <h1>OptiFlow Dateimanager - Dokumentation</h1>
+                <div class="search-wrapper">
+                    <input
+                        type="search"
+                        id="doc-search-input"
+                        placeholder="Dokumentation durchsuchen..."
+                    />
+                    <i data-lucide="search" class="lucide-search"></i>
+                    <div id="search-results"></div>
+                </div>
             </div>
             <nav>
                 <ul>
@@ -64,7 +77,7 @@
                     </li>
                     <li>
                         <a href="technik_sicherheit.html"
-                        >Technik & Sicherheit</a
+                            >Technik & Sicherheit</a
                         >
                     </li>
                     <li><a href="tastenkürzel.html">Tastenkürzel</a></li>
@@ -142,9 +155,9 @@
                                     <code>data</code>-Ordner!</strong
                                 >
                                 Benennen Sie ihn stattdessen vorübergehend um
-                                (z.B. in <code>data_alt</code>) und starten Sie die App.
-                                Wenn sie startet, liegt das Problem in einer der
-                                alten Dateien.
+                                (z.B. in <code>data_alt</code>) und starten Sie
+                                die App. Wenn sie startet, liegt das Problem in
+                                einer der alten Dateien.
                             </p>
                         </div>
                     </div>
@@ -175,24 +188,25 @@
                         <div class="flow-box">
                             <i data-lucide="users"></i>
                             <p>
-                                Kommunizieren Sie mit anderen Admins
-                                (nur diese können solche prozesse ausführen).
-                                Läuft gerade ein großer Index-Scan, eine
-                                Entduplizierung oder ein OCR-Prozess? Wenn ja,
-                                ist Warten die beste Lösung.
+                                Kommunizieren Sie mit anderen Admins (nur diese
+                                können solche prozesse ausführen). Läuft gerade
+                                ein großer Index-Scan, eine Entduplizierung oder
+                                ein OCR-Prozess? Wenn ja, ist Warten die beste
+                                Lösung.
                             </p>
                         </div>
                     </div>
                     <div class="flow-step">
                         <div class="flow-label">Schritt 2: Events prüfen</div>
                         <div class="flow-box">
-                            <i data-lucide="calendar-clock" ></i>
+                            <i data-lucide="calendar-clock"></i>
                             <p>
                                 Falls niemand aktiv eine Aufgabe gestartet hat,
                                 könnte ein schlecht konfiguriertes,
                                 ressourcen-intensives Event (siehe
                                 <a href="einstellungen.html"
-                                    >Einstellungen &rarr; System</a
+                                    >Einstellungen &rarr; Server & Geplante
+                                    Aufgaben</a
                                 >) die Ursache sein.
                             </p>
                         </div>
@@ -236,7 +250,8 @@
                     <ol>
                         <li>
                             Stoppen Sie die App und benennen Sie den gesamten
-                            <code>data</code>-Ordner um (z.B. in <code>data_alt</code>).
+                            <code>data</code>-Ordner um (z.B. in
+                            <code>data_alt</code>).
                         </li>
                         <li>
                             Starten Sie die App. Sie wird einen leeren
@@ -246,9 +261,9 @@
                         <li>
                             Stoppen Sie die App erneut. Kopieren Sie nun die
                             alten Daten (wie <code>index.json</code>,
-                            <code>events.json</code> etc.) aus <code>data_alt</code> in den
-                            neuen `data`-Ordner, aber
-                            <strong>ohne die alte `users.json`</strong>.
+                            <code>events.json</code> etc.) aus
+                            <code>data_alt</code> in den neuen `data`-Ordner,
+                            aber <strong>ohne die alte `users.json`</strong>.
                         </li>
                         <li>Starten Sie die App.</li>
                     </ol>
@@ -280,15 +295,5 @@
         <footer>
             <p>&copy; 2025 Robin Schumacher</p>
         </footer>
-
-        <script src="doc-script.js" defer></script>
-        <script>
-            // Skript für Lucide Icons
-            document.addEventListener("DOMContentLoaded", () => {
-                if (typeof lucide !== "undefined") {
-                    lucide.createIcons();
-                }
-            });
-        </script>
     </body>
 </html>
