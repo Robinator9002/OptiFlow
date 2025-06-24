@@ -1,6 +1,6 @@
 /**
  * OptiFlow Documentation Main Script
- * Version 7.2 - Added global keyboard shortcuts for search (Ctrl+F, type-to-search)
+ * Version 7.3 - Fixed theme persistence logic to prevent flickering on page load.
  */
 document.addEventListener("DOMContentLoaded", () => {
     // --- Parts that can run early ---
@@ -18,31 +18,45 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 2. THEME SWITCHER LOGIC
+    // 2. THEME SWITCHER LOGIC (REVISED)
     if (typeof lucide !== "undefined") {
         lucide.createIcons();
     }
     const allSwitchers = document.querySelectorAll(".theme-switcher-floating");
-    if (allSwitchers.length > 0) {
-        const applyTheme = (theme) => {
-            document.documentElement.removeAttribute("data-theme");
-            if (theme !== "default") {
-                document.documentElement.setAttribute("data-theme", theme);
-            }
-            allSwitchers.forEach((switcher) => {
-                const buttons = {
-                    default: switcher.querySelector("#theme-default"),
-                    dark: switcher.querySelector("#theme-dark"),
-                    contrast: switcher.querySelector("#theme-contrast"),
-                };
-                Object.values(buttons).forEach((btn) => {
-                    if (btn) btn.classList.remove("active");
-                });
-                if (buttons[theme]) {
-                    buttons[theme].classList.add("active");
-                }
+
+    // This new, lean function ONLY handles the visual state of the buttons.
+    const updateButtonStates = (theme) => {
+        allSwitchers.forEach((switcher) => {
+            const buttons = {
+                default: switcher.querySelector("#theme-default"),
+                dark: switcher.querySelector("#theme-dark"),
+                contrast: switcher.querySelector("#theme-contrast"),
+            };
+            // Remove 'active' from all buttons first
+            Object.values(buttons).forEach((btn) => {
+                if (btn) btn.classList.remove("active");
             });
-        };
+            // Then add 'active' to the correct one
+            if (buttons[theme]) {
+                buttons[theme].classList.add("active");
+            }
+        });
+    };
+
+    // This function is now only called on direct user click.
+    const applyTheme = (theme) => {
+        // The fast inline script in the HTML head already did this.
+        // But we do it again on click to apply the change instantly.
+        document.documentElement.removeAttribute("data-theme");
+        if (theme !== "default") {
+            document.documentElement.setAttribute("data-theme", theme);
+        }
+        // After changing the theme, update the button states.
+        updateButtonStates(theme);
+    };
+
+    if (allSwitchers.length > 0) {
+        // Setup click listeners
         allSwitchers.forEach((switcher) => {
             const buttons = {
                 default: switcher.querySelector("#theme-default"),
@@ -53,14 +67,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 const button = buttons[themeKey];
                 if (button) {
                     button.addEventListener("click", () => {
+                        // 1. Save the choice
                         localStorage.setItem("doc_theme", themeKey);
+                        // 2. Apply the theme and update buttons
                         applyTheme(themeKey);
                     });
                 }
             });
         });
+
+        // ON PAGE LOAD:
+        // Get the saved theme...
         const savedTheme = localStorage.getItem("doc_theme") || "default";
-        applyTheme(savedTheme);
+        // ...and ONLY update the buttons. The theme itself was already set
+        // by the anti-flicker script in the HTML's <head>.
+        updateButtonStates(savedTheme);
     }
 
     // 3. ADVANCED SMART-HIDING HEADER LOGIC
