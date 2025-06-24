@@ -8,7 +8,7 @@ import datetime
 
 class DateiController:
     def __init__(self, tools_dir: str, base_dirs: str, extensions: Optional[List] = None, index_file: str = "file_index.json",
-                index_content: bool = True, convert_pdf: bool = False, max_size_kb: int = 0, max_content_size_let: Optional[int] = None, data_file: Optional[str] = 'data/user.json', auto_login_time: Optional[int] = 24, events_file: str = "data/events.json", structure_file: str = "data/structure.json",
+                index_content: bool = True, convert_pdf: bool = False, max_size_kb: int = 0, max_content_size_let: Optional[int] = None, data_file: Optional[str] = 'data/users.json', auto_login_time: Optional[int] = 24, events_file: str = "data/events.json", structure_file: str = "data/structure.json",
                max_age_days: int = 1000, old_files_limit: int = 0, sort_by: str = 'age', sort_order: str = 'normal',
                   search_limit: int = 100, snippet_limit: int = 0, snippet_window: int = 40, proximity_window: int = 20,
                dupe_file: str = "data/dupes.json",

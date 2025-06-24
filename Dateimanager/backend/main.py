@@ -172,7 +172,7 @@ MAX_SIZE_KB = 0
 MAX_CONTENT_SIZE_LET = None
 SEARCH_LIMIT = 30
 STRUCTURE_FILE = os.path.join(DATA_DIR, "structure.json")
-USER_FILE = os.path.join(DATA_DIR, "user.json")
+USER_FILE = os.path.join(DATA_DIR, "users.json")
 AUTO_LOGIN_TIME = 24
 
 # Secret Key
