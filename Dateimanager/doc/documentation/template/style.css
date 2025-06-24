@@ -24,6 +24,7 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
         0 4px 6px -4px rgba(0, 0, 0, 0.1);
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --info-box-danger-border: #c53929;
 
     /* --- Doc-specific variables --- */
     --doc-bg: #ffffff;
@@ -54,6 +55,7 @@ html[data-theme="dark"] {
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3),
         0 4px 6px -4px rgba(0, 0, 0, 0.3);
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --info-box-danger-border: #f53929;
 
     /* --- Doc-specific variables --- */
     --doc-bg: #21212a;
@@ -82,6 +84,7 @@ html[data-theme="contrast"] {
     --shadow-md: none;
     --shadow-lg: none;
     --shadow-sm: none;
+    --info-box-danger-border: #f00000;
 
     /* --- Doc-specific variables --- */
     --doc-bg: #ffffff;
@@ -556,7 +559,7 @@ img:hover {
 }
 
 .info-box:hover {
-    transform: translateY(-5px);
+    transform: translateY(-5px) scale(1.01);
     cursor: default;
     box-shadow: var(--shadow-lg);
 }
@@ -583,7 +586,7 @@ img:hover {
     font-size: 1.2em;
     margin-right: 0.6em;
     display: inline-block;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s ease;
 }
 
 .info-box.tech h4::before {
@@ -591,7 +594,7 @@ img:hover {
 }
 
 .info-box:hover h4::before {
-    transform: rotate(15deg) scale(1.1);
+    transform: rotate(30deg) scale(1.2);
 }
 
 /* Danger Info Box */
@@ -772,15 +775,28 @@ img:hover {
     align-items: center;
     gap: 1.5em;
     text-align: left;
+    transition: transform 200ms;
 }
 
-.flow-box i.lucide {
+.flow-box:hover{
+    cursor: pointer;
+    transform: scale(1.025);
+}
+
+.flow-box .lucide {
     color: var(--accent-primary);
-    font-size: 1.8em;
+    width: 1.5em;
+    height: 1.5em;
     flex-shrink: 0;
+    transition: width 200ms, height 200ms;
 }
 
-.flow-box.warning i.lucide {
+.flow-box:hover .lucide {
+    width: 1.8em;
+    height: 1.8em;
+}
+
+.flow-box.warning .lucide {
     color: var(--info-box-danger-border);
 }
 
