@@ -377,6 +377,7 @@ a {
     color: var(--accent-primary);
     text-decoration: none;
     font-weight: 500;
+    font-size: 1.15rem;
     background-image: linear-gradient(
         var(--accent-primary),
         var(--accent-primary)

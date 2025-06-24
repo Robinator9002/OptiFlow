@@ -28,7 +28,7 @@
         <script src="https://unpkg.com/lucide@latest" defer></script>
     </head>
     <body>
-        <div class="theme-switcher theme-switcher-floating">
+        <div class="theme-switcher-floating">
             <button id="theme-default" title="Helles Theme">
                 <i data-lucide="sun"></i>
             </button>
@@ -63,7 +63,7 @@
                     </li>
                     <li><a href="einstellungen.html">Einstellungen</a></li>
                     <li><a href="datenmanagement.html">Datenmanagement</a></li>
-                    <li><a ref=troubleshooting.html">Fehlerbehebung</a></li>
+                    <li><a href="troubleshooting.html">Fehlerbehebung</a></li>
                     <li>
                         <a href="technik_sicherheit.html"
                             >Technik & Sicherheit</a
@@ -115,6 +115,18 @@
                     >
                     angelegt werden.
                 </p>
+                <div class="info-box">
+                    <h4>Passwort vergessen?</h4>
+                    <p>
+                        Sollten Sie oder andere Admins einmal den Zugriff
+                        verlieren, keine Sorge. Es gibt einen
+                        Notfall-Mechanismus. Wie dieser funktioniert, erfahren
+                        Sie im Kapitel
+                        <a href="troubleshooting.html#problem-passwords"
+                            >Fehlerbehebung</a
+                        >.
+                    </p>
+                </div>
                 <div class="img-container">
                     <img
                         src="../img/first-steps/admin-register.png"
@@ -137,12 +149,8 @@
                 </p>
                 <ol>
                     <li>
-                        Navigieren Sie zu <strong>⚙️ Einstellungen</strong> oben
+                        Navigieren Sie zu <strong>Index & Scanner</strong> oben
                         rechts.
-                    </li>
-                    <li>
-                        Wählen Sie in der linken Leiste den Reiter
-                        <strong>"Scanner"</strong> aus.
                     </li>
                     <li>
                         <strong>Zielordner festlegen:</strong> Klicken Sie auf
@@ -160,8 +168,11 @@
                         Sie sich eine eigene Auswahl zusammen.
                     </li>
                     <li>
-                        Klicken Sie unten auf <strong>"Speichern"</strong>, um
+                        Klicken Sie rechts auf <strong>"Konfiguration Speichern"</strong>, um
                         Ihre Konfiguration zu übernehmen.
+                    </li>
+                    <li>
+                        Wenn sie dauerhafte Standard-Einstellungen festlegen wollen, dann sollten sie in den Tab <strong>⚙️ Einstellungen</strong> wechseln und in dem Tab 'Scanner' dauerhafte Standardeinstellungen festlegen. Mehr dazu finden sie in den <a href="einstellungen.html">Einstellungen</a>.
                     </li>
                 </ol>
                 <div class="img-container">
@@ -185,11 +196,11 @@
                     <li>
                         Wechseln Sie zum Reiter
                         <strong>"Index & Scanner"</strong> in der
-                        Hauptnavigation.
+                        Hauptnavigation (wenn sie das noch nicht getan haben, richten sie den Scan ein, wie oben beschrieben).
                     </li>
                     <li>
                         Klicken Sie auf den Button
-                        <strong>"Dateien scannen & indexieren"</strong> und
+                        <strong>"Dateien scannen"</strong> und
                         bestätigen Sie die Sicherheitsabfrage.
                     </li>
                     <li>
@@ -231,6 +242,7 @@
                         Klicken Sie auf ein Suchergebnis, um rechts eine
                         detaillierte Vorschau der Datei zu sehen.
                     </li>
+                    Wenn Sie mehr über die Suche lesen wollen, sehen Sie in <a href="funktionen_benutzer.html">Funktionen (Benutzer)</a> nach.
                 </ol>
             </section>
         </main>
