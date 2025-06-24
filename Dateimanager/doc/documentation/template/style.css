@@ -705,7 +705,7 @@ img:hover {
 }
 
 .info-box h4::before {
-    content: "�";
+    content: "💡";
     font-size: 1.2em;
     margin-right: 0.6em;
     display: inline-block;
