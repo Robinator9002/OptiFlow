@@ -541,7 +541,84 @@ img:hover {
     transform: rotate(15deg) scale(1.1);
 }
 
-/* NEU: Accordion Styling */
+/* NEU: Danger Info Box */
+.info-box.danger {
+    background-color: var(--info-box-danger-bg);
+    border-left-color: var(--info-box-danger-border);
+}
+
+.info-box.danger h4 {
+    color: var(--info-box-danger-text);
+    font-weight: 700;
+}
+
+.info-box.danger p {
+    color: var(--info-box-danger-text);
+}
+
+.info-box.danger strong {
+    color: var(--info-box-danger-text);
+}
+
+.info-box.danger h4 .lucide {
+    margin-right: 0.6em;
+    color: var(--info-box-danger-border);
+}
+
+
+/* NEU: Workflow Cards */
+.workflow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2em;
+    margin-top: 2.5em;
+}
+
+.workflow-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.workflow-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.workflow-card .workflow-icon {
+    font-size: 2em;
+    color: var(--accent-primary);
+    margin-bottom: 0.5em;
+    line-height: 1;
+}
+
+.workflow-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.75em;
+    font-size: 1.3em;
+}
+
+.workflow-card p {
+    font-size: 0.95em;
+    color: var(--text-muted);
+    flex-grow: 1;
+}
+
+.workflow-card ol {
+    padding-left: 1.2em;
+    font-size: 0.9em;
+}
+
+.workflow-card li {
+    margin-bottom: 0.6em;
+}
+
+/* Accordion Styling */
 .accordion {
     border: 1px solid var(--border-primary);
     border-radius: 8px;
