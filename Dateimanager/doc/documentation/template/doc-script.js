@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let lastScrollY = window.scrollY;
         let isTicking = false;
         let scrollUpDistance = 0;
-        const showThreshold = 1000; // Pixel, die man nach oben scrollen muss
+        const showThreshold = 800; // Pixel, die man nach oben scrollen muss
 
         // Function to set the pin state
         const setPinState = (isPinned) => {
