@@ -125,7 +125,7 @@ class ChangeUsernameRequest(BaseModel):
 class DeleteOwnAccountRequest(BaseModel):
     password: str # Passwort des Benutzers, der seinen eigenen Account löscht
 
-# NEU: Modelle für Admin-Aktionen zur Benutzerverwaltung, die Admin-Passwort erfordern
+#  Modelle für Admin-Aktionen zur Benutzerverwaltung, die Admin-Passwort erfordern
 class AdminActionBaseRequest(BaseModel): # Basis für Admin-Aktionen, die Admin-PW erfordern
     requesting_admin_password: str = Field(..., description="Passwort des Admins, der die Aktion ausführt.")
 

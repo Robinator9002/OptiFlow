@@ -46,7 +46,7 @@ export interface ExtendedFormElement
 		label?: string;
 		placeholder?: string;
 		labelPosition?: LabelPosition;
-		labelTextSize?: number; // NEU: Schriftgröße für das Label von Input-Feldern
+		labelTextSize?: number; //  Schriftgröße für das Label von Input-Feldern
 		src?: string;
 		alt?: string;
 		imageShape?: "rectangle" | "circle";
@@ -103,7 +103,7 @@ const paletteItems: PaletteItemData[] = [
 			label: "Label",
 			placeholder: "Platzhalter",
 			fontSize: 16, // Schriftgröße des Input-Textes
-			labelTextSize: 14, // NEU: Standard Schriftgröße für das Label
+			labelTextSize: 14, //  Standard Schriftgröße für das Label
 			labelPosition: "top",
 			textAlignHorizontal: "left", // Textausrichtung im Input-Feld
 		},
@@ -161,7 +161,7 @@ const createInitialEditorFormState = (
 			fontStyle: el.properties.fontStyle || "normal",
 			// Input-spezifische Defaults
 			labelPosition: el.properties.labelPosition || "top",
-			labelTextSize: el.properties.labelTextSize || 14, // NEU: Default für LabelTextSize
+			labelTextSize: el.properties.labelTextSize || 14, //  Default für LabelTextSize
 			// Image-spezifische Defaults
 			imageShape: el.properties.imageShape || "rectangle",
 			// Line-spezifische Defaults
@@ -900,7 +900,7 @@ const FormEditorContainer: React.FC<FormEditorContainerProps> = ({
 					labelPosition = "top",
 					textAlignHorizontal,
 					labelTextSize,
-				} = element.properties; // NEU: labelTextSize hier destrukturieren
+				} = element.properties; //  labelTextSize hier destrukturieren
 				const inputWrapperStyle: React.CSSProperties = { ...baseStyle };
 				const finalLabelStyle: React.CSSProperties = {
 					display: "block",
@@ -909,7 +909,7 @@ const FormEditorContainer: React.FC<FormEditorContainerProps> = ({
 					textOverflow: "ellipsis",
 					padding: "0 2px",
 					flexShrink: 0,
-					fontSize: labelTextSize ? `${labelTextSize}px` : "inherit", // NEU: LabelTextSize anwenden
+					fontSize: labelTextSize ? `${labelTextSize}px` : "inherit", //  LabelTextSize anwenden
 				};
 				const finalInputFieldStyle: React.CSSProperties = {
 					// fontSize: 'inherit', // Erbt von baseStyle (element.properties.fontSize)

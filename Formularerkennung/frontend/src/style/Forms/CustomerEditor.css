@@ -34,7 +34,7 @@
 	margin-bottom: 0;
 }
 
-/* NEU: Hauptbereich, der Canvas und Sidebar nebeneinander anordnet */
+ /* Hauptbereich, der Canvas und Sidebar nebeneinander anordnet */
 .customer-form-editor-main-content {
 	display: flex;
 	flex-direction: row; /* Canvas und Sidebar nebeneinander */
@@ -66,7 +66,7 @@
 	min-height: 30rem;
 }
 
-/* NEU: Sidebar für Aktionen und zusätzliche Informationen */
+ /* Sidebar für Aktionen und zusätzliche Informationen */
 .customer-form-editor-sidebar {
 	width: 280px; /* Feste Breite für die Sidebar, oder flex-basis verwenden */
 	flex-shrink: 0; /* Sidebar soll nicht schrumpfen */

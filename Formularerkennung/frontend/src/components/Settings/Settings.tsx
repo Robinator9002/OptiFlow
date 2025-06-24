@@ -29,7 +29,7 @@ interface SettingsProps {
 	}) => void;
 	setCurrentUser: (user: UserPublic | null) => void;
 	onLogout: () => void;
-	// NEU: Props von App.tsx für vorab geladene Einstellungen und Callbacks
+	//  Props von App.tsx für vorab geladene Einstellungen und Callbacks
 	initialUserSettings: UserSettingsData | null;
 	onApplyVisualSettings: (settings?: UserSettingsData | null) => void;
 	onSettingsUpdate: (updatedSettings: UserSettingsData) => void;

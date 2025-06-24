@@ -12,10 +12,10 @@ import { ToastType } from "../Layout/ToastNotifications"; // Für addToast Prop
 interface StaffReceivedFormsViewProps {
 	addToast: (message: string, type?: ToastType, duration?: number) => void;
 	currentUser: api.UserPublic | null;
-	// NEU: Callback, um die Detailansicht einer Einreichung zu öffnen
+	//  Callback, um die Detailansicht einer Einreichung zu öffnen
 	onViewSubmissionDetails: (submission: EnrichedSubmission) => void;
 	onDeleteSubmission: (submission: EnrichedSubmission) => void;
-	// NEU: showConfirmModal Prop von App.tsx
+	//  showConfirmModal Prop von App.tsx
 	showConfirmModal: (config: {
 		title?: string;
 		message: string;

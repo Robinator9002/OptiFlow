@@ -22,7 +22,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [noUsersExist, setNoUsersExist] = useState<boolean>(false);
     
-    // NEU: State für die Sichtbarkeit des "Passwort vergessen"-Modals
+    //  State für die Sichtbarkeit des "Passwort vergessen"-Modals
     const [showResetModal, setShowResetModal] = useState<boolean>(false);
 
     // Check on initial render if any users exist to toggle setup mode
@@ -236,7 +236,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                         </button>
                     )}
                      
-                    {/* NEU: Der Hilfetext ist jetzt ein Link, der das Modal öffnet */}
+                    { /* Der Hilfetext ist jetzt ein Link, der das Modal öffnet */}
                     {!isRegistering && (
                         <p className="help-text">
                            <a href="#" onClick={(e) => { e.preventDefault(); setShowResetModal(true); }}>

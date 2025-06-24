@@ -73,7 +73,7 @@ class AccountManager:
 
         password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
         
-        # NEU: Der erste Benutzer ist immer ein Admin
+        #  Der erste Benutzer ist immer ein Admin
         new_user_is_admin = is_admin if not is_first_user else True
         
         self.users.append({

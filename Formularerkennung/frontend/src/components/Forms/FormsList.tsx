@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import * as api from "../../api/api";
 import type { FormPublic } from "../../api/api";
 import SendFormModal from "../Modals/SendFormModal";
-// NEU: Importiere ein einfaches Modal (oder baue es direkt hier)
+//  Importiere ein einfaches Modal (oder baue es direkt hier)
 // Annahme: Es existiert eine generische Modal-Komponente unter diesem Pfad
 import { CreateFormModal } from "../Modals/CreateFormModal";
 
@@ -52,11 +52,11 @@ const FormsListComponent: React.FC<FormsListProps> = ({
 	} | null>(null);
 	const [isPreparingSend, setIsPreparingSend] = useState<boolean>(false);
 
-	// NEU: State für das Template-Auswahl-Modal
+	//  State für das Template-Auswahl-Modal
 	const [isTemplateModalOpen, setIsTemplateModalOpen] =
 		useState<boolean>(false);
 	const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
-	// NEU: Ladezustand für die Navigation zum Editor
+	//  Ladezustand für die Navigation zum Editor
 	const [isNavigating, setIsNavigating] = useState<boolean>(false);
 
 	// Funktion zum Laden der Formulare
@@ -158,18 +158,18 @@ const FormsListComponent: React.FC<FormsListProps> = ({
 		// Toast wird im Modal angezeigt
 	};
 
-	// NEU: Handler zum Öffnen des Template-Auswahl-Modals
+	//  Handler zum Öffnen des Template-Auswahl-Modals
 	const handleOpenTemplateModal = () => {
 		setSelectedTemplateId(""); // Auswahl zurücksetzen
 		setIsTemplateModalOpen(true); // Modal öffnen
 	};
 
-	// NEU: Handler zum Schließen des Template-Auswahl-Modals
+	//  Handler zum Schließen des Template-Auswahl-Modals
 	const handleCloseTemplateModal = () => {
 		setIsTemplateModalOpen(false);
 	};
 
-	// NEU: Handler zum Starten des Editors (entweder leer oder mit Template)
+	//  Handler zum Starten des Editors (entweder leer oder mit Template)
 	const handleStartNewForm = async () => {
 		setIsNavigating(true); // Ladezustand für Navigation aktivieren
 		try {
@@ -318,7 +318,7 @@ const FormsListComponent: React.FC<FormsListProps> = ({
 				</ul>
 			)}
 
-			{/* NEU: Template-Auswahl-Modal */}
+			{ /* Template-Auswahl-Modal */}
 			<CreateFormModal // Verwendung der angenommenen Modal-Komponente
 				isOpen={isTemplateModalOpen}
 				onConfirm={handleStartNewForm}

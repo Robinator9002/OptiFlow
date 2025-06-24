@@ -8,7 +8,7 @@ import type { ToastType } from "../Layout/ToastNotifications";
 interface RegisterProps {
 	onRegistrationSuccess: (newUser: UserPublic) => void;
 	addToast: (message: string, type?: ToastType, duration?: number) => void;
-	// NEU: Callback zum Umschalten zur Login-Ansicht
+	//  Callback zum Umschalten zur Login-Ansicht
 	onSwitchToLogin: () => void;
 }
 

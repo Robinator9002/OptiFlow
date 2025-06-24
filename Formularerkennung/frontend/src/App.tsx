@@ -80,7 +80,7 @@ const AppContent: React.FC = () => {
 		{ isOpen: false, message: "", onConfirm: () => {}, onCancel: () => {} }
 	);
 
-	// NEU: State für die geladenen Benutzereinstellungen
+	//  State für die geladenen Benutzereinstellungen
 	const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
 
 	const { addToast } = useToast();
@@ -111,7 +111,7 @@ const AppContent: React.FC = () => {
 		[]
 	);
 
-	// NEU: Funktion zum Anwenden der visuellen Einstellungen
+	//  Funktion zum Anwenden der visuellen Einstellungen
 	const applyVisualSettings = useCallback((settings?: UserSettings | null) => {
 		const themeToApply = settings?.theme ?? DEFAULT_THEME;
 		const fontSizeToApply =
@@ -151,7 +151,7 @@ const AppContent: React.FC = () => {
 							: "formsList"
 					);
 
-					// NEU: Benutzereinstellungen laden und anwenden, nachdem der Benutzer geladen wurde
+					//  Benutzereinstellungen laden und anwenden, nachdem der Benutzer geladen wurde
 					try {
 						const settings = await apiFunctions.getMyUserSettings();
 						setUserSettings(settings);
@@ -285,7 +285,7 @@ const AppContent: React.FC = () => {
 		setActiveTab(initialTab);
 		addToast(`Willkommen zurück, ${userWithRole.username}!`, "success");
 
-		// NEU: Einstellungen direkt nach Login laden und anwenden
+		//  Einstellungen direkt nach Login laden und anwenden
 		try {
 			const settings = await apiFunctions.getMyUserSettings();
 			setUserSettings(settings);
@@ -535,7 +535,7 @@ const AppContent: React.FC = () => {
 						showConfirmModal={showConfirmModal}
 						setCurrentUser={setCurrentUser}
 						onLogout={handleLogout}
-						// NEU: Übergebe die geladenen Einstellungen und die apply-Funktion
+						//  Übergebe die geladenen Einstellungen und die apply-Funktion
 						initialUserSettings={userSettings}
 						onApplyVisualSettings={applyVisualSettings}
 						// onSettingsUpdate wird benötigt, um userSettings in App.tsx zu aktualisieren

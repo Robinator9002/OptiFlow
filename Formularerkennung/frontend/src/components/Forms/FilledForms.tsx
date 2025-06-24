@@ -14,10 +14,10 @@ interface FilledFormsProps {
 		duration?: number
 	) => void;
 	onOpenFormToFill: (formTemplateId: string, formName: string) => void;
-	// NEU: Callback für die Detailansicht einer Einreichung
+	//  Callback für die Detailansicht einer Einreichung
 	onViewSubmissionDetails: (submission: EnrichedSubmission) => void;
 	onDeleteSubmission: (submission: EnrichedSubmission) => void;
-	// NEU: showConfirmModal Prop von App.tsx
+	//  showConfirmModal Prop von App.tsx
 	showConfirmModal: (config: {
 		title?: string;
 		message: string;

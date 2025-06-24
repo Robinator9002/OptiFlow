@@ -18,7 +18,7 @@ interface CustomerFormEditorProps {
 	onFormSubmitted: (submittedFormData: FilledFormPublic) => void;
 	onCloseEditor: () => void;
 	addToast: (message: string, type?: ToastType, duration?: number) => void;
-	// NEU: showConfirmModal Prop von App.tsx
+	//  showConfirmModal Prop von App.tsx
 	showConfirmModal: (config: {
 		title?: string;
 		message: string;

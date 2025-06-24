@@ -129,7 +129,7 @@
     margin-top: 1rem;
 }
 
-/* NEU: Styling für den "Passwort vergessen?" Link */
+ /* Styling für den "Passwort vergessen?" Link */
 .help-text a {
     color: var(--text-secondary);
     font-size: 1rem;
@@ -144,7 +144,7 @@
     border-bottom-color: var(--text-primary);
 }
 
-/* NEU: Hilfs-Styling für den Warnhinweis im Modal */
+ /* Hilfs-Styling für den Warnhinweis im Modal */
 .reset-warning {
     margin-top: 1rem;
     margin-bottom: 1rem;

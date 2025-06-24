@@ -1,7 +1,7 @@
 import React, { createContext, useState, useCallback, useEffect } from "react";
 import { getUserSettings, type Settings as ApiSettings } from "../api/api";
 
-// NEU: Ein zentrales Objekt für alle Standardeinstellungen.
+//  Ein zentrales Objekt für alle Standardeinstellungen.
 // Dies ist jetzt die einzige Quelle der Wahrheit für die Defaults.
 export const DEFAULT_SETTINGS: ApiSettings = {
     theme_name: "default",

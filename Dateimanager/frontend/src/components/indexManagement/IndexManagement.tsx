@@ -7,7 +7,7 @@ import {
     loadIndex,
     deleteIndex,
 } from "../../api/api.tsx";
-// NEU: Icons aus lucide-react importiert
+//  Icons aus lucide-react importiert
 import { RefreshCw, FileScan, Download, Trash2 } from "lucide-react";
 
 // --- Type Definitions ---

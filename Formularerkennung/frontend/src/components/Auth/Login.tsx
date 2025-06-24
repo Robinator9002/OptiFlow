@@ -6,7 +6,7 @@ interface LoginComponentProps {
 	onLoginSuccess: (user: api.UserPublic) => void;
 	setAuthError: (error: string | null) => void;
 	authError: string | null;
-	// NEU: Callback zum Umschalten zur Registrierungsansicht
+	//  Callback zum Umschalten zur Registrierungsansicht
 	onSwitchToRegister: () => void;
 }
 

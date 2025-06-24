@@ -171,9 +171,9 @@
     border-top: 1px solid var(--border-primary, #d1d5db);
     padding-top: 20px;
     margin-top: 15px;
-    display: flex; /* NEU: Flexbox für Button-Anordnung */
-    justify-content: flex-end; /* NEU: Buttons nach rechts */
-    gap: 15px; /* NEU: Abstand zwischen Buttons */
+    display: flex;  /* Flexbox für Button-Anordnung */
+    justify-content: flex-end;  /* Buttons nach rechts */
+    gap: 15px;  /* Abstand zwischen Buttons */
     flex-shrink: 0;
 }
 
@@ -186,7 +186,7 @@
     background-color: var(--accent-primary-hover, #2563eb);
 }
 
-/* NEU: Styling für den sekundären Button */
+ /* Styling für den sekundären Button */
 .help-modal-footer .secondary-action-button {
     background-color: var(--bg-tertiary, #e5e7eb);
     color: var(--text-secondary, #374151);
