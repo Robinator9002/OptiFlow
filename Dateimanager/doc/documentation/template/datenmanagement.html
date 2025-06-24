@@ -1,0 +1,247 @@
+<!-- datenmanagement.html -->
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Datenmanagement & Backup - OptiFlow Dokumentation</title>
+        <link rel="stylesheet" href="style.css" />
+
+        <!-- Anti-Flicker Theme Loader -->
+        <script>
+            (function () {
+                try {
+                    const theme =
+                        localStorage.getItem("doc_theme") || "default";
+                    if (theme !== "default") {
+                        document.documentElement.setAttribute(
+                            "data-theme",
+                            theme
+                        );
+                    }
+                } catch (e) {
+                    /* localStorage is not available */
+                }
+            })();
+        </script>
+
+        <script src="https://unpkg.com/lucide@latest" defer></script>
+    </head>
+    <body>
+        <div class="theme-switcher theme-switcher-floating">
+            <button id="theme-default" title="Helles Theme">
+                <i data-lucide="sun"></i>
+            </button>
+            <button id="theme-dark" title="Dunkles Theme">
+                <i data-lucide="moon"></i>
+            </button>
+            <button id="theme-contrast" title="Hoher Kontrast">
+                <i data-lucide="contrast"></i>
+            </button>
+        </div>
+        <header>
+            <h1>OptiFlow Dateimanager - Dokumentation</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Übersicht</a></li>
+                    <li>
+                        <a href="installation.html">Installation</a>
+                    </li>
+                    <li><a href="erste_schritte.html">Erste Schritte</a></li>
+                    <li>
+                        <a href="funktionen_benutzer.html"
+                            >Funktionen (Benutzer)</a
+                        >
+                    </li>
+                    <li>
+                        <a href="funktionen_admin.html">Funktionen (Admin)</a>
+                    </li>
+                    <li><a href="einstellungen.html">Einstellungen</a></li>
+                    <li>
+                        <a href="technik_sicherheit.html"
+                            >Technik & Sicherheit</a
+                        >
+                    </li>
+                    <li class="active">
+                        <a href="datenmanagement.html">Datenmanagement</a>
+                    </li>
+                    <li><a href="tastenkürzel.html">Tastenkürzel</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section id="datenmanagement-intro">
+                <h2>Datenmanagement, Backup & Wiederherstellung</h2>
+                <p>
+                    Ein robustes Datenmanagement ist das Rückgrat eines jeden
+                    zuverlässigen Systems. Dieser Abschnitt ist der Leitfaden
+                    für Administratoren zur Sicherung, Wiederherstellung und im
+                    Notfall auch zur Zurücksetzung der OptiFlow-Kerndaten. Ein
+                    Verständnis dieser Prozesse ist entscheidend für die
+                    Aufrechterhaltung der Systemintegrität.
+                </p>
+                <div class="info-box tech">
+                    <h4>Der `data` Ordner: Das Herz des Systems</h4>
+                    <p>
+                        Alle Kerndaten von OptiFlow – Benutzer, Index, Events,
+                        etc. – werden als separate <code>.json</code>-Dateien im
+                        <code>data</code>-Verzeichnis gespeichert. Der genaue
+                        Pfad hängt von Ihrer
+                        <a href="installation.html#windows-installer"
+                            >Installationsmethode</a
+                        >
+                        ab. Alle hier beschriebenen Aktionen beziehen sich auf
+                        die Dateien in diesem Ordner.
+                    </p>
+                </div>
+            </section>
+
+            <section id="workflow-cards">
+                <div class="workflow-grid">
+                    <!-- Workflow Card: Backup -->
+                    <div class="workflow-card">
+                        <div class="workflow-icon">
+                            <i data-lucide="download-cloud"></i>
+                        </div>
+                        <h3>1. Backup erstellen</h3>
+                        <p>
+                            Sichern Sie regelmäßig alle kritischen Systemdateien
+                            direkt über die Web-Oberfläche.
+                        </p>
+                        <ol>
+                            <li>
+                                Gehen Sie zu
+                                <a href="einstellungen.html">Einstellungen</a>
+                                &rarr; <strong>Datenbank</strong>.
+                            </li>
+                            <li>
+                                Wählen Sie nacheinander jede wichtige Datei aus
+                                (z.B. <code>users.json</code>,
+                                <code>index.json</code>,
+                                <code>events.json</code>).
+                            </li>
+                            <li>
+                                Klicken Sie für jede Datei auf den Button
+                                <strong>"Download Backup"</strong>.
+                            </li>
+                            <li>
+                                Bewahren Sie diese JSON-Dateien an einem
+                                sicheren, externen Ort auf.
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Workflow Card: Restore -->
+                    <div class="workflow-card">
+                        <div class="workflow-icon">
+                            <i data-lucide="upload-cloud"></i>
+                        </div>
+                        <h3>2. System wiederherstellen</h3>
+                        <p>
+                            Stellen Sie einen früheren Systemzustand aus Ihren
+                            Backup-Dateien wieder her.
+                        </p>
+                        <ol>
+                            <li>
+                                Stoppen Sie die OptiFlow-Anwendung vollständig.
+                            </li>
+                            <li>
+                                Navigieren Sie zum <code>data</code>-Ordner auf
+                                Ihrem Server.
+                            </li>
+                            <li>
+                                Ersetzen Sie die vorhandenen
+                                <code>.json</code>-Dateien durch Ihre
+                                Backup-Versionen.
+                            </li>
+                            <li>Starten Sie OptiFlow neu.</li>
+                            <li>
+                                <strong>Wichtig:</strong> Gehen Sie zu
+                                <a href="funktionen_admin.html"
+                                    >Funktionen (Admin)</a
+                                >
+                                &rarr; <strong>Index & Scanner</strong> und
+                                klicken Sie auf <strong>"Index laden"</strong>,
+                                um sicherzustellen, dass die App den
+                                wiederhergestellten Index korrekt einliest.
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Workflow Card: Reset -->
+                    <div class="workflow-card">
+                        <div class="workflow-icon">
+                            <i data-lucide="hard-drive-reset"></i>
+                        </div>
+                        <h3>3. Notfall-Reset</h3>
+                        <p>
+                            Wenn der Admin-Zugang verloren geht, können Sie das
+                            Benutzersystem zurücksetzen.
+                        </p>
+                        <ol>
+                            <li>
+                                Stoppen Sie die OptiFlow-Anwendung vollständig.
+                            </li>
+                            <li>
+                                Navigieren Sie zum <code>data</code>-Ordner.
+                            </li>
+                            <li>
+                                Löschen Sie <strong>nur</strong> die Datei
+                                <code>users.json</code>.
+                            </li>
+                            <li>Starten Sie OptiFlow neu.</li>
+                            <li>
+                                Die App befindet sich nun im
+                                Ersteinrichtungs-Modus. Der nächste Benutzer,
+                                der sich registriert, wird automatisch zum neuen
+                                Administrator.
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <section id="reset-warning-section">
+                <div class="info-box danger">
+                    <h4>
+                        <i data-lucide="alert-triangle"></i> Achtung: Der
+                        "Passwort vergessen"-Reset ist destruktiv!
+                    </h4>
+                    <p>
+                        Die im Login-Dialog beschriebene und hier unter Punkt 3
+                        detaillierte Methode zum Zurücksetzen eines vergessenen
+                        Admin-Passworts ist ein letzter Ausweg.
+                    </p>
+                    <p>
+                        Durch das Löschen der
+                        <strong><code>users.json</code></strong> gehen
+                        <strong
+                            >alle Benutzerkonten, alle Passwörter und alle
+                            benutzerspezifischen Einstellungen unwiderruflich
+                            verloren</strong
+                        >. Ihre anderen Daten wie der Suchindex
+                        (<code>index.json</code>) bleiben zwar erhalten, aber
+                        die gesamte Benutzerverwaltung wird auf null gesetzt.
+                    </p>
+                    <p>
+                        Dieser Vorgang sollte nur durchgeführt werden, wenn eine
+                        Wiederherstellung über ein Backup nicht möglich oder
+                        nicht gewünscht ist.
+                    </p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2025 Robin Schumacher</p>
+        </footer>
+        <script>
+            // Skript für Lucide Icons
+            document.addEventListener("DOMContentLoaded", () => {
+                if (typeof lucide !== "undefined") {
+                    lucide.createIcons();
+                }
+            });
+        </script>
+        <script src="theme-switcher.js" defer></script>
+    </body>
+</html>
