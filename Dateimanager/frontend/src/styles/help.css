@@ -171,19 +171,34 @@
     border-top: 1px solid var(--border-primary, #d1d5db);
     padding-top: 20px;
     margin-top: 15px;
-    text-align: right;
-    flex-shrink: 0; /* Prevents the footer from shrinking */
+    display: flex; /* NEU: Flexbox für Button-Anordnung */
+    justify-content: flex-end; /* NEU: Buttons nach rechts */
+    gap: 15px; /* NEU: Abstand zwischen Buttons */
+    flex-shrink: 0;
 }
 
 .help-modal-footer .action-button {
-    /* Uses global button styles, but can be adjusted here */
     background-color: var(--accent-primary, #3b82f6);
     color: var(--text-on-accent, #ffffff);
     padding: 10px 20px;
 }
 .help-modal-footer .action-button:hover {
-    background-color: var(--accent-primary-hover, #2563eb); /* Uses variable */
+    background-color: var(--accent-primary-hover, #2563eb);
 }
+
+/* NEU: Styling für den sekundären Button */
+.help-modal-footer .secondary-action-button {
+    background-color: var(--bg-tertiary, #e5e7eb);
+    color: var(--text-secondary, #374151);
+    padding: 10px 20px;
+    border: 1px solid var(--border-primary, #d1d5db);
+}
+
+.help-modal-footer .secondary-action-button:hover {
+    background-color: var(--border-primary, #d1d5db);
+    color: var(--text-primary, #1f2937);
+}
+
 
 /* Animations for the Modal */
 @keyframes fadeInOverlay {

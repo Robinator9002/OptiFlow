@@ -53,7 +53,13 @@
 		"files": [
 			"dist/**/*",
 			"electron-main.js",
-			"package.json"
+			"preload.js"
+		],
+		"extraResources": [
+			{
+				"from": "./doc/documentation/template",
+				"to": "doc"
+			}
 		],
 		"extraFiles": [
 			{

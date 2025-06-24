@@ -4,7 +4,25 @@ interface HelpProps {
     onClose: () => void;
 }
 
+// TypeScript-Definition für die Preload-API
+declare global {
+    interface Window {
+        electron: {
+            openDocs: () => Promise<void>;
+        }
+    }
+}
+
 export const Help: React.FC<HelpProps> = ({ onClose }) => {
+
+    const handleOpenDocs = () => {
+        if (window.electron) {
+            window.electron.openDocs();
+        } else {
+            console.error("Electron API not found. Is preload.js configured correctly?");
+        }
+    };
+
     return (
         <div className="help-modal-overlay">
             <div className="help-modal-content">
@@ -115,6 +133,10 @@ export const Help: React.FC<HelpProps> = ({ onClose }) => {
                     </section>
                 </div>
                 <div className="help-modal-footer">
+                    {/* NEUER BUTTON */}
+                    <button onClick={handleOpenDocs} className="secondary-action-button">
+                        Vollständige Dokumentation öffnen
+                    </button>
                     <button onClick={onClose} className="action-button">
                         Schließen
                     </button>

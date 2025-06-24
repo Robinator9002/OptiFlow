@@ -1,20 +1,19 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 import isDev from "electron-is-dev";
 import { spawn } from "child_process";
-import os from "os"; // Importiere 'os' um TEMP-Verzeichnis zu finden
+import os from "os"; 
 import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let pythonProcess;
-let mainWindow; // Fenster global halten für Debugging
+let mainWindow;
 
-// Funktion zum Schreiben von Logs in eine Datei
 function writeLog(message) {
-    const logDir = path.join(os.tmpdir(), "OptiFlowLogs"); // Log-Verzeichnis im System-Temp-Ordner
+    const logDir = path.join(os.tmpdir(), "OptiFlowLogs"); 
     if (!fs.existsSync(logDir)) {
         fs.mkdirSync(logDir, { recursive: true });
     }
@@ -22,22 +21,38 @@ function writeLog(message) {
     fs.appendFileSync(logFile, `${new Date().toISOString()} - ${message}\n`);
 }
 
+// Handler zum Öffnen der Dokumentation
+ipcMain.handle('open-documentation', () => {
+    const docPath = isDev
+      ? path.resolve(__dirname, '..', 'doc', 'documentation', 'template', 'index.html')
+      : path.resolve(process.resourcesPath, 'doc', 'index.html');
+      
+    writeLog(`Attempting to open documentation at: ${docPath}`);
+
+    if (fs.existsSync(docPath)) {
+        shell.openPath(docPath);
+        writeLog(`Successfully opened documentation.`);
+    } else {
+        writeLog(`ERROR: Documentation file not found at: ${docPath}`);
+    }
+});
+
+
 function createWindow() {
     mainWindow = new BrowserWindow({
-        // Fenster global zuweisen
         width: 1440,
         height: 800,
         icon: path.join(__dirname, "public", "icon.png"),
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
-            // preload: path.join(__dirname, 'preload.js') // Füge dies hinzu, wenn du einen Preload-Skript hast
+            // WICHTIG: Preload-Skript aktivieren
+            preload: path.join(__dirname, 'preload.js') 
         },
     });
 
     writeLog("createWindow called.");
 
-    // === START PYTHON BACKEND ===
     function startPythonBackend() {
         let pythonExecutablePath;
 
@@ -51,16 +66,12 @@ function createWindow() {
             );
             writeLog(`Dev path to Python executable: ${pythonExecutablePath}`);
         } else {
-            // Im Produktionsmodus: Finde den Root-Pfad der Anwendung
             const appRoot = path.dirname(app.getPath("exe"));
-
-            // Der 'backend'-Ordner liegt direkt in diesem Root, als Geschwister-Ordner
             pythonExecutablePath = path.join(
                 appRoot,
                 "backend",
                 "OptiFlowFileManager.exe"
             );
-
             writeLog(`Prod path to Python executable: ${pythonExecutablePath}`);
         }
 
@@ -91,19 +102,15 @@ function createWindow() {
         writeLog("Python backend spawn command sent.");
     }
 
-    startPythonBackend(); // Starte das Python-Backend beim Initialisieren des Fensters
+    startPythonBackend();
 
-    // === LADE FRONTEND ===
     if (isDev) {
         writeLog(
             "Loading frontend in development mode from http://localhost:5173"
         );
         mainWindow.loadURL("http://localhost:5173");
-        mainWindow.webContents.openDevTools(); // Öffne DevTools im Entwicklungsmodus
+        mainWindow.webContents.openDevTools(); 
     } else {
-        // Die folgende Zeile wurde entfernt, um die DevTools in der Produktionsversion nicht automatisch zu öffnen.
-        // mainWindow.webContents.openDevTools(); 
-        
         const frontendPath = path.join(__dirname, "dist", "index.html");
         writeLog(
             `Loading frontend in production mode from file: ${frontendPath}`
@@ -113,7 +120,7 @@ function createWindow() {
             writeLog(
                 `ERROR: Frontend index.html not found at: ${frontendPath}`
             );
-            mainWindow.loadFile(path.join(__dirname, "error.html")); // Lade eine Fehlerseite
+            mainWindow.loadFile(path.join(__dirname, "error.html")); 
             return;
         }
 
@@ -121,24 +128,18 @@ function createWindow() {
     }
 }
 
-// Diese Methode wird aufgerufen, wenn Electron mit der Initialisierung fertig ist
-// und bereit ist, Browser-Fenster zu erstellen.
 app.whenReady().then(() => {
     createWindow();
 
     app.on("activate", function () {
-        // macOS: Erstelle ein neues Fenster, wenn auf das Dock-Icon geklickt wird und keine anderen Fenster offen sind.
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
 });
 
-// Beende die Anwendung, wenn alle Fenster geschlossen sind (außer auf macOS).
 app.on("window-all-closed", function () {
     if (process.platform !== "darwin") app.quit();
-    // Beende den Python-Prozess sauber, wenn die Electron-App geschlossen wird
     if (pythonProcess) {
         console.log("Terminating Python backend...");
-        pythonProcess.kill(); // Sendet SIGTERM
-        // Für Windows: pythonProcess.kill('SIGKILL'); falls SIGTERM nicht reicht
+        pythonProcess.kill();
     }
 });
