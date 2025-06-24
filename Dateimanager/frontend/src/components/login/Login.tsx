@@ -154,6 +154,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                             <p>
                                Nachdem Sie die Datei gelöscht und die App neu gestartet haben, können Sie hier einen neuen Administrator-Account anlegen.
                             </p>
+                            <p>In einigen Fällen kann es passieren das der Server zuerst einige Aufträge ausführt, wie Events die fällig werden oder das laden des Indexes. Normalerweiße reicht es hier einfach etwas zu warten, wenn das nicht Funktioniert dann hilft es den Data Ordner zu komplett löschen. Davor sollte allerdings ein backup von allen darin vorhandenen Dateien gemacht werden!</p>
                         </div>
                         {/* ENDE: Ersetzter Block */}
                         <div className="modal-buttons">
