@@ -125,20 +125,20 @@ header {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border-bottom: 1px solid var(--border-primary);
     
-    /* NEU: Geänderte Positionierung für den Auto-Hide-Effekt */
-    position: fixed; /* Geändert von sticky zu fixed */
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    width: 100%; /* Stellt sicher, dass der Header die volle Breite hat */
-    
+    width: 100%;
     z-index: 1000;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.25em;
-
-    /* NEU: Transition für sanftes Ein-/Ausblenden */
+    padding: 1.5em 1.5em;
+    background-color: var(--header-bg);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border-primary);
     transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1);
     transform: translateY(0);
 }
@@ -149,6 +149,11 @@ header.header-hidden {
     box-shadow: none;
 }
 
+/* NEU: Styling für den fixierten Zustand */
+header.is-pinned {
+    /* Wichtig: Überschreibt die 'header-hidden' Transformation */
+    transform: translateY(0) !important;
+}
 
 header h1 {
     font-size: 1.8em;
@@ -157,6 +162,35 @@ header h1 {
     color: var(--text-primary);
     margin: 0;
     order: 1;
+}
+
+/* NEU: Pin-Button Styling */
+#pin-header-toggle {
+    position: absolute;
+    left: 10%;
+    top: 2rem;
+    background: transparent;
+    border: 1px solid var(--border-primary);
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+#pin-header-toggle:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+header.is-pinned #pin-header-toggle {
+    background-color: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
 }
 
 nav {
