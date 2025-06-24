@@ -159,10 +159,6 @@ header.header-hidden {
     box-shadow: none;
 }
 
-header.is-pinned {
-    /* No change needed here, it just prevents hiding */
-}
-
 .header-top-row {
     display: flex;
     justify-content: space-between;
