@@ -3,8 +3,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import isDev from "electron-is-dev";
 import { spawn } from "child_process";
-import os from "os"; 
+import os from "os";
 import fs from "fs";
+import http from "http";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,8 +13,15 @@ const __dirname = path.dirname(__filename);
 let pythonProcess;
 let mainWindow;
 
+let docServer = null;
+const DOC_PORT = 8081;
+
+/**
+ * Schreibt eine Log-Nachricht in eine temporäre Datei.
+ * @param {string} message Die zu loggende Nachricht.
+ */
 function writeLog(message) {
-    const logDir = path.join(os.tmpdir(), "OptiFlowLogs"); 
+    const logDir = path.join(os.tmpdir(), "OptiFlowLogs");
     if (!fs.existsSync(logDir)) {
         fs.mkdirSync(logDir, { recursive: true });
     }
@@ -21,23 +29,120 @@ function writeLog(message) {
     fs.appendFileSync(logFile, `${new Date().toISOString()} - ${message}\n`);
 }
 
-// Handler zum Öffnen der Dokumentation
-ipcMain.handle('open-documentation', () => {
-    const docPath = isDev
-      ? path.resolve(__dirname, '..', 'doc', 'documentation', 'template', 'index.html')
-      : path.resolve(process.resourcesPath, 'doc', 'index.html');
-      
-    writeLog(`Attempting to open documentation at: ${docPath}`);
-
-    if (fs.existsSync(docPath)) {
-        shell.openPath(docPath);
-        writeLog(`Successfully opened documentation.`);
-    } else {
-        writeLog(`ERROR: Documentation file not found at: ${docPath}`);
+// --- HANDLER ZUM ÖFFNEN DER DOKUMENTATION (MIT UMLAUT-FIX) ---
+ipcMain.handle("open-documentation", async () => {
+    if (docServer && docServer.listening) {
+        const serverAddress = `http://localhost:${DOC_PORT}`;
+        writeLog(
+            `Dokumentations-Server läuft bereits. Öffne Browser bei ${serverAddress}`
+        );
+        await shell.openExternal(serverAddress);
+        return;
     }
+
+    const docDir = isDev
+        ? path.resolve(__dirname, "..", "doc", "documentation", "template")
+        : path.resolve(process.resourcesPath, "doc");
+
+    writeLog(`Pfad zum Dokumentations-Verzeichnis: ${docDir}`);
+
+    if (!fs.existsSync(docDir)) {
+        writeLog(
+            `FEHLER: Dokumentations-Verzeichnis nicht gefunden unter: ${docDir}`
+        );
+        if (mainWindow) {
+            mainWindow.webContents.send(
+                "error-dialog",
+                "Dokumentation nicht gefunden",
+                `Das Verzeichnis wurde nicht gefunden: ${docDir}`
+            );
+        }
+        return;
+    }
+
+    docServer = http.createServer((req, res) => {
+        let requestUrl = req.url === "/" ? "index.html" : req.url;
+        requestUrl = requestUrl.split("?")[0];
+
+        // KORREKTUR 1: URL dekodieren, um mit Sonderzeichen wie 'ü' umgehen zu können.
+        try {
+            requestUrl = decodeURIComponent(requestUrl);
+        } catch (e) {
+            res.writeHead(400, { "Content-Type": "text/plain" });
+            res.end("Bad Request: Malformed URI");
+            return;
+        }
+
+        let filePath = path.join(docDir, requestUrl);
+
+        if (!filePath.startsWith(docDir)) {
+            res.writeHead(403, { "Content-Type": "text/plain" });
+            res.end("Forbidden");
+            return;
+        }
+
+        const extname = String(path.extname(filePath)).toLowerCase();
+        const mimeTypes = {
+            ".html": "text/html",
+            ".css": "text/css",
+            ".js": "application/javascript",
+            ".json": "application/json",
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".svg": "image/svg+xml",
+        };
+        const contentType = mimeTypes[extname] || "application/octet-stream";
+
+        fs.readFile(filePath, (error, content) => {
+            if (error) {
+                if (error.code === "ENOENT") {
+                    // KORREKTUR 2: Eine echte 404-Fehlerseite senden, anstatt auf index.html umzuleiten.
+                    res.writeHead(404, {
+                        "Content-Type": "text/html; charset=utf-8",
+                    });
+                    res.end(`
+                        <div style="font-family: sans-serif; text-align: center; padding: 40px;">
+                            <h1>404 - Nicht gefunden</h1>
+                            <p>Die angeforderte Ressource wurde auf diesem Server nicht gefunden:</p>
+                            <p style="background: #eee; padding: 10px; border-radius: 4px; display: inline-block;"><code>${requestUrl}</code></p>
+                            <hr style="width: 200px; margin: 20px auto;">
+                            <p><a href="/">Zurück zur Startseite</a></p>
+                        </div>
+                    `);
+                } else {
+                    res.writeHead(500);
+                    res.end(`Server Error: ${error.code}`);
+                }
+            } else {
+                res.writeHead(200, { "Content-Type": contentType });
+                res.end(content, "utf-8");
+            }
+        });
+    });
+
+    docServer
+        .listen(DOC_PORT, "127.0.0.1", () => {
+            const serverAddress = `http://localhost:${DOC_PORT}`;
+            writeLog(
+                `Dokumentations-Server erfolgreich gestartet unter ${serverAddress}`
+            );
+            shell.openExternal(serverAddress);
+        })
+        .on("error", (err) => {
+            writeLog(`FEHLER beim Starten des Doku-Servers: ${err.message}`);
+            if (mainWindow) {
+                mainWindow.webContents.send(
+                    "error-dialog",
+                    "Doku-Server Fehler",
+                    `Der Server konnte nicht gestartet werden: ${err.message}`
+                );
+            }
+        });
 });
 
-
+/**
+ * Erstellt das Hauptfenster der Anwendung.
+ */
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1440,
@@ -46,61 +151,11 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
-            // WICHTIG: Preload-Skript aktivieren
-            preload: path.join(__dirname, 'preload.js') 
+            preload: path.join(__dirname, "preload.js"),
         },
     });
 
     writeLog("createWindow called.");
-
-    function startPythonBackend() {
-        let pythonExecutablePath;
-
-        if (isDev) {
-            pythonExecutablePath = path.join(
-                __dirname,
-                "..",
-                "dist",
-                "OptiFlowFileManager",
-                "OptiFlowFileManager.exe"
-            );
-            writeLog(`Dev path to Python executable: ${pythonExecutablePath}`);
-        } else {
-            const appRoot = path.dirname(app.getPath("exe"));
-            pythonExecutablePath = path.join(
-                appRoot,
-                "backend",
-                "OptiFlowFileManager.exe"
-            );
-            writeLog(`Prod path to Python executable: ${pythonExecutablePath}`);
-        }
-
-        if (!fs.existsSync(pythonExecutablePath)) {
-            writeLog(
-                `ERROR: Python executable not found at: ${pythonExecutablePath}`
-            );
-            return;
-        }
-
-        writeLog(`Attempting to spawn Python backend: ${pythonExecutablePath}`);
-
-        pythonProcess = spawn(pythonExecutablePath, [], {
-            stdio: "inherit",
-            cwd: path.dirname(pythonExecutablePath),
-        });
-
-        pythonProcess.on("error", (err) => {
-            writeLog(
-                `ERROR: Failed to start Python backend process: ${err.message}`
-            );
-        });
-
-        pythonProcess.on("close", (code) => {
-            writeLog(`Python backend exited with code ${code}`);
-        });
-
-        writeLog("Python backend spawn command sent.");
-    }
 
     startPythonBackend();
 
@@ -109,9 +164,9 @@ function createWindow() {
             "Loading frontend in development mode from http://localhost:5173"
         );
         mainWindow.loadURL("http://localhost:5173");
-        mainWindow.webContents.openDevTools(); 
+        mainWindow.webContents.openDevTools();
     } else {
-        const frontendPath = path.join(__dirname, "dist", "index.html");
+        const frontendPath = path.join(__dirname, "..", "dist", "index.html");
         writeLog(
             `Loading frontend in production mode from file: ${frontendPath}`
         );
@@ -120,13 +175,67 @@ function createWindow() {
             writeLog(
                 `ERROR: Frontend index.html not found at: ${frontendPath}`
             );
-            mainWindow.loadFile(path.join(__dirname, "error.html")); 
+            mainWindow.loadFile(path.join(__dirname, "error.html"));
             return;
         }
 
         mainWindow.loadFile(frontendPath);
     }
 }
+
+/**
+ * Startet den Python-Backend-Prozess.
+ */
+function startPythonBackend() {
+    let pythonExecutablePath;
+
+    if (isDev) {
+        pythonExecutablePath = path.join(
+            __dirname,
+            "..",
+            "dist",
+            "OptiFlowFileManager",
+            "OptiFlowFileManager.exe"
+        );
+        writeLog(`Dev path to Python executable: ${pythonExecutablePath}`);
+    } else {
+        const appRoot = path.dirname(app.getPath("exe"));
+        pythonExecutablePath = path.join(
+            appRoot,
+            "backend",
+            "OptiFlowFileManager.exe"
+        );
+        writeLog(`Prod path to Python executable: ${pythonExecutablePath}`);
+    }
+
+    if (!fs.existsSync(pythonExecutablePath)) {
+        writeLog(
+            `ERROR: Python executable not found at: ${pythonExecutablePath}`
+        );
+        return;
+    }
+
+    writeLog(`Attempting to spawn Python backend: ${pythonExecutablePath}`);
+
+    pythonProcess = spawn(pythonExecutablePath, [], {
+        stdio: "inherit",
+        cwd: path.dirname(pythonExecutablePath),
+    });
+
+    pythonProcess.on("error", (err) => {
+        writeLog(
+            `ERROR: Failed to start Python backend process: ${err.message}`
+        );
+    });
+
+    pythonProcess.on("close", (code) => {
+        writeLog(`Python backend exited with code ${code}`);
+    });
+
+    writeLog("Python backend spawn command sent.");
+}
+
+// Electron App Lifecycle Events
 
 app.whenReady().then(() => {
     createWindow();
@@ -137,9 +246,18 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", function () {
-    if (process.platform !== "darwin") app.quit();
+    if (process.platform !== "darwin") {
+        app.quit();
+    }
+});
+
+app.on("will-quit", () => {
     if (pythonProcess) {
         console.log("Terminating Python backend...");
         pythonProcess.kill();
+    }
+    if (docServer) {
+        console.log("Closing documentation server...");
+        docServer.close();
     }
 });
