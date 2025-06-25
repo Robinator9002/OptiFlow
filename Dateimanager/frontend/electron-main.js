@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, ipcMain, shell, protocol } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 import isDev from "electron-is-dev";
@@ -29,7 +29,7 @@ function writeLog(message) {
     fs.appendFileSync(logFile, `${new Date().toISOString()} - ${message}\n`);
 }
 
-// --- HANDLER ZUM ÖFFNEN DER DOKUMENTATION (MIT UMLAUT-FIX) ---
+// --- HANDLER ZUM ÖFFNEN DER DOKUMENTATION ---
 ipcMain.handle("open-documentation", async () => {
     if (docServer && docServer.listening) {
         const serverAddress = `http://localhost:${DOC_PORT}`;
@@ -64,7 +64,6 @@ ipcMain.handle("open-documentation", async () => {
         let requestUrl = req.url === "/" ? "index.html" : req.url;
         requestUrl = requestUrl.split("?")[0];
 
-        // KORREKTUR 1: URL dekodieren, um mit Sonderzeichen wie 'ü' umgehen zu können.
         try {
             requestUrl = decodeURIComponent(requestUrl);
         } catch (e) {
@@ -96,7 +95,6 @@ ipcMain.handle("open-documentation", async () => {
         fs.readFile(filePath, (error, content) => {
             if (error) {
                 if (error.code === "ENOENT") {
-                    // KORREKTUR 2: Eine echte 404-Fehlerseite senden, anstatt auf index.html umzuleiten.
                     res.writeHead(404, {
                         "Content-Type": "text/html; charset=utf-8",
                     });
@@ -166,20 +164,19 @@ function createWindow() {
         mainWindow.loadURL("http://localhost:5173");
         mainWindow.webContents.openDevTools();
     } else {
-        const frontendPath = path.join(__dirname, "..", "dist", "index.html");
-        writeLog(
-            `Loading frontend in production mode from file: ${frontendPath}`
-        );
+        // HIER SIND DIE ÄNDERUNGEN: Wir verwenden jetzt `loadURL` mit unserem neuen Protokoll.
+        const frontendPath = path.join(__dirname, "dist", "index.html");
+        writeLog(`Lade Frontend im Produktionsmodus von: ${frontendPath}`);
 
         if (!fs.existsSync(frontendPath)) {
             writeLog(
-                `ERROR: Frontend index.html not found at: ${frontendPath}`
+                `FEHLER: Frontend index.html nicht gefunden unter: ${frontendPath}`
             );
-            mainWindow.loadFile(path.join(__dirname, "error.html"));
+            mainWindow.loadURL("app://error.html");
             return;
         }
 
-        mainWindow.loadFile(frontendPath);
+        mainWindow.loadURL("app://dist/index.html");
     }
 }
 
@@ -197,7 +194,6 @@ function startPythonBackend() {
             "OptiFlowFileManager",
             "OptiFlowFileManager.exe"
         );
-        writeLog(`Dev path to Python executable: ${pythonExecutablePath}`);
     } else {
         const appRoot = path.dirname(app.getPath("exe"));
         pythonExecutablePath = path.join(
@@ -205,7 +201,6 @@ function startPythonBackend() {
             "backend",
             "OptiFlowFileManager.exe"
         );
-        writeLog(`Prod path to Python executable: ${pythonExecutablePath}`);
     }
 
     if (!fs.existsSync(pythonExecutablePath)) {
@@ -216,7 +211,6 @@ function startPythonBackend() {
     }
 
     writeLog(`Attempting to spawn Python backend: ${pythonExecutablePath}`);
-
     pythonProcess = spawn(pythonExecutablePath, [], {
         stdio: "inherit",
         cwd: path.dirname(pythonExecutablePath),
@@ -231,13 +225,18 @@ function startPythonBackend() {
     pythonProcess.on("close", (code) => {
         writeLog(`Python backend exited with code ${code}`);
     });
-
-    writeLog("Python backend spawn command sent.");
 }
 
 // Electron App Lifecycle Events
 
 app.whenReady().then(() => {
+    // NEU: Registrieren des benutzerdefinierten 'app://' Protokolls
+    protocol.registerFileProtocol("app", (request, callback) => {
+        // Entfernt 'app://' und normalisiert den Pfad
+        const url = request.url.slice("app://".length);
+        callback({ path: path.join(__dirname, url) });
+    });
+
     createWindow();
 
     app.on("activate", function () {
