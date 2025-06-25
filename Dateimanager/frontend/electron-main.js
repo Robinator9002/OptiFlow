@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain, shell, protocol } from "electron";
+import { app, BrowserWindow, ipcMain, shell, protocol, net } from "electron";
 import path from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import isDev from "electron-is-dev";
 import { spawn } from "child_process";
 import os from "os";
@@ -10,9 +10,23 @@ import http from "http";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// KORREKTUR 1: Dem Chromium-Kern FRÜHZEITIG mitteilen, dass unser Protokoll vertrauenswürdig ist.
+// Dies MUSS vor dem app.whenReady() Event geschehen.
+protocol.registerSchemesAsPrivileged([
+    {
+        scheme: "app",
+        privileges: {
+            standard: true,
+            secure: true,
+            supportFetchAPI: true,
+            stream: true,
+            corsEnabled: true, // Wichtig für fetch-Anfragen aus dem Renderer
+        },
+    },
+]);
+
 let pythonProcess;
 let mainWindow;
-
 let docServer = null;
 const DOC_PORT = 8081;
 
@@ -29,7 +43,7 @@ function writeLog(message) {
     fs.appendFileSync(logFile, `${new Date().toISOString()} - ${message}\n`);
 }
 
-// --- HANDLER ZUM ÖFFNEN DER DOKUMENTATION ---
+// --- HANDLER ZUM ÖFFNEN DER DOKUMENTATION (bleibt unverändert) ---
 ipcMain.handle("open-documentation", async () => {
     if (docServer && docServer.listening) {
         const serverAddress = `http://localhost:${DOC_PORT}`;
@@ -98,15 +112,9 @@ ipcMain.handle("open-documentation", async () => {
                     res.writeHead(404, {
                         "Content-Type": "text/html; charset=utf-8",
                     });
-                    res.end(`
-                        <div style="font-family: sans-serif; text-align: center; padding: 40px;">
-                            <h1>404 - Nicht gefunden</h1>
-                            <p>Die angeforderte Ressource wurde auf diesem Server nicht gefunden:</p>
-                            <p style="background: #eee; padding: 10px; border-radius: 4px; display: inline-block;"><code>${requestUrl}</code></p>
-                            <hr style="width: 200px; margin: 20px auto;">
-                            <p><a href="/">Zurück zur Startseite</a></p>
-                        </div>
-                    `);
+                    res.end(
+                        `<h1>404 Not Found</h1><p>Die Ressource <code>${requestUrl}</code> wurde nicht gefunden.</p><a href="/">Zurück</a>`
+                    );
                 } else {
                     res.writeHead(500);
                     res.end(`Server Error: ${error.code}`);
@@ -164,9 +172,10 @@ function createWindow() {
         mainWindow.loadURL("http://localhost:5173");
         mainWindow.webContents.openDevTools();
     } else {
-        // HIER SIND DIE ÄNDERUNGEN: Wir verwenden jetzt `loadURL` mit unserem neuen Protokoll.
         const frontendPath = path.join(__dirname, "dist", "index.html");
-        writeLog(`Lade Frontend im Produktionsmodus von: ${frontendPath}`);
+        writeLog(
+            `Lade Frontend im Produktionsmodus von: app://dist/index.html`
+        );
 
         if (!fs.existsSync(frontendPath)) {
             writeLog(
@@ -185,7 +194,6 @@ function createWindow() {
  */
 function startPythonBackend() {
     let pythonExecutablePath;
-
     if (isDev) {
         pythonExecutablePath = path.join(
             __dirname,
@@ -215,26 +223,33 @@ function startPythonBackend() {
         stdio: "inherit",
         cwd: path.dirname(pythonExecutablePath),
     });
-
-    pythonProcess.on("error", (err) => {
+    pythonProcess.on("error", (err) =>
         writeLog(
             `ERROR: Failed to start Python backend process: ${err.message}`
-        );
-    });
-
-    pythonProcess.on("close", (code) => {
-        writeLog(`Python backend exited with code ${code}`);
-    });
+        )
+    );
+    pythonProcess.on("close", (code) =>
+        writeLog(`Python backend exited with code ${code}`)
+    );
 }
 
 // Electron App Lifecycle Events
 
 app.whenReady().then(() => {
-    // NEU: Registrieren des benutzerdefinierten 'app://' Protokolls
-    protocol.registerFileProtocol("app", (request, callback) => {
-        // Entfernt 'app://' und normalisiert den Pfad
-        const url = request.url.slice("app://".length);
-        callback({ path: path.join(__dirname, url) });
+    // KORREKTUR 2: Die moderne 'protocol.handle' Methode verwenden.
+    protocol.handle("app", (request) => {
+        const url = request.url.slice("app://".length).split("?")[0];
+        const filePath = path.join(__dirname, url);
+
+        // Verwende net.fetch, um die lokale Datei wie eine Web-Ressource zu behandeln.
+        return net.fetch(pathToFileURL(filePath).toString()).catch((error) => {
+            console.error(
+                `[protocol.handle] Failed to fetch ${filePath}:`,
+                error
+            );
+            // Gibt eine saubere 404-Antwort zurück, wenn die Datei nicht gefunden wird.
+            return new Response(`File Not Found: ${url}`, { status: 404 });
+        });
     });
 
     createWindow();
