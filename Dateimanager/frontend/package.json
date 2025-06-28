@@ -57,7 +57,7 @@
 		],
 		"extraResources": [
 			{
-				"from": "../doc/documentation/template",
+				"from": "../doc/documentation",
 				"to": "doc"
 			}
 		],
