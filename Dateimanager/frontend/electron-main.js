@@ -43,39 +43,40 @@ function writeLog(message) {
     fs.appendFileSync(logFile, `${new Date().toISOString()} - ${message}\n`);
 }
 
-// --- HANDLER ZUM ÖFFNEN DER DOKUMENTATION (bleibt unverändert) ---
+// --- HANDLER ZUM ÖFFNEN DER DOKUMENTATION (ÜBERARBEITETE VERSION) ---
 ipcMain.handle("open-documentation", async () => {
     if (docServer && docServer.listening) {
         const serverAddress = `http://localhost:${DOC_PORT}`;
-        writeLog(
-            `Dokumentations-Server läuft bereits. Öffne Browser bei ${serverAddress}`
-        );
+        writeLog(`Dokumentations-Server läuft bereits. Öffne Browser bei ${serverAddress}`);
         await shell.openExternal(serverAddress);
         return;
     }
 
-    const docDir = isDev
-        ? path.resolve(__dirname, "..", "doc", "documentation", "template")
+    // NEU: Definiere einen Basis-Pfad für die gesamte Doku (inkl. Bilder)
+    const docBasePath = isDev
+        ? path.resolve(__dirname, "..", "doc", "documentation")
         : path.resolve(process.resourcesPath, "doc");
 
-    writeLog(`Pfad zum Dokumentations-Verzeichnis: ${docDir}`);
+    // NEU: Definiere den spezifischen Pfad, wo die HTML-Dateien liegen
+    const docHtmlPath = path.join(docBasePath, "template");
 
-    if (!fs.existsSync(docDir)) {
-        writeLog(
-            `FEHLER: Dokumentations-Verzeichnis nicht gefunden unter: ${docDir}`
-        );
+    writeLog(`Basis-Pfad zur Dokumentation: ${docBasePath}`);
+    writeLog(`Pfad zu den HTML-Dateien: ${docHtmlPath}`);
+
+    if (!fs.existsSync(docHtmlPath)) {
+        writeLog(`FEHLER: Dokumentations-Verzeichnis nicht gefunden unter: ${docHtmlPath}`);
         if (mainWindow) {
             mainWindow.webContents.send(
                 "error-dialog",
                 "Dokumentation nicht gefunden",
-                `Das Verzeichnis wurde nicht gefunden: ${docDir}`
+                `Das Verzeichnis wurde nicht gefunden: ${docHtmlPath}`
             );
         }
         return;
     }
 
     docServer = http.createServer((req, res) => {
-        let requestUrl = req.url === "/" ? "index.html" : req.url;
+        let requestUrl = req.url === "/" ? "/index.html" : req.url;
         requestUrl = requestUrl.split("?")[0];
 
         try {
@@ -85,16 +86,22 @@ ipcMain.handle("open-documentation", async () => {
             res.end("Bad Request: Malformed URI");
             return;
         }
+        
+        // GEÄNDERT: Der Dateipfad wird relativ zum Basis-Pfad der Doku aufgelöst.
+        // Das erlaubt Anfragen wie /template/index.html und /img/logo.png.
+        // Die HTML-Dateien referenzieren Bilder vermutlich mit Pfaden wie "../img/...",
+        // was durch path.join korrekt zu einem Pfad innerhalb von docBasePath aufgelöst wird.
+        const requestedFilePath = path.join(docBasePath, requestUrl);
 
-        let filePath = path.join(docDir, requestUrl);
-
-        if (!filePath.startsWith(docDir)) {
+        // GEÄNDERT: Sicherheitscheck gegen den Basis-Pfad, nicht mehr den HTML-Pfad.
+        // Das ist wichtig, damit Bilder aus dem /img Ordner geladen werden dürfen.
+        if (!requestedFilePath.startsWith(docBasePath)) {
             res.writeHead(403, { "Content-Type": "text/plain" });
             res.end("Forbidden");
             return;
         }
 
-        const extname = String(path.extname(filePath)).toLowerCase();
+        const extname = String(path.extname(requestedFilePath)).toLowerCase();
         const mimeTypes = {
             ".html": "text/html",
             ".css": "text/css",
@@ -106,15 +113,26 @@ ipcMain.handle("open-documentation", async () => {
         };
         const contentType = mimeTypes[extname] || "application/octet-stream";
 
-        fs.readFile(filePath, (error, content) => {
+        fs.readFile(requestedFilePath, (error, content) => {
             if (error) {
                 if (error.code === "ENOENT") {
-                    res.writeHead(404, {
-                        "Content-Type": "text/html; charset=utf-8",
-                    });
-                    res.end(
-                        `<h1>404 Not Found</h1><p>Die Ressource <code>${requestUrl}</code> wurde nicht gefunden.</p><a href="/">Zurück</a>`
-                    );
+                     // Wenn die Datei nicht gefunden wird, versuchen wir, sie im 'template'-Ordner zu finden.
+                     // Das ist nützlich für Anfragen wie '/index.html'
+                    const fallbackFilePath = path.join(docHtmlPath, requestUrl);
+                     if (fs.existsSync(fallbackFilePath)) {
+                         fs.readFile(fallbackFilePath, (fallBackError, fallbackContent) => {
+                             if(fallBackError) {
+                                res.writeHead(500);
+                                res.end(`Server Error: ${fallBackError.code}`);
+                             } else {
+                                res.writeHead(200, { "Content-Type": contentType });
+                                res.end(fallbackContent, "utf-8");
+                             }
+                         });
+                     } else {
+                        res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
+                        res.end(`<h1>404 Not Found</h1><p>Die Ressource <code>${requestUrl}</code> wurde nicht gefunden.</p><a href="/">Zurück</a>`);
+                     }
                 } else {
                     res.writeHead(500);
                     res.end(`Server Error: ${error.code}`);
@@ -126,12 +144,12 @@ ipcMain.handle("open-documentation", async () => {
         });
     });
 
+
     docServer
         .listen(DOC_PORT, "127.0.0.1", () => {
-            const serverAddress = `http://localhost:${DOC_PORT}`;
-            writeLog(
-                `Dokumentations-Server erfolgreich gestartet unter ${serverAddress}`
-            );
+            // GEÄNDERT: Wir öffnen direkt die index.html im template-Verzeichnis.
+            const serverAddress = `http://localhost:${DOC_PORT}/template/index.html`;
+            writeLog(`Dokumentations-Server erfolgreich gestartet. Öffne ${serverAddress}`);
             shell.openExternal(serverAddress);
         })
         .on("error", (err) => {
