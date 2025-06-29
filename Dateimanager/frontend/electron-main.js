@@ -10,7 +10,7 @@ import http from "http";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// KORREKTUR 1: Dem Chromium-Kern FRÜHZEITIG mitteilen, dass unser Protokoll vertrauenswürdig ist.
+// Dem Chromium-Kern FRÜHZEITIG mitteilen, dass unser Protokoll vertrauenswürdig ist.
 // Dies MUSS vor dem app.whenReady() Event geschehen.
 protocol.registerSchemesAsPrivileged([
     {
@@ -52,12 +52,12 @@ ipcMain.handle("open-documentation", async () => {
         return;
     }
 
-    // NEU: Definiere einen Basis-Pfad für die gesamte Doku (inkl. Bilder)
+    // Definiere einen Basis-Pfad für die gesamte Doku (inkl. Bilder)
     const docBasePath = isDev
         ? path.resolve(__dirname, "..", "doc", "documentation")
         : path.resolve(process.resourcesPath, "doc");
 
-    // NEU: Definiere den spezifischen Pfad, wo die HTML-Dateien liegen
+    // Definiere den spezifischen Pfad, wo die HTML-Dateien liegen
     const docHtmlPath = path.join(docBasePath, "template");
 
     writeLog(`Basis-Pfad zur Dokumentation: ${docBasePath}`);
@@ -87,13 +87,13 @@ ipcMain.handle("open-documentation", async () => {
             return;
         }
         
-        // GEÄNDERT: Der Dateipfad wird relativ zum Basis-Pfad der Doku aufgelöst.
+        // Der Dateipfad wird relativ zum Basis-Pfad der Doku aufgelöst.
         // Das erlaubt Anfragen wie /template/index.html und /img/logo.png.
         // Die HTML-Dateien referenzieren Bilder vermutlich mit Pfaden wie "../img/...",
         // was durch path.join korrekt zu einem Pfad innerhalb von docBasePath aufgelöst wird.
         const requestedFilePath = path.join(docBasePath, requestUrl);
 
-        // GEÄNDERT: Sicherheitscheck gegen den Basis-Pfad, nicht mehr den HTML-Pfad.
+        // Sicherheitscheck gegen den Basis-Pfad, nicht mehr den HTML-Pfad.
         // Das ist wichtig, damit Bilder aus dem /img Ordner geladen werden dürfen.
         if (!requestedFilePath.startsWith(docBasePath)) {
             res.writeHead(403, { "Content-Type": "text/plain" });
@@ -147,7 +147,7 @@ ipcMain.handle("open-documentation", async () => {
 
     docServer
         .listen(DOC_PORT, "127.0.0.1", () => {
-            // GEÄNDERT: Wir öffnen direkt die index.html im template-Verzeichnis.
+            // Wir öffnen direkt die index.html im template-Verzeichnis.
             const serverAddress = `http://localhost:${DOC_PORT}/template/index.html`;
             writeLog(`Dokumentations-Server erfolgreich gestartet. Öffne ${serverAddress}`);
             shell.openExternal(serverAddress);
@@ -254,7 +254,7 @@ function startPythonBackend() {
 // Electron App Lifecycle Events
 
 app.whenReady().then(() => {
-    // KORREKTUR 2: Die moderne 'protocol.handle' Methode verwenden.
+    // Die moderne 'protocol.handle' Methode verwenden.
     protocol.handle("app", (request) => {
         const url = request.url.slice("app://".length).split("?")[0];
         const filePath = path.join(__dirname, url);

@@ -789,7 +789,7 @@ def start_server():
 #  Haupt-Ausführungspunkt des Skripts
 # ================================================================= #
 if __name__ == "__main__":
-    # KORREKTUR: Dies muss der ALLERERSTE Aufruf im __main__-Block sein.
+    # Dies muss der ALLERERSTE Aufruf im __main__-Block sein.
     # Er ist essenziell für Windows, um Kindprozesse korrekt zu erstellen.
     # Unter Linux/macOS hat er keine Auswirkungen.
     multiprocessing.freeze_support()

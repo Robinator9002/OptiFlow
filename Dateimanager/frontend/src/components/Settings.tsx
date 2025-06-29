@@ -76,7 +76,7 @@ const Settings: React.FC<SettingsProps> = ({
     const [isSaving, setIsSaving] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
 
-    // KORREKTUR: Initialisiere die lokalen States mit einem Fallback auf die defaultSettings.
+    // Initialisiere die lokalen States mit einem Fallback auf die defaultSettings.
     // Dies garantiert, dass der Typ korrekt ist (z.B. `number` anstatt `number | undefined`).
     const [searchLimit, setSearchLimit] = useState(settings.search_limit ?? defaultSettings.search_limit!);
     const [snippetLimit, setSnippetLimit] = useState(settings.snippet_limit ?? defaultSettings.snippet_limit!);
@@ -103,7 +103,7 @@ const Settings: React.FC<SettingsProps> = ({
     const [activeTab, setActiveTab] = useState("general");
     const [lastActiveTab, setLastActiveTab] = useState("general");
 
-    // KORREKTUR: Auch der useEffect muss die Fallbacks verwenden, um die Typ-Sicherheit zu gewährleisten.
+    // Auch der useEffect muss die Fallbacks verwenden, um die Typ-Sicherheit zu gewährleisten.
     useEffect(() => {
         setSearchLimit(settings.search_limit ?? defaultSettings.search_limit!);
         setSnippetLimit(settings.snippet_limit ?? defaultSettings.snippet_limit!);

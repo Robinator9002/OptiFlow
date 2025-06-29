@@ -29,7 +29,7 @@ interface CanvasAreaProps {
 	elements: ExtendedFormElement[];
 	selectedElementId: string | null;
 	snapLines: SnapLine[];
-	// KORREKTUR: Akzeptiere, dass die Ref 'null' sein kann
+	// Akzeptiere, dass die Ref 'null' sein kann
 	canvasRef: React.RefObject<HTMLDivElement | null>;
 	onDragOverCanvas: (event: React.DragEvent<HTMLDivElement>) => void;
 	onDropOnCanvas: (event: React.DragEvent<HTMLDivElement>) => void;
